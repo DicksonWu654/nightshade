@@ -2,6 +2,8 @@
 
 Nightshade is an offline static security analyzer for Compact, Midnight's smart contract language.
 
+This project extends the Midnight Network with additional developer tooling.
+
 Docs: <DOCS_URL>
 
 [Apache-2.0](LICENSE) | [Download v0.1.1](https://github.com/DicksonWu654/nightshade/releases/tag/v0.1.1)
