@@ -24,7 +24,7 @@ function ruleCard(rule) {
   const item = element("li", "rule-card");
   const heading = element("div", "rule-title");
   const link = element("a", "", rule.id);
-  link.href = `https://github.com/DicksonWu654/nightshade/blob/v0.1.0/docs/detectors/${encodeURIComponent(rule.id)}.md`;
+  link.href = `https://github.com/DicksonWu654/nightshade/blob/v0.1.1/docs/detectors/${encodeURIComponent(rule.id)}.md`;
   link.setAttribute("aria-label", `${rule.id} documentation on GitHub`);
   heading.append(link);
   item.append(heading, element("p", "", rule.description));
