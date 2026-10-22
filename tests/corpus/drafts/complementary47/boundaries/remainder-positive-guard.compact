@@ -1,0 +1,10 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export circuit secondEndpointPositive(color: Bytes<32>, recipient: Either<ContractAddress, UserAddress>, total: Uint<128>, part: Uint<128>): [] {
+  assert(disclose(total) > 0 as Uint<128>, "positive total");
+  assert(disclose(part) <= disclose(total), "part within total");
+  const remainder = total - part;
+  assert(disclose(remainder) > 0 as Uint<128>, "positive second endpoint");
+  sendUnshielded(disclose(color), disclose(part), disclose(recipient));
+  sendUnshielded(disclose(color), disclose(remainder), disclose(recipient));
+}

@@ -1,0 +1,10 @@
+// This comparison does not establish that default salt is rejected: the caller
+// may choose a different excluded value.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+struct OwnerCommitment { salt: Bytes<32>; owner: Bytes<32>; }
+export ledger commitment: Bytes<32>;
+export circuit initialize(salt: Bytes<32>, ownerSecret: Bytes<32>, excludedSalt: Bytes<32>): [] {
+  assert(salt != excludedSalt, "salt equals excluded value");
+  commitment = disclose(persistentHash<OwnerCommitment>(OwnerCommitment { salt: salt, owner: ownerSecret }));
+}

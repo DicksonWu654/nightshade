@@ -1,0 +1,12 @@
+// Synthetic source-pattern regression.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger roleTree: MerkleTree<2, Field>;
+// Tree leaves commit to a role/account pair. No prior-membership check before insertion.
+circuit roleAccountCommitment(role: Bytes<32>, account: Bytes<32>): Field {
+ return persistentHash<Vector<2, Bytes<32>>>([disclose(role), disclose(account)]) as Field;
+}
+export circuit grantRole(role: Bytes<32>, account: Bytes<32>): [] {
+ const commitment = roleAccountCommitment(role, account);
+ roleTree.insert(disclose(commitment));
+}

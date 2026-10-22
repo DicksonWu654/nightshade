@@ -1,0 +1,11 @@
+pragma language_version >= 0.23;
+import CompactStandardLibrary;
+
+export ledger revealDeadline: Uint<64>;
+export ledger revealed: Boolean;
+constructor() { revealDeadline = 0; revealed = false; }
+
+export circuit revealBuyCommit(currentTimestamp: Uint<64>): [] {
+  assert(disclose(currentTimestamp <= revealDeadline), "late reveal");
+  revealed = true;
+}

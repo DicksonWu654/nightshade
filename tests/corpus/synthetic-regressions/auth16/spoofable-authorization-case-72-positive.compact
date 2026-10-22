@@ -1,0 +1,14 @@
+import CompactStandardLibrary;
+// Representative equality and membership sites among 17 shipped examples.
+export ledger owner: Bytes<32>;
+export ledger admins: Set<Bytes<32>>;
+export ledger value: Field;
+// Owned example constructor pins arbitrary native-key authorities at deploy.
+constructor(configuredOwner: Bytes<32>, configuredAdmin: Bytes<32>) {
+  owner = disclose(configuredOwner);
+  admins.insert(disclose(configuredAdmin));
+}
+export circuit requireOwner(): [] { assert(ownPublicKey().bytes == owner, "owner"); }
+export circuit requireAdmin(): [] { assert(admins.member(disclose(ownPublicKey().bytes)), "admin"); }
+export circuit ownerWrite(next: Field): [] { requireOwner(); value = disclose(next); }
+export circuit adminWrite(next: Field): [] { requireAdmin(); value = disclose(next); }

@@ -1,0 +1,18 @@
+pragma language_version >= 0.23.0;
+import CompactStandardLibrary;
+export ledger publicDigest: Bytes<32>;
+export ledger publicScalar: Field;
+export ledger rootJubjubPoint: JubjubPoint;
+pure circuit digest(value: Bytes<32>): Bytes<32> {
+  return persistentHash<Vector<1, Bytes<32>>>([value]);
+}
+pure circuit scalar(value: Bytes<32>): Field {
+  return degradeToTransient(persistentHash<Vector<1, Bytes<32>>>([value]));
+}
+export circuit derivePublicKey(publicInput: Bytes<32>): [] {
+  const publicValueDigest = digest(publicInput);
+  const publicValueScalar = scalar(publicInput);
+  publicDigest = disclose(publicValueDigest);
+  publicScalar = disclose(publicValueScalar);
+  rootJubjubPoint = disclose(ecMulGenerator(publicValueScalar));
+}

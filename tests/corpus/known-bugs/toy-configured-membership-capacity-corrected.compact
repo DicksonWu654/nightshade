@@ -1,0 +1,15 @@
+pragma language_version >= 0.20;
+
+import CompactStandardLibrary;
+export ledger configured: Set<Bytes<32>>;
+constructor(first: Bytes<32>, second: Bytes<32>) {
+  assert(disclose(first) != disclose(second), "distinct configured members");
+  configured.insert(disclose(first));
+  configured.insert(disclose(second));
+}
+export circuit guarded(a: Bytes<32>, b: Bytes<32>): Boolean {
+  assert(disclose(a) != disclose(b), "distinct requested members");
+  assert(configured.member(disclose(a)), "first configured member");
+  assert(configured.member(disclose(b)), "second configured member");
+  return true;
+}

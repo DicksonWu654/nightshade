@@ -1,0 +1,9 @@
+import CompactStandardLibrary;
+ledger used: Set<Field>;
+export ledger accepted: Field;
+witness token(): Field;
+export circuit accept(): [] {
+  const id = token();
+  assert(!used.member(disclose(id)), "fresh");
+  accepted = disclose(id);
+}

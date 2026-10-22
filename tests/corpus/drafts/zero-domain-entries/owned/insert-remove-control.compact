@@ -1,0 +1,8 @@
+// Owned static source-shape fixture. No execution or exploit reproduction.
+pragma language_version >= 0.20;
+import CompactStandardLibrary;
+export ledger supply: Map<Bytes<32>, Uint<64>>;
+export circuit credit(domain: Bytes<32>): [] {
+  supply.insert(disclose(domain), 0);
+  supply.remove(disclose(domain));
+}

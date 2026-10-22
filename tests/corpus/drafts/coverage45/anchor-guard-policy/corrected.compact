@@ -1,0 +1,31 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+
+export ledger anchor: Bytes<32>;
+export ledger owner: Bytes<32>;
+export ledger heartbeat: Field;
+
+constructor(initialOwnerId: Bytes<32>) {
+  owner = disclose(initialOwnerId);
+}
+
+witness ownerSecret(): Bytes<32>;
+circuit ownerId(secret: Bytes<32>): Bytes<32> {
+  return persistentHash<Vector<2, Bytes<32>>>([pad(32, "anchor-owner:"), secret]);
+}
+circuit requireOwner(): [] {
+  assert(ownerId(ownerSecret()) == owner, "owner authorization");
+}
+
+export circuit writeAnchor(next: Bytes<32>): [] {
+  requireOwner();
+  anchor = disclose(next);
+}
+export circuit rotateOwner(nextOwnerId: Bytes<32>): [] {
+  requireOwner();
+  owner = disclose(nextOwnerId);
+}
+export circuit tick(next: Field): [] {
+  requireOwner();
+  heartbeat = disclose(next);
+}

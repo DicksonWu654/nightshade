@@ -1,0 +1,9 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+struct Credential { domain: Bytes<32>; owner: Bytes<32>; }
+export ledger credential: Bytes<32>;
+export circuit register(ownerSecret: Bytes<32>): [] {
+  // Deployment policy supplies a distinct literal in each instance's source.
+  // Static source alone does not verify that external policy.
+  credential = disclose(persistentHash<Credential>(Credential { domain: pad(32, "instance-a"), owner: ownerSecret }));
+}

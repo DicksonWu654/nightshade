@@ -1,0 +1,7 @@
+import CompactStandardLibrary;
+export ledger marker9: Field;
+export ledger stored9: Field;
+export circuit change9(next: Field): [] {
+  assert(next == marker9, "value relation");
+  stored9 = disclose(next);
+}

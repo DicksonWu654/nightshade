@@ -1,0 +1,15 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+
+witness nonce(): Bytes<32>;
+
+export circuit maybeSend(
+  amount: Uint<64>, color: Bytes<32>, destination: Either<ContractAddress, UserAddress>
+): [] {
+  const id = nonce();
+  if (disclose(amount) == 0 as Uint<64>) {
+    sendUnshielded(disclose(color), disclose(amount), disclose(destination));
+  } else {
+    assert(id != default<Bytes<32>>, "nonzero path control");
+  }
+}

@@ -1,0 +1,48 @@
+// This file is part of midnightntwrk/example-counter.
+// Copyright (C) Midnight Foundation
+// SPDX-License-Identifier: Apache-2.0
+// Licensed under the Apache License, Version 2.0 (the "License");
+// You may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+pragma language_version >= 0.20;
+
+import CompactStandardLibrary;
+
+// public state
+export ledger round: Counter;
+
+// transition function changing public state
+export circuit increment(): [] {
+  round.increment(1);
+}
+
+// Owned operation-intent case: both document mutations use the same private-preimage check.
+export ledger controllerCommitment: Bytes<32>;
+export ledger authorizationNonce: Uint<64>;
+export ledger document: Field;
+witness localSecretKey(): Bytes<32>;
+circuit authorize(): [] {
+  assert(persistentHash<Bytes<32>>(localSecretKey()) == controllerCommitment, "controller preimage");
+}
+export circuit updateDocument(next: Field): [] {
+  authorize();
+  document = disclose(next);
+}
+export circuit revokeDocument(): [] {
+  authorize();
+  document = document - document;
+}
+constructor(controllerSeed: Bytes<32>) {
+  controllerCommitment = persistentHash<Bytes<32>>(disclose(controllerSeed));
+  authorizationNonce = 0 as Uint<64>;
+  document = 0 as Field;
+}

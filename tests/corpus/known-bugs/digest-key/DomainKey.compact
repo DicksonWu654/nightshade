@@ -1,0 +1,9 @@
+// Owned synthetic control with a separate hash domain.
+pragma language_version >= 0.23.0;
+module DomainKey {
+  import CompactStandardLibrary;
+  export pure circuit derivePk(seed: Bytes<32>): JubjubPoint {
+    const digest = persistentHash<Vector<2, Bytes<32>>>([pad(32, "owned/point-domain"), seed]);
+    return ecMulGenerator(degradeToTransient(digest));
+  }
+}

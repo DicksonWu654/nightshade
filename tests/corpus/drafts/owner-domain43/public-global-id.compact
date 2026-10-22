@@ -1,0 +1,8 @@
+// Intentional multi-input public global identifier; structural match may be actionable only with context.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+struct GlobalIdentifier { network: Bytes<32>; namespace: Bytes<32>; }
+export ledger globalId: Bytes<32>;
+export circuit publish(network: Bytes<32>, namespace: Bytes<32>): [] {
+  globalId = disclose(persistentHash<GlobalIdentifier>(GlobalIdentifier { network: network, namespace: namespace }));
+}

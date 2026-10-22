@@ -1,0 +1,14 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger currentColor: Bytes<32>;
+export circuit colorRevision(color: Bytes<32>, replacementColor: Bytes<32>, recipient: Either<ContractAddress, UserAddress>, total: Uint<128>, part: Uint<128>): [] {
+  assert(disclose(total) > 0 as Uint<128>, "positive total");
+  assert(disclose(part) <= disclose(total), "part within total");
+  const remainder = total - part;
+  currentColor = disclose(color);
+  const firstColorSnapshot = currentColor;
+  sendUnshielded(disclose(firstColorSnapshot), disclose(part), disclose(recipient));
+  currentColor = disclose(replacementColor);
+  const secondColorSnapshot = currentColor;
+  sendUnshielded(disclose(secondColorSnapshot), disclose(remainder), disclose(recipient));
+}

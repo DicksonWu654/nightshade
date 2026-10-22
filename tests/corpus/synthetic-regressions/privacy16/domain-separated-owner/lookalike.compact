@@ -1,0 +1,7 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+struct OwnerCommitment { selfAddress: ContractAddress; owner: Bytes<32>; }
+export ledger commitment: Bytes<32>;
+export circuit initialize(ownerSecret: Bytes<32>): [] {
+  commitment = disclose(persistentHash<OwnerCommitment>(OwnerCommitment { selfAddress: kernel.self(), owner: ownerSecret }));
+}

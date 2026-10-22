@@ -1,0 +1,12 @@
+Nightshade
+Licensed under the Apache License, Version 2.0; see LICENSE.
+
+The Compact parser uses midnightntwrk/compact-tree-sitter, revision
+22de6ee9dbf4b92fe4e2fe3602e53f1e352b79fd (Apache-2.0), with local grammar
+extensions in src/parser/native/grammar.cjs. Generated packages preserve the
+upstream grammar, licence and modification notice in dist/parser/.
+The tree-sitter runtime and generated runtime headers are MIT-licensed.
+
+Bundled Compact standard libraries are distributed under Apache-2.0 with their
+original notices retained. See THIRD_PARTY.md for source identities, dependency
+licences and attribution for adapted test fixtures.

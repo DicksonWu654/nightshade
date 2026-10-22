@@ -1,0 +1,5 @@
+import CompactStandardLibrary;
+// ownPublicKey is used only for a non-authorization read/routing value.
+export ledger value: Field;
+export circuit publicKeyPreview(): Bytes<32> { return ownPublicKey().bytes; }
+export circuit publicRead(): Field { return disclose(value); }

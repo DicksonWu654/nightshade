@@ -1,0 +1,6 @@
+pragma language_version >= 0.23.0;
+import CompactStandardLibrary;
+export circuit sendIndependent(color: Bytes<32>, recipient: Either<ContractAddress, UserAddress>, firstAmount: Uint<128>, secondAmount: Uint<128>): [] {
+  sendUnshielded(disclose(color), disclose(firstAmount), disclose(recipient));
+  sendUnshielded(disclose(color), disclose(secondAmount), disclose(recipient));
+}

@@ -1,0 +1,8 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+module Local { export circuit jubjubSchnorrVerify<#N>(msg: Vector<N, Field>, sig: JubjubSchnorrSignature, pk: JubjubPoint): Boolean { return true; } }
+import Local prefix App_;
+export ledger enrolled: JubjubPoint;
+constructor(seed: JubjubPoint) { assert(seed != default<JubjubPoint>, "constructor seed"); enrolled = disclose(seed); }
+export circuit enroll(pk: JubjubPoint): [] { enrolled = disclose(pk); }
+export circuit signedAction(msg: Vector<1, Field>, sig: JubjubSchnorrSignature): [] { assert(App_jubjubSchnorrVerify<1>(msg, sig, enrolled), "application check"); }

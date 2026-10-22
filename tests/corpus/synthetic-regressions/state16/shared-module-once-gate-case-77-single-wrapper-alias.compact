@@ -1,0 +1,14 @@
+// A single wrapper imports the stateful module once. Two prefixed imports of
+// that wrapper expose aliases to one module instance, not two importers.
+pragma language_version >= 0.20;
+import CompactStandardLibrary;
+
+module First {
+  import "shared-module-once-gate-case-77-positive/security/Initializable" prefix I_;
+  export circuit initialize(): [] { I_initialize(); }
+}
+
+import First prefix A_;
+import First prefix B_;
+export circuit initializeA(): [] { A_initialize(); }
+export circuit initializeB(): [] { B_initialize(); }

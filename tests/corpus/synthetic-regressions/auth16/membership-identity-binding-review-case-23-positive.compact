@@ -1,0 +1,8 @@
+import CompactStandardLibrary;
+// A wrapper can authenticate a different caller because clearMemos returns no identity.
+export ledger owner: Bytes<32>;
+export ledger allowedIdentities: Set<Bytes<32>>;
+witness accountSecret(): Bytes<32>;
+witness wrapperCaller(): Bytes<32>;
+circuit clearMemos(): [] { assert(persistentHash<Bytes<32>>(accountSecret()) == owner, "auth"); }
+export circuit allowlistedClear(): [] { assert(allowedIdentities.member(disclose(wrapperCaller())), "allowlist"); clearMemos(); }

@@ -1,0 +1,14 @@
+// Owned quiet control: inner membership tests otherSpender, lookup uses spender.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger allowances: Map<Bytes<32>, Map<Bytes<32>, Uint<64>>>;
+export circuit allowance(owner: Bytes<32>, spender: Bytes<32>, otherSpender: Bytes<32>): Uint<64> {
+ if (allowances.member(disclose(owner)) && allowances.lookup(disclose(owner)).member(disclose(otherSpender))) return allowances.lookup(disclose(owner)).lookup(disclose(spender));
+ return 0 as Uint<64>;
+}
+export circuit spend(owner: Bytes<32>, spender: Bytes<32>, amount: Uint<64>): [] {
+ assert(allowances.member(disclose(owner)), "owner exists");
+ assert(allowances.lookup(disclose(owner)).member(disclose(spender)), "spender exists");
+ const approved = allowances.lookup(disclose(owner)).lookup(disclose(spender));
+ allowances.lookup(disclose(owner)).insert(disclose(spender), disclose((approved - disclose(amount)) as Uint<64>));
+}

@@ -1,0 +1,35 @@
+// Owned metadata lifecycle canonical-provider composition candidate; no runtime or protocol claim.
+// Library revision: ec1331cd8195694c747d291e8fc8ab6d2914a976.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+import "token/NonFungibleToken" prefix NFT_;
+export ledger cachedURI: Map<Uint<128>, Opaque<"string">>;
+constructor(name: Opaque<"string">, symbol: Opaque<"string">) { NFT_initialize(name, symbol); }
+
+export circuit mint(id: Uint<128>, who: Bytes<32>, value: Opaque<"string">): [] {
+  const owner = left<Bytes<32>, ContractAddress>(disclose(who));
+  NFT__mint(owner, id);
+  cachedURI.insert(disclose(id), disclose(value));
+}
+export circuit burn(id: Uint<128>): [] {
+  NFT__burn(id);
+  cachedURI.remove(disclose(id));
+}
+export circuit remint(id: Uint<128>, who: Bytes<32>, value: Opaque<"string">): Opaque<"string"> {
+  const owner = left<Bytes<32>, ContractAddress>(disclose(who));
+  NFT__mint(owner, id);
+  cachedURI.insert(disclose(id), disclose(value));
+  return cachedURI.lookup(disclose(id));
+}
+// Distinct-id control: metadata belongs to token 1 while token 0 is burned and reissued.
+export circuit replaceToken(recipient: Bytes<32>, oldURI: Opaque<"string">): Opaque<"string"> {
+  assert(recipient != default<Bytes<32>>, "recipient");
+  const owner = left<Bytes<32>, ContractAddress>(disclose(recipient));
+  NFT__mint(owner, 0);
+  NFT__mint(owner, 1);
+  cachedURI.insert(1, disclose(oldURI));
+  NFT__burn(0);
+  cachedURI.remove(0);
+  NFT__mint(owner, 0);
+  return cachedURI.lookup(1);
+}

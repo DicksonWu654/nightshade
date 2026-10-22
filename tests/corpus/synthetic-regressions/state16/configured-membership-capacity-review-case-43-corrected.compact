@@ -1,0 +1,18 @@
+// Owned source-shape correction. Signer identities stand in for registered signer slots; signature cryptography is unmodeled.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger registered: Set<Bytes<32>>;
+export ledger threshold: Uint<8>;
+constructor(signerA: Bytes<32>, signerB: Bytes<32>) {
+ assert(disclose(signerA) != disclose(signerB), "two distinct signer slots required");
+ registered.insert(disclose(signerA)); registered.insert(disclose(signerB)); threshold = 2 as Uint<8>;
+}
+witness signerA(): Bytes<32>; witness signerB(): Bytes<32>;
+circuit verifyTwo(): Boolean {
+ const a = signerA(); const b = signerB();
+ assert(a != b, "distinct signers");
+ assert(registered.member(disclose(a)), "signer A registered");
+ assert(registered.member(disclose(b)), "signer B registered");
+ return true;
+}
+export circuit gatedOperation(): [] { assert(disclose(threshold) >= 2, "two approvals threshold"); assert(verifyTwo(), "two approvals"); }

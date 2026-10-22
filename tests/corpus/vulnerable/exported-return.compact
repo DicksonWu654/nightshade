@@ -1,0 +1,10 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger ownerHash: Bytes<32>;
+constructor(initialHash: Bytes<32>) {
+  ownerHash = disclose(initialHash);
+}
+export circuit reveal(secret: Field): Field {
+  assert(persistentHash<Field>(secret) == ownerHash, "not authorized");
+  return disclose(secret);
+}

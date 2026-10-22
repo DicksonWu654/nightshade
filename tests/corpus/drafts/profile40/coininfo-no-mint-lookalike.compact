@@ -1,0 +1,15 @@
+pragma language_version >= 0.18.0 && <= 0.18.0;
+import CompactStandardLibrary;
+
+export { CoinInfo };
+export ledger accepted: Uint<64>;
+
+constructor() {
+  accepted = 0;
+}
+
+export circuit acceptOnly(coin: CoinInfo, amount: Uint<64>): [] {
+  receive(disclose(coin));
+  assert(amount > 0, "amount must be positive");
+  accepted = (accepted + disclose(amount)) as Uint<64>;
+}

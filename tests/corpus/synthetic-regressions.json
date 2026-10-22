@@ -1,0 +1,3820 @@
+{
+  "version": "synthetic-regressions-1",
+  "scope": "Owned synthetic compiler and detector regression triplets. Unmapped cases remain explicit coverage boundaries; these are not measurements of third-party code.",
+  "cases": [
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "known-bugs/sdk-public-key-authorization-positive.compact",
+          "sha256": "980dfb8399a387e0b4fb97b761d9bde32b70154eb7dc24eb089f94c0469275ce"
+        },
+        "corrected": {
+          "file": "known-bugs/sdk-public-key-authorization-corrected.compact",
+          "sha256": "ebfb216eb96b17bc339b3fa4b93d4751b1f99fcb23faf07c7bfb7cb10dd49c0c"
+        },
+        "lookalike": {
+          "file": "known-bugs/sdk-public-key-authorization-lookalike.compact",
+          "sha256": "65f6fae03d42c78a7a585e71cad4bd607415d77934123153d7cdb4915437188b"
+        }
+      },
+      "targets": [
+        {
+          "detector": "spoofable-authorization",
+          "positiveLines": [
+            13
+          ]
+        }
+      ],
+      "policies": null,
+      "groundTruthStatus": "existing-scoped-sites",
+      "id": "spoofable-authorization-1",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "known-bugs/sdk-public-key-membership-positive.compact",
+          "sha256": "4febd36bcbb1629b602f166cd85a758ed98a3643d0dd11937f088bfcb0f268c0"
+        },
+        "corrected": {
+          "file": "known-bugs/sdk-public-key-membership-corrected.compact",
+          "sha256": "82350c6de4de44a7c79e771003866dffebee0ddfebd374afdd0531eb29ea4b3d"
+        },
+        "lookalike": {
+          "file": "known-bugs/sdk-public-key-membership-lookalike.compact",
+          "sha256": "939b3df6a9c3646467df721d5ef0967802a565ba6676ea4cdfe72d25f28967e4"
+        }
+      },
+      "targets": [
+        {
+          "detector": "public-key-membership-authorization",
+          "positiveLines": [
+            17
+          ]
+        }
+      ],
+      "policies": null,
+      "groundTruthStatus": "existing-scoped-sites",
+      "id": "public-key-membership-authorization-2",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 3,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/auth16/spoofable-authorization-case-1-positive.compact",
+          "sha256": "ad06edee77a2f6f623a69e62925c4d71ac26da41dda2254a3ee8178f1c1b5309"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/auth16/spoofable-authorization-case-1-corrected.compact",
+          "sha256": "36877aca1a6bb22252f4b137d272634e277c5e1d41c8f4ac4a5a40e09a65d05d"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/auth16/spoofable-authorization-case-1-lookalike.compact",
+          "sha256": "4b709d970be77a77b6acc8afafbc60e583038926af9f5f8f92c7d82c40a90de7"
+        }
+      },
+      "targets": [
+        {
+          "detector": "spoofable-authorization",
+          "positiveLines": [
+            40,
+            51,
+            58,
+            64,
+            70
+          ]
+        },
+        {
+          "detector": "public-key-membership-authorization",
+          "positiveLines": [
+            45
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "spoofable-authorization-3",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "known-bugs/counter-zero-membership-positive.compact",
+          "sha256": "c4c68d61c0dffa81aafd967f3fc5616ecebd5f5883f5148483b5b4418ca0e4b4"
+        },
+        "corrected": {
+          "file": "known-bugs/counter-zero-membership-corrected.compact",
+          "sha256": "8c3ad5ffcd727cd23dc2cd2a5771343b853c29293c9b21985721f4dc5e93f81f"
+        },
+        "lookalike": {
+          "file": "known-bugs/counter-zero-membership-lookalike.compact",
+          "sha256": "b5bb70d29430087d56e45840e064568c6152de96f3e13fa1191f51adadb03454"
+        }
+      },
+      "targets": [
+        {
+          "detector": "zero-amount-initial-membership",
+          "positiveLines": [
+            31
+          ]
+        }
+      ],
+      "policies": {
+        "zeroAmountMembership": [
+          {
+            "circuit": "credit",
+            "amount": "amount",
+            "map": "balances"
+          }
+        ]
+      },
+      "groundTruthStatus": "existing-scoped-sites",
+      "id": "zero-amount-initial-membership-4",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/state16/zero-amount-unguarded-map-debit-review-case-2-positive.compact",
+          "sha256": "c2fa20f7c72a706f56823f2c9f03127eb2b666d18f7f45df3d49183f823704b5"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/state16/zero-amount-unguarded-map-debit-review-case-2-corrected.compact",
+          "sha256": "2036e1fb530a2a88a2fa30c920de7c8f97864cd1469f94bfd4ee79c6c2578ff0"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/state16/zero-amount-unguarded-map-debit-review-case-2-lookalike.compact",
+          "sha256": "13a57a85859c0ca22138c894000f38062fa2576249b12e60fc9ca27aa493cdb3"
+        }
+      },
+      "targets": [
+        {
+          "detector": "zero-amount-unguarded-map-debit-review",
+          "positiveLines": [
+            7
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "zero-amount-unguarded-map-debit-review-5",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/state16/zero-amount-initial-membership-case-3-positive.compact",
+          "sha256": "9fae51570d0ec3061369b6f468110f85aee1dd060304b61bdfd7ada7d8797e27"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/state16/zero-amount-initial-membership-case-3-corrected.compact",
+          "sha256": "990429c058c15ce73a765c7de857efe27dfc559813c21fe3aef6c0674bb344a1"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/state16/zero-amount-initial-membership-case-3-lookalike.compact",
+          "sha256": "341a14184efe51fe8fbccbe6b8a489276ee6d2ffe3fe0ea8097d69626df5a450"
+        }
+      },
+      "targets": [
+        {
+          "detector": "zero-amount-initial-membership",
+          "positiveLines": [
+            11,
+            12
+          ]
+        }
+      ],
+      "policies": {
+        "zeroAmountMembership": [
+          {
+            "circuit": "spend",
+            "amount": "amount",
+            "map": "allowances"
+          }
+        ]
+      },
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "zero-amount-initial-membership-6",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/state16/zero-amount-initial-membership-case-3-positive.compact",
+          "sha256": "9fae51570d0ec3061369b6f468110f85aee1dd060304b61bdfd7ada7d8797e27"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/state16/zero-amount-initial-membership-case-3-corrected.compact",
+          "sha256": "990429c058c15ce73a765c7de857efe27dfc559813c21fe3aef6c0674bb344a1"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/state16/zero-amount-initial-membership-case-3-lookalike.compact",
+          "sha256": "341a14184efe51fe8fbccbe6b8a489276ee6d2ffe3fe0ea8097d69626df5a450"
+        }
+      },
+      "targets": [
+        {
+          "detector": "zero-default-getter-membership-review",
+          "positiveLines": [
+            12
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "zero-default-getter-membership-review-7",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": true,
+      "checks": {
+        "positive": {
+          "file": "known-bugs/library-nft-cache-lifecycle-positive.compact",
+          "sha256": "aae4b6f17b43de7366fab71803a6322653b089100d3ce44ee30a93d1379bd76e"
+        },
+        "corrected": {
+          "file": "known-bugs/library-nft-cache-lifecycle-corrected.compact",
+          "sha256": "ed27b1b45665b919238e54c1b297c8a43230cc89033982216231195aa861d3af"
+        },
+        "lookalike": {
+          "file": "known-bugs/library-nft-cache-lifecycle-lookalike.compact",
+          "sha256": "6b6a27284a0825d2c4761fd21fc3778020f01a735b73125833a41555d42e4dcb"
+        }
+      },
+      "targets": [
+        {
+          "detector": "stale-nft-metadata",
+          "positiveLines": [
+            26
+          ]
+        }
+      ],
+      "policies": {
+        "currentNftMetadata": [
+          {
+            "owners": "_owners",
+            "metadata": "cachedURI",
+            "consumer": "replaceToken"
+          }
+        ]
+      },
+      "groundTruthStatus": "existing-scoped-sites",
+      "id": "stale-nft-metadata-8",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/state16/stale-nft-metadata-case-4-positive.compact",
+          "sha256": "bbeb5f6d0d816d1a819b67df4f98b42e3a59059fb3bfc3043c78b1ab98a3f087"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/state16/stale-nft-metadata-case-4-corrected.compact",
+          "sha256": "3d176b923229430d0d728f5b28e2d45968dfc55e5f3cacf2fff979def991b546"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/state16/stale-nft-metadata-case-4-lookalike.compact",
+          "sha256": "3d176b923229430d0d728f5b28e2d45968dfc55e5f3cacf2fff979def991b546"
+        }
+      },
+      "targets": [],
+      "groundTruthStatus": "pending-mapped-sites",
+      "id": "static-boundary-9",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "known-bugs/counter-write-only-ledger-positive.compact",
+          "sha256": "2e0b0afa523f09aabe67f4e74d3ef0f2f0b705d02c6131e1888ef3fdf6e59a68"
+        },
+        "corrected": {
+          "file": "known-bugs/counter-write-only-ledger-corrected.compact",
+          "sha256": "161d8e3aaee77ea37f729df04dd0a8f0f40300114d9857fdd004ecd8833011c9"
+        },
+        "lookalike": {
+          "file": "known-bugs/counter-write-only-ledger-lookalike.compact",
+          "sha256": "f64f35912545b25bffbdaaf08f6deb20d0958459df3c60ab1421adeb05863461"
+        }
+      },
+      "targets": [
+        {
+          "detector": "write-only-ledger",
+          "positiveLines": [
+            29
+          ]
+        }
+      ],
+      "policies": null,
+      "groundTruthStatus": "existing-scoped-sites",
+      "id": "write-only-ledger-10",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/state16/source-claim-map-getter-review-case-5-positive.compact",
+          "sha256": "ec0966889ea0c0dd4ba3576901402c44c45b4dea16eee5720fdaf3f5ccddc08d"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/state16/source-claim-map-getter-review-case-5-corrected.compact",
+          "sha256": "5c1c37857ae9b3dd107d6510d7e8ed813906f8e37457ff7445bde798dd6d814a"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/state16/source-claim-map-getter-review-case-5-lookalike.compact",
+          "sha256": "16ba113b671a56d7b5da9bf1e813c227cc6519581bd24cd9ef3fc0d4253f12c0"
+        }
+      },
+      "targets": [
+        {
+          "detector": "source-claim-map-getter-review",
+          "positiveLines": [
+            6
+          ]
+        }
+      ],
+      "policies": {
+        "sourceMapGetters": [
+          {
+            "setter": "setAdmin",
+            "getter": "getRoleAdmin",
+            "map": "roleAdmin",
+            "setterKey": "role",
+            "setterValue": "admin",
+            "getterKey": "role",
+            "quote": "// Documentation claims DEFAULT_ADMIN_ROLE is customizable by roleAdmin entry."
+          }
+        ]
+      },
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "source-claim-map-getter-review-11",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "known-bugs/counter-either-payload-positive.compact",
+          "sha256": "2e20bb0647bbe3cad6401a8af18001594949be395b290fd60f5f50c0001e2158"
+        },
+        "corrected": {
+          "file": "known-bugs/counter-either-payload-corrected.compact",
+          "sha256": "6b30e90908074ac6a8eac459f2945588e553961447b479578c88f4d75d72dc54"
+        },
+        "lookalike": {
+          "file": "known-bugs/counter-either-payload-lookalike.compact",
+          "sha256": "c82b2971b6ae084a6a40d408dbe55a9244eb57a01fc519d52a61f183859ca67b"
+        }
+      },
+      "targets": [
+        {
+          "detector": "either-payload-mismatch",
+          "positiveLines": [
+            30
+          ]
+        }
+      ],
+      "policies": null,
+      "groundTruthStatus": "existing-scoped-sites",
+      "id": "either-payload-mismatch-12",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": true,
+      "checks": {
+        "positive": {
+          "file": "known-bugs/library-default-owner-positive.compact",
+          "sha256": "d1f8745f9889fa0e33a6611d4b8ce8011a5fad579f243f385569730773acc69c"
+        },
+        "corrected": {
+          "file": "known-bugs/library-default-owner-corrected.compact",
+          "sha256": "e8690e70006011e7eadb8325b190d9d3ea08aed0b814f0d3089580e903cabf32"
+        },
+        "lookalike": {
+          "file": "known-bugs/library-default-owner-lookalike.compact",
+          "sha256": "7b1e941aeec1976d3da65cf1fa15b3e1cce75ca0ab325844a4cdbe0892c13e1d"
+        }
+      },
+      "targets": [
+        {
+          "detector": "default-recipient-or-owner",
+          "positiveLines": [
+            59
+          ]
+        }
+      ],
+      "policies": null,
+      "groundTruthStatus": "existing-scoped-sites",
+      "id": "default-recipient-or-owner-13",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/state16/either-payload-mismatch-case-6-positive.compact",
+          "sha256": "b29b05dd0769926ff82f66545070edefd462066e5efa5d228c125b76b9ccf662"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/state16/either-payload-mismatch-case-6-corrected.compact",
+          "sha256": "6d908efcc1f6c1214279e4bb00cde870056246216be71e464f42c2798b1e646d"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/state16/either-payload-mismatch-case-6-lookalike.compact",
+          "sha256": "dfba236e6f1c853c9da75caaee07f0ab708bc7c1a7de1b9a63ca8edc16675f69"
+        }
+      },
+      "targets": [
+        {
+          "detector": "either-payload-mismatch",
+          "positiveLines": [
+            14
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "either-payload-mismatch-14",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "known-bugs/counter-branch-tail-positive.compact",
+          "sha256": "af1f500d4cb85dc5e0ef22a9ebce375ba7fc46743fbc8f8099a1adc7bfc0cce9"
+        },
+        "corrected": {
+          "file": "known-bugs/counter-branch-tail-corrected.compact",
+          "sha256": "f33f78b54a6232b79984276aaf6362ca2e5f1c18ce25dec894fe10a83ca633e7"
+        },
+        "lookalike": {
+          "file": "known-bugs/counter-branch-tail-lookalike.compact",
+          "sha256": "d28cebfa3e407145b4393cfdd6be4b90bb708f8eec7bc11aca3e548fa263c220"
+        }
+      },
+      "targets": [
+        {
+          "detector": "duplicated-branch-tail",
+          "positiveLines": [
+            30
+          ]
+        }
+      ],
+      "policies": null,
+      "groundTruthStatus": "existing-scoped-sites",
+      "id": "duplicated-branch-tail-15",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "known-bugs/counter-boolean-branch-positive.compact",
+          "sha256": "5e2dd89ac46d57d51e3aaaefa42d5f10231a84247eb2e0e6d66c6a013531f773"
+        },
+        "corrected": {
+          "file": "known-bugs/counter-boolean-branch-corrected.compact",
+          "sha256": "d9c821fe46c0cf17ce74af9e5a11ea9b86a1763079d16ef75109f3302b21963c"
+        },
+        "lookalike": {
+          "file": "known-bugs/counter-boolean-branch-lookalike.compact",
+          "sha256": "80a1c4b9bec539bdcba1d2fa3e6827160d6ae9d782e5b2408a3b74b51dc839a8"
+        }
+      },
+      "targets": [
+        {
+          "detector": "redundant-boolean-branch",
+          "positiveLines": [
+            21
+          ]
+        }
+      ],
+      "policies": null,
+      "groundTruthStatus": "existing-scoped-sites",
+      "id": "redundant-boolean-branch-16",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/state16/redundant-boolean-branch-case-7-positive.compact",
+          "sha256": "0a32c7cb5ccea5a295b1257289c832a0867b0f1031948943d3ae37c683add911"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/state16/redundant-boolean-branch-case-7-corrected.compact",
+          "sha256": "cb8c28422819c76ae4b6217599025b699669429e94758f17f587318ea20601e4"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/state16/redundant-boolean-branch-case-7-lookalike.compact",
+          "sha256": "1fbbe6496368abbae53d48f5dde40c69653bbe4b4eb69df0ecc95ac0614ba58b"
+        }
+      },
+      "targets": [
+        {
+          "detector": "redundant-boolean-branch",
+          "positiveLines": [
+            5
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "redundant-boolean-branch-17",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": true,
+      "checks": {
+        "positive": {
+          "file": "known-bugs/library-role-bootstrap-positive.compact",
+          "sha256": "e57592f15622d6291543c691d9b3b789530eae58ec7addef92cf8b112f103b3e"
+        },
+        "corrected": {
+          "file": "known-bugs/library-role-bootstrap-corrected.compact",
+          "sha256": "a9b62215c312e42058e533f523a963b85ecb04f8a929061362920ec9e326127c"
+        },
+        "lookalike": {
+          "file": "known-bugs/library-role-bootstrap-lookalike.compact",
+          "sha256": "569975726264043d213879024e16bdb182828fd42d1c71184795ef34b8185a36"
+        }
+      },
+      "targets": [
+        {
+          "detector": "missing-role-bootstrap",
+          "positiveLines": [
+            20
+          ]
+        }
+      ],
+      "policies": null,
+      "groundTruthStatus": "existing-scoped-sites",
+      "id": "missing-role-bootstrap-18",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": true,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/state16/missing-role-bootstrap-case-8-positive.compact",
+          "sha256": "619b17a2424849cf93d409c56fcf58caf7fb8acf7d4571b34229417b9b9dd2e6"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/state16/missing-role-bootstrap-case-8-corrected.compact",
+          "sha256": "48420984d3b7f458fcb619a49e129e127b334a74efde559934fa23bbf5079b35"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/state16/missing-role-bootstrap-case-8-lookalike.compact",
+          "sha256": "02fbaa25d5cc29128f6fdb723ca01c100649d154cf298f3f92a07e8df1f00184"
+        }
+      },
+      "targets": [
+        {
+          "detector": "missing-role-bootstrap",
+          "positiveLines": [
+            12
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "missing-role-bootstrap-19",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.31.1",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "known-bugs/library-public-encryption-secret-positive.compact",
+          "sha256": "dec243f640bb06d05708ce3ef871d12d406b656ce01e58d5cd343158fae24004"
+        },
+        "corrected": {
+          "file": "known-bugs/library-public-encryption-secret-corrected.compact",
+          "sha256": "a93c7294208b1102a95639d3f11f9227f1f4e423ff2c2648f1f18154e8584555"
+        },
+        "lookalike": {
+          "file": "known-bugs/library-public-encryption-secret-lookalike.compact",
+          "sha256": "b48a3a2484db2670411d50946676254535214821ab84b56c3256672ce330e8e8"
+        }
+      },
+      "targets": [
+        {
+          "detector": "publicly-derivable-encryption-secret",
+          "positiveLines": [
+            12
+          ]
+        }
+      ],
+      "policies": null,
+      "groundTruthStatus": "existing-scoped-sites",
+      "id": "publicly-derivable-encryption-secret-20",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/privacy16/account-key-domain/positive.compact",
+          "sha256": "fbb3b9954e2baea8de4008a7f04a425c75ffc268fcb0968a5b0dee38410f0338"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/privacy16/account-key-domain/corrected.compact",
+          "sha256": "4e1c8490046bd93888a05b441295b2d6c1786f9607066234ac32262adc17490d"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/privacy16/account-key-domain/lookalike.compact",
+          "sha256": "624b52c08b09dd19f419d134792c971feabc81e233ff28d226748ec1ccce55ca"
+        }
+      },
+      "targets": [
+        {
+          "detector": "published-digest-generator-scalar-review",
+          "positiveLines": [
+            17
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "published-digest-generator-scalar-review-21",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "known-bugs/counter-list-reset-positive.compact",
+          "sha256": "45e59dac31e742eebdca50d3f0636fe96650d466e8827fd9d7d2acb8794b193c"
+        },
+        "corrected": {
+          "file": "known-bugs/counter-list-reset-corrected.compact",
+          "sha256": "28072449757a5e8ecf61cdac10a58b867902e30d50cdfc102f42002ad1e65330"
+        },
+        "lookalike": {
+          "file": "known-bugs/counter-list-reset-lookalike.compact",
+          "sha256": "891372716f908085c16ff89f63ef50dd9dfda8c532a5dab48bf13e73f0a1c099"
+        }
+      },
+      "targets": [
+        {
+          "detector": "destructive-list-reset",
+          "positiveLines": [
+            31
+          ]
+        }
+      ],
+      "policies": null,
+      "groundTruthStatus": "existing-scoped-sites",
+      "id": "destructive-list-reset-22",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/state16/destructive-list-reset-case-12-positive.compact",
+          "sha256": "108c075b97d99dca7a77f0710bc717140cd35b40128aebc8c605f700095436b6"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/state16/destructive-list-reset-case-12-corrected.compact",
+          "sha256": "e137f3067e5eb502430a1a70b4789ee2ac2b8d1496019e28f4369b6f0d8e5948"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/state16/destructive-list-reset-case-12-lookalike.compact",
+          "sha256": "c0cb0f97ea014b28223e1f8c9e533cae50e9a2cfba681ae7dd8aff731aa9aeb1"
+        }
+      },
+      "targets": [
+        {
+          "detector": "destructive-list-reset",
+          "positiveLines": [
+            14
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "destructive-list-reset-23",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/privacy16/contract-recipient-claim/positive.compact",
+          "sha256": "eff28e74f8166394cc1ad3e88aefd70ba8528932a6bc4087db4451750690869a"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/privacy16/contract-recipient-claim/corrected.compact",
+          "sha256": "e36d29ab276b35c6a369e2ae01b006db502848329098dd469d74cab4184f6230"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/privacy16/contract-recipient-claim/lookalike.compact",
+          "sha256": "731578a4e413a51665eac64cfc945af02db75f9451e0a8d0597c8db2dc48f092"
+        }
+      },
+      "targets": [],
+      "groundTruthStatus": "pending-mapped-sites",
+      "id": "static-boundary-24",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/privacy16/escrow-randomness/positive.compact",
+          "sha256": "9f372b0a59e82ca8150a10cf97ae72218f4b941a1c622e62b52cf73908e4b06e"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/privacy16/escrow-randomness/corrected.compact",
+          "sha256": "54f0015b5926398d6af0327aeabcad8358a3ac4011c5d7ecd1bbbba2e0abcf7d"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/privacy16/escrow-randomness/lookalike.compact",
+          "sha256": "fa7322d1b54494905e53bd452144b622bca5695c22a73c02a0280a39f110d0bd"
+        }
+      },
+      "targets": [],
+      "groundTruthStatus": "pending-mapped-sites",
+      "id": "static-boundary-25",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 3,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/auth16/secret-binding-divergence-review-case-16-positive.compact",
+          "sha256": "47b13a63c5791cbf64571424f4c6b83db51047fbb80f1135dd605639b5b6cca6"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/auth16/secret-binding-divergence-review-case-16-corrected.compact",
+          "sha256": "fd465990911ec0b304c13e390dd2de9e45f7acce08d1350d2c270d13e34733fe"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/auth16/secret-binding-divergence-review-case-16-lookalike.compact",
+          "sha256": "7b2a102d488cdcce1585bc7b95a5f3527e6c428eccbbdd183e3bcb3a40c0b346"
+        }
+      },
+      "targets": [],
+      "groundTruthStatus": "pending-mapped-sites",
+      "id": "static-boundary-26",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "known-bugs/bboard-required-guard-positive.compact",
+          "sha256": "cf30c7f7104d3fd5652c97477df0c0e2fbcc1e6a5f25f406aaf4830c4a280887"
+        },
+        "corrected": {
+          "file": "known-bugs/bboard-required-guard-corrected.compact",
+          "sha256": "78930a080208e4be34eedeff3e6628e011d48665335f3956c8ef4ce7ec8c68cd"
+        },
+        "lookalike": {
+          "file": "known-bugs/bboard-required-guard-lookalike.compact",
+          "sha256": "3f509a60f84cf798d2c7db149b444830c91773704b33a1434712a1baa0b2eda7"
+        }
+      },
+      "targets": [
+        {
+          "detector": "unguarded-sensitive-state-write",
+          "positiveLines": [
+            69
+          ]
+        }
+      ],
+      "policies": {
+        "authorization": [
+          {
+            "state": "adminNote",
+            "guard": "requireOwner"
+          }
+        ]
+      },
+      "groundTruthStatus": "existing-scoped-sites",
+      "id": "unguarded-sensitive-state-write-27",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/state16/inconsistent-keyed-state-guard-case-17-positive.compact",
+          "sha256": "21f70501f4df9cb9b5a80ea5b4cbd069e807f1137b8b18774239bd28a9753e4d"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/state16/inconsistent-keyed-state-guard-case-17-corrected.compact",
+          "sha256": "6f0c3c79f3ddcb2459006ef7c4af13ae4bc581867bae007f35c227384efbc72c"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/state16/inconsistent-keyed-state-guard-case-17-lookalike.compact",
+          "sha256": "987437154f194a6f6f63237f3c54c0eb850c700425c8d00fdc457fb7d1ebb2ed"
+        }
+      },
+      "targets": [
+        {
+          "detector": "inconsistent-keyed-state-guard",
+          "positiveLines": [
+            14
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "inconsistent-keyed-state-guard-28",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "known-bugs/library-credit-nonce-reset-positive.compact",
+          "sha256": "5cb3eacc0e14c5e69323d25b1d153fe91788e71dbc4ef6c9c9578c97ecfa1db4"
+        },
+        "corrected": {
+          "file": "known-bugs/library-credit-nonce-reset-corrected.compact",
+          "sha256": "a4ab10b0a26ec39ff512b16f7e22dbe67cb2a635a2b24a0d325afccfed567942"
+        },
+        "lookalike": {
+          "file": "known-bugs/library-credit-nonce-reset-lookalike.compact",
+          "sha256": "c2f2e6285af5901d3251f4802a5e03fdf8c54c23af43ef050beb2eec6dc336b0"
+        }
+      },
+      "targets": [
+        {
+          "detector": "resettable-list-nonce",
+          "positiveLines": [
+            15
+          ]
+        }
+      ],
+      "policies": null,
+      "groundTruthStatus": "existing-scoped-sites",
+      "id": "resettable-list-nonce-29",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "known-bugs/counter-resettable-list-nonce-positive.compact",
+          "sha256": "09799946c884bab3ab77dddfd3c4437e2f4d6b8bae960d56a5f6467a891723a6"
+        },
+        "corrected": {
+          "file": "known-bugs/counter-resettable-list-nonce-corrected.compact",
+          "sha256": "88cd5b701f8a7d78d9c8f7c930510047c4a4c32b113f47376d22da8bac668a5f"
+        },
+        "lookalike": {
+          "file": "known-bugs/counter-resettable-list-nonce-lookalike.compact",
+          "sha256": "e79d7b6c6caf459dc7be5cfbc4863965885b3f2c7a659cbb8b7fcb692342a6a6"
+        }
+      },
+      "targets": [
+        {
+          "detector": "resettable-list-nonce",
+          "positiveLines": [
+            37
+          ]
+        }
+      ],
+      "policies": null,
+      "groundTruthStatus": "existing-scoped-sites",
+      "id": "resettable-list-nonce-30",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/state16/resettable-list-nonce-case-18-positive.compact",
+          "sha256": "11e4039ebdb2fea7f8670ae4ca2cbfa9807ea09930ce647129e27e25bef8d6dd"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/state16/resettable-list-nonce-case-18-corrected.compact",
+          "sha256": "0ac1851bf2a7dfd44f9d970332b78dc06ce9205747dad1dfbc9ebe61a6ad68b6"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/state16/resettable-list-nonce-case-18-lookalike.compact",
+          "sha256": "300ee2db6e71a67a13a4c40e3d82ff20f6a1445fce6eb21f9cf7c43b8d37fa0d"
+        }
+      },
+      "targets": [
+        {
+          "detector": "resettable-list-nonce",
+          "positiveLines": [
+            8
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "resettable-list-nonce-31",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/state16/static-boundary-case-19-positive.compact",
+          "sha256": "e5f4cb8eaeda0c1a9ad51901558f55d42916203d7e8069a7409ae05164cb7f96"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/state16/static-boundary-case-19-corrected.compact",
+          "sha256": "d17b3790e68457d4d677d7800c0c5c235dc3496d9fa8328b94e07726ecbe0ac1"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/state16/static-boundary-case-19-lookalike.compact",
+          "sha256": "8065f1eaee96e1520eb4be1057f30bd03ccc27ff49197fb864095535d43d040c"
+        }
+      },
+      "targets": [],
+      "groundTruthStatus": "pending-mapped-sites",
+      "id": "static-boundary-32",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "known-bugs/library-split-identity-positive.compact",
+          "sha256": "2b2e22e27ed2008238693b8d5d8a9fe85e8d65357f2eaea188f972b4cf2cbe92"
+        },
+        "corrected": {
+          "file": "known-bugs/library-split-identity-corrected.compact",
+          "sha256": "43ec7517aaae5ce879d832ddd6e770fc6cd98c40e963d651f0ec6dd0f41e8f76"
+        },
+        "lookalike": {
+          "file": "known-bugs/library-split-identity-lookalike.compact",
+          "sha256": "c8bf42a4a3ed49c81bc1c02095e47e8c1da7152711094d90a1ddae0beb320695"
+        }
+      },
+      "targets": [
+        {
+          "detector": "split-witness-identity",
+          "positiveLines": [
+            30
+          ]
+        }
+      ],
+      "policies": null,
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "split-witness-identity-33",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "known-bugs/counter-split-identity-positive.compact",
+          "sha256": "dfd2c89f0f000d5f8a4318a2b8ee1766a918c41c31edc985539aa97f2893711d"
+        },
+        "corrected": {
+          "file": "known-bugs/counter-split-identity-corrected.compact",
+          "sha256": "fecfa3708271e98d340aaeeb2e51fd768e8a29ca7c57ae7fe400bcd1b01e8f09"
+        },
+        "lookalike": {
+          "file": "known-bugs/counter-split-identity-lookalike.compact",
+          "sha256": "082ea076e93a5655414f0071de029e37f5c8cee389a36a694688459ba6774458"
+        }
+      },
+      "targets": [
+        {
+          "detector": "split-witness-identity",
+          "positiveLines": [
+            58
+          ]
+        }
+      ],
+      "policies": null,
+      "groundTruthStatus": "existing-scoped-sites",
+      "id": "split-witness-identity-34",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/state16/zero-transfer-retained-list-review-case-21-positive.compact",
+          "sha256": "d2c63b844b0fb539ef146e3915c43105106ac089f811a20e7b8384b6e1145e57"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/state16/zero-transfer-retained-list-review-case-21-corrected.compact",
+          "sha256": "b83dac58cdf7034c69013da0052859a30505b901c1815f77ebf404cd3c261b82"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/state16/zero-transfer-retained-list-review-case-21-lookalike.compact",
+          "sha256": "c1928e866fdd09ec35a8011483ff6ad43a7d40038659246221b942733ad80d71"
+        }
+      },
+      "targets": [],
+      "groundTruthStatus": "pending-mapped-sites",
+      "id": "static-boundary-35",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 3,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/auth16/membership-identity-binding-review-case-23-positive.compact",
+          "sha256": "89f2c4b1e7555daabcd9b84bc0387196cc49ff0bc14524a450db1c04f48883f2"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/auth16/membership-identity-binding-review-case-23-corrected.compact",
+          "sha256": "9fbcfc99cb038a4107c0a084d40028138636480cc20c864c37463fafa502c483"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/auth16/membership-identity-binding-review-case-23-lookalike.compact",
+          "sha256": "f2fd3c78e588d62549bb36b63e1bcc46e999a9edfc2b5a2dc36946b36a15d2a2"
+        }
+      },
+      "targets": [],
+      "groundTruthStatus": "pending-mapped-sites",
+      "id": "static-boundary-36",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/privacy16/elgamal-key-binding/positive.compact",
+          "sha256": "f69cff99d6c4078b4d598bb45de259ca3a9e8a2c3ec784bf6dde8449e99220fb"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/privacy16/elgamal-key-binding/corrected.compact",
+          "sha256": "92f9e2dd0c322c5d636fc9f2b3d71196cbe4c99fd2951c62ff4a1490cfe81807"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/privacy16/elgamal-key-binding/lookalike.compact",
+          "sha256": "f449ca5761a65212b81b08067a7e246644cc638872f7b7e2c0abf97ad8e51957"
+        }
+      },
+      "targets": [],
+      "groundTruthStatus": "pending-mapped-sites",
+      "id": "static-boundary-37",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "known-bugs/counter-merkle-insert-dedupe-positive.compact",
+          "sha256": "0cbba0b147ed1107e0420c8ba5e37a502091c2bf709fcccae797dae44d08bf65"
+        },
+        "corrected": {
+          "file": "known-bugs/counter-merkle-insert-dedupe-corrected.compact",
+          "sha256": "c66e28f8a5374909d009b7542c4dce94c44db3b0c9b4bba2a53a27df2ba66207"
+        },
+        "lookalike": {
+          "file": "known-bugs/counter-merkle-insert-dedupe-lookalike.compact",
+          "sha256": "0140eb60d55a3afd99015a14474ff634cca4d2e19871a8519469323152f1afe2"
+        }
+      },
+      "targets": [
+        {
+          "detector": "merkle-insert-without-dedupe",
+          "positiveLines": [
+            31
+          ]
+        }
+      ],
+      "policies": null,
+      "groundTruthStatus": "existing-scoped-sites",
+      "id": "merkle-insert-without-dedupe-38",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/state16/merkle-insert-without-dedupe-case-26-positive.compact",
+          "sha256": "04fed42c744ba65bbffb486978d8a235da14683abf4c12f4883be1b8ffb577ec"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/state16/merkle-insert-without-dedupe-case-26-corrected.compact",
+          "sha256": "2fa4876bae86d8ef199e143c1786666e30f502cb24905ac3d531aaa0257b6240"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/state16/merkle-insert-without-dedupe-case-26-lookalike.compact",
+          "sha256": "2e68b69791c4b86951351d1d3e4c8a062e43c52a93bec0404fedd7bab87ce460"
+        }
+      },
+      "targets": [
+        {
+          "detector": "merkle-insert-without-dedupe",
+          "positiveLines": [
+            11
+          ],
+          "lookalikeLines": [
+            11
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "merkle-insert-without-dedupe-39",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/privacy16/supply-wrapper-composition/positive.compact",
+          "sha256": "d48dd2b43908458ec794e10e2dd7c3dce2727120b2dda7773c1d03e94d32f672"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/privacy16/supply-wrapper-composition/corrected.compact",
+          "sha256": "eefaa76063167e8b8302d23f0517217ca6ba3908a51af29f44e90cc93c0a41b8"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/privacy16/supply-wrapper-composition/lookalike.compact",
+          "sha256": "2642fa631bf7bd90eac43c767a5d5cd7813533541ab9acdc364d6f652f747662"
+        }
+      },
+      "targets": [],
+      "groundTruthStatus": "pending-mapped-sites",
+      "id": "static-boundary-40",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/privacy16/zero-ciphertext-metadata/positive.compact",
+          "sha256": "b143b30c0719dc8ec9582a40024afc348a325aa69b248ed66516f8bcd5807ba8"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/privacy16/zero-ciphertext-metadata/corrected.compact",
+          "sha256": "b143b30c0719dc8ec9582a40024afc348a325aa69b248ed66516f8bcd5807ba8"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/privacy16/zero-ciphertext-metadata/lookalike.compact",
+          "sha256": "b302d6fa14f85f91e58f62604538d7ec7327f0b45fb8bba463963ca0132fc567"
+        }
+      },
+      "targets": [],
+      "groundTruthStatus": "pending-mapped-sites",
+      "id": "static-boundary-41",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/state16/caller-key-zero-entry-review-case-29-positive.compact",
+          "sha256": "e7b426c809a262d9d7ae345c9409587444e6de97e3dfdb4f68acf7842d633ac0"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/state16/caller-key-zero-entry-review-case-29-corrected.compact",
+          "sha256": "62e55c9d22f667a50cd96ff2f399b1ca507c4d57d12c508fa8fb3b3f27c46f2f"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/state16/caller-key-zero-entry-review-case-29-lookalike.compact",
+          "sha256": "62e55c9d22f667a50cd96ff2f399b1ca507c4d57d12c508fa8fb3b3f27c46f2f"
+        }
+      },
+      "targets": [],
+      "groundTruthStatus": "pending-mapped-sites",
+      "id": "static-boundary-42",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "known-bugs/counter-parent-send-metadata-positive.compact",
+          "sha256": "3a965f12ebc96cb1500efa7604f45bc1cef862c15ccefeb2980ff756411051bf"
+        },
+        "corrected": {
+          "file": "known-bugs/counter-parent-send-metadata-corrected.compact",
+          "sha256": "f8bd9fcd37719bb21e2230f2519f8bdbd8b3bb8737c4f2f7c71e2ff6f36b3d55"
+        },
+        "lookalike": {
+          "file": "known-bugs/counter-parent-send-metadata-lookalike.compact",
+          "sha256": "7ae5c10797ce44bae869f54f1c93b6c0de2b8d4768e1c897d2d633f8363b7132"
+        }
+      },
+      "targets": [
+        {
+          "detector": "discarded-shielded-send-result",
+          "positiveLines": [
+            8
+          ]
+        }
+      ],
+      "policies": null,
+      "groundTruthStatus": "existing-scoped-sites",
+      "id": "discarded-shielded-send-result-43",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "known-bugs/counter-mint-metadata-positive.compact",
+          "sha256": "9721f062923b4402955e716dff53cf359f1a12be512aa4aa7067c8039a82a5fc"
+        },
+        "corrected": {
+          "file": "known-bugs/counter-mint-metadata-corrected.compact",
+          "sha256": "15caa3aa5f982858833bce52cd7203945822d6ed3609f125b240091972113b55"
+        },
+        "lookalike": {
+          "file": "known-bugs/counter-mint-metadata-lookalike.compact",
+          "sha256": "cddc0033d59ca04d9ef98a2e9dd5dbd15d90a2fe91cd6fa42d427a79d246ce72"
+        }
+      },
+      "targets": [
+        {
+          "detector": "discarded-shielded-send-result",
+          "positiveLines": [
+            12
+          ]
+        }
+      ],
+      "policies": null,
+      "groundTruthStatus": "existing-scoped-sites",
+      "id": "discarded-shielded-send-result-44",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/privacy16/discarded-coin-info/positive.compact",
+          "sha256": "acad6caabddf91b65806f5b27762a7a32e58d4de77b4a1b4e45d22ff38335fae"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/privacy16/discarded-coin-info/corrected.compact",
+          "sha256": "6db086955c4d39ab7dea313e3acfdf4a2a60d8fc08a7c15a1a89adbdcadbe6f5"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/privacy16/discarded-coin-info/lookalike.compact",
+          "sha256": "2ba6a97c6987b46e4ef76744278ae19e64e473157bb59691a3da60d6979c7ac3"
+        }
+      },
+      "targets": [
+        {
+          "detector": "discarded-shielded-send-result",
+          "positiveLines": [
+            29,
+            32
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "discarded-shielded-send-result-45",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/privacy16/domain-separated-owner/positive.compact",
+          "sha256": "3f2876111b0edccac03a93bec90b3ad976ce031de1d3cb79dc058c942e9d7ab1"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/privacy16/domain-separated-owner/corrected.compact",
+          "sha256": "196319fa034387fd858375dbdc477b06e15b904753d79c5ee0f01cb4a02e683f"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/privacy16/domain-separated-owner/lookalike.compact",
+          "sha256": "90bb1a6a6ba4c571b8f96cd0330392f5ff03cce96b2dfc2adbafab42a82dd387"
+        }
+      },
+      "targets": [],
+      "groundTruthStatus": "pending-mapped-sites",
+      "id": "static-boundary-46",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "known-bugs/counter-owner-nonce-key-positive.compact",
+          "sha256": "1a02c58d6773c2a045dc5965255dd3491806e9fef56413c349232e969500ca3c"
+        },
+        "corrected": {
+          "file": "known-bugs/counter-owner-nonce-key-corrected.compact",
+          "sha256": "27d877c15ae667e96e13ef1b3502787b2c515d4fe11d21362723dc1dbeb9c7d7"
+        },
+        "lookalike": {
+          "file": "known-bugs/counter-owner-nonce-key-lookalike.compact",
+          "sha256": "f2c28b642225239cde8b6044bce1a3c5dd9af4c128884ce7598bd53c92b1bbb0"
+        }
+      },
+      "targets": [
+        {
+          "detector": "native-key-authentication-review",
+          "positiveLines": [
+            15
+          ]
+        }
+      ],
+      "policies": null,
+      "groundTruthStatus": "existing-scoped-sites",
+      "id": "native-key-authentication-review-47",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/privacy16/native-key-credential/positive.compact",
+          "sha256": "19210e8877d282007c1470a7119c6778a81d2da99b0fff38fd706a25a3f1beed"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/privacy16/native-key-credential/corrected.compact",
+          "sha256": "80d383e70443ef839b0885b0d5b62bfbf01aebeda5b1f1b8fef5d1c1f2dcd6bd"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/privacy16/native-key-credential/lookalike.compact",
+          "sha256": "4c0ec4490019af9d70680e2fe283c42726647cfe39bf45c50eaca74af0b28eb9"
+        }
+      },
+      "targets": [
+        {
+          "detector": "native-key-authentication-review",
+          "positiveLines": [
+            35
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "native-key-authentication-review-48",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 3,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/auth16/static-boundary-case-33-positive.compact",
+          "sha256": "f672ad22acf68e68e7b47031c5a71168c79951839437578ece1cd7d6ad8de664"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/auth16/static-boundary-case-33-corrected.compact",
+          "sha256": "f390d5044cee57aaecee188230997be7bb2628a3c621e5e1f531f566bf717ad3"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/auth16/static-boundary-case-33-lookalike.compact",
+          "sha256": "06e16c7d5c4a784a0c3d5524f5650e9f85e511258cf515d1fc72134832351ef1"
+        }
+      },
+      "targets": [],
+      "groundTruthStatus": "pending-mapped-sites",
+      "id": "static-boundary-49",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 3,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/validation16/native-key-domain-positive.compact",
+          "sha256": "da0ab68d9fa831f95a546da63578689f04bca7653e124461d991b6151e095c56"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/validation16/native-key-domain-corrected.compact",
+          "sha256": "416bc6ef7b4ef68fbd1573c30d207c4485366347ffc404b795efe788e5e93cc6"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/validation16/native-key-domain-lookalike.compact",
+          "sha256": "f55af5e3e68373eb25fd1466a9f5764a5098a1f7d792bc2f975a7e84ae9b8c7c"
+        }
+      },
+      "targets": [],
+      "groundTruthStatus": "pending-mapped-sites",
+      "id": "static-boundary-50",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/state16/merkle-membership-not-enforced-case-36-positive.compact",
+          "sha256": "e385a4930a625f7b87ac2bf795acf4f490752657c2c59d6aae4a7d2eca8ddc3e"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/state16/merkle-membership-not-enforced-case-36-corrected.compact",
+          "sha256": "8a248cb0b4dc2e6a0997012c51a0f1d97be5831f8ebf10b08c8e7e527d423e42"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/state16/merkle-membership-not-enforced-case-36-lookalike.compact",
+          "sha256": "8a248cb0b4dc2e6a0997012c51a0f1d97be5831f8ebf10b08c8e7e527d423e42"
+        }
+      },
+      "targets": [
+        {
+          "detector": "merkle-membership-not-enforced",
+          "positiveLines": [
+            14
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "merkle-membership-not-enforced-51",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "known-bugs/counter-zero-unshielded-send-positive.compact",
+          "sha256": "3c979e6e5b3eff50a293d8b319ba19cf5678738a8fb43655acbecba82cbd99b0"
+        },
+        "corrected": {
+          "file": "known-bugs/counter-zero-unshielded-send-corrected.compact",
+          "sha256": "0d419f64634ac0a756e48f37bcf2120353d129b0e2dab05431e95c9002ee5889"
+        },
+        "lookalike": {
+          "file": "known-bugs/counter-zero-unshielded-send-lookalike.compact",
+          "sha256": "13a30fc4203151a513e0cd365479688018b1497ed3e2634d50e51320501327bf"
+        }
+      },
+      "targets": [
+        {
+          "detector": "zero-amount-unshielded-send",
+          "positiveLines": [
+            29,
+            33
+          ]
+        }
+      ],
+      "policies": null,
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "zero-amount-unshielded-send-52",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "known-bugs/counter-redundant-receive-positive.compact",
+          "sha256": "bd9f8ac8beeba0ce322ce49928696ac045f6fb789302f7f61e6da67b9ed030cd"
+        },
+        "corrected": {
+          "file": "known-bugs/counter-redundant-receive-corrected.compact",
+          "sha256": "cf157e9f03581d094284645c9c69f5e5a7b61caab63ed2131c6d9eb9fe2fe5f5"
+        },
+        "lookalike": {
+          "file": "known-bugs/counter-redundant-receive-lookalike.compact",
+          "sha256": "f69bfd59119ccb74a5ee4556d1cf248291e18af30782e9b4f80d01218f435aa5"
+        }
+      },
+      "targets": [
+        {
+          "detector": "redundant-self-shielded-receive",
+          "positiveLines": [
+            30
+          ]
+        }
+      ],
+      "policies": null,
+      "groundTruthStatus": "existing-scoped-sites",
+      "id": "redundant-self-shielded-receive-53",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/state16/redundant-self-shielded-receive-case-39-positive.compact",
+          "sha256": "84eb01c3191f121c5dcd3c333ccc78593e8321a0b1f320c8252539dac7252260"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/state16/redundant-self-shielded-receive-case-39-corrected.compact",
+          "sha256": "c1ae6d728d5d57ef051db25b1937ce64c7a26fa26d10cd1105245c3832d48aff"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/state16/redundant-self-shielded-receive-case-39-lookalike.compact",
+          "sha256": "824ad84795372a4d9db1be548ea37bf51a08042fdd863f5a3306d0d651677ebe"
+        }
+      },
+      "targets": [
+        {
+          "detector": "redundant-self-shielded-receive",
+          "positiveLines": [
+            6,
+            10
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "redundant-self-shielded-receive-54",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 3,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "known-bugs/counter-signed-coin-positive.compact",
+          "sha256": "7c433f861c124f8c9125ebc9726ec450187f24061b09c2cab52480b78ce87d00"
+        },
+        "corrected": {
+          "file": "known-bugs/counter-signed-coin-corrected.compact",
+          "sha256": "d485f1e76218a7851a37fda620ac376ba67099ed78be6608123c35c5f477b25d"
+        },
+        "lookalike": {
+          "file": "known-bugs/counter-signed-coin-lookalike.compact",
+          "sha256": "3d0546fb4032b9b78c07bb65160cdd5d27a58694e0a40e2330fc17b7cdd83c10"
+        }
+      },
+      "targets": [
+        {
+          "detector": "signed-effect-input",
+          "positiveLines": [
+            36
+          ]
+        }
+      ],
+      "policies": null,
+      "groundTruthStatus": "existing-scoped-sites",
+      "id": "signed-effect-input-55",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 3,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/privacy16/burn-approval-coin/positive.compact",
+          "sha256": "7c433f861c124f8c9125ebc9726ec450187f24061b09c2cab52480b78ce87d00"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/privacy16/burn-approval-coin/corrected.compact",
+          "sha256": "cb9a5e859be30af444e33d41425ba1488274c369b47f28c09f9b9fcc926801f5"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/privacy16/burn-approval-coin/lookalike.compact",
+          "sha256": "3d0546fb4032b9b78c07bb65160cdd5d27a58694e0a40e2330fc17b7cdd83c10"
+        }
+      },
+      "targets": [
+        {
+          "detector": "signed-effect-input",
+          "positiveLines": [
+            36
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "signed-effect-input-56",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/privacy16/parent-forward-metadata/positive.compact",
+          "sha256": "3a965f12ebc96cb1500efa7604f45bc1cef862c15ccefeb2980ff756411051bf"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/privacy16/parent-forward-metadata/corrected.compact",
+          "sha256": "f8bd9fcd37719bb21e2230f2519f8bdbd8b3bb8737c4f2f7c71e2ff6f36b3d55"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/privacy16/parent-forward-metadata/lookalike.compact",
+          "sha256": "7ae5c10797ce44bae869f54f1c93b6c0de2b8d4768e1c897d2d633f8363b7132"
+        }
+      },
+      "targets": [
+        {
+          "detector": "discarded-shielded-send-result",
+          "positiveLines": [
+            8
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "discarded-shielded-send-result-57",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/state16/source-claim-shielded-issuance-review-case-42-positive.compact",
+          "sha256": "425658f8edf5add56c990ccad2c0af09dad3d98fc784d38529605edae9e5eae7"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/state16/source-claim-shielded-issuance-review-case-42-corrected.compact",
+          "sha256": "b47b378351695866ba39d1b362cc808cd1009f3dc10ea7f15b9c6556fd35309b"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/state16/source-claim-shielded-issuance-review-case-42-lookalike.compact",
+          "sha256": "505670ad74622460e852b51ffcec7d35d0ce989a8990b2c3f7019a876d507942"
+        }
+      },
+      "targets": [
+        {
+          "detector": "source-claim-shielded-issuance-review",
+          "positiveLines": [
+            6
+          ]
+        }
+      ],
+      "policies": {
+        "sourceClaims": [
+          {
+            "kind": "non-transferable-shielded-issuance",
+            "circuit": "issue",
+            "quote": "// Contract claim: recipients cannot transfer issued coins to other parties."
+          }
+        ]
+      },
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "source-claim-shielded-issuance-review-58",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 3,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/state16/configured-membership-capacity-review-case-43-native-positive.compact",
+          "sha256": "50a3b9c0f93d9ba34f6d347c66aa1fad6511940c4d0f22010050637f9f6f2ad5"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/state16/configured-membership-capacity-review-case-43-native-corrected.compact",
+          "sha256": "a386122cf47c109601262746d177da53a7f4f9d7337b5882b7e54bad6d846b54"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/state16/configured-membership-capacity-review-case-43-native-lookalike.compact",
+          "sha256": "36d549f19ca5b29472e5c94062fae32993502a47e4125b4ef0c3c5c82d48c68c"
+        }
+      },
+      "targets": [
+        {
+          "detector": "configured-membership-capacity-review",
+          "positiveLines": [
+            82
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "configured-membership-capacity-review-59",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "known-bugs/bboard-declared-secret-positive.compact",
+          "sha256": "30a7a885b2a037b6d3269f649964dbb5b3ed527e7b3326f283517146efbf53a0"
+        },
+        "corrected": {
+          "file": "known-bugs/bboard-declared-secret-corrected.compact",
+          "sha256": "9deb9ab4fff17c4345c2066cc461ebb5a7d85db454d05e7066873a22f7005b63"
+        },
+        "lookalike": {
+          "file": "known-bugs/bboard-declared-secret-lookalike.compact",
+          "sha256": "6ea72ea2218b0eb9b3e2e39e04cf9c34442d65349de1b4c935734bd8ab62c5c3"
+        }
+      },
+      "targets": [
+        {
+          "detector": "declared-secret-publication",
+          "positiveLines": [
+            47
+          ]
+        }
+      ],
+      "policies": {
+        "secrets": [
+          {
+            "witness": "localSecretKey",
+            "allowedForms": [
+              "hash"
+            ]
+          }
+        ]
+      },
+      "groundTruthStatus": "existing-scoped-sites",
+      "id": "declared-secret-publication-60",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/privacy16/shielded-result-return/positive.compact",
+          "sha256": "d2b1d9634c13f5b189494ca8f63f2da40e3dfe245d981a96520f50d9cd2977c2"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/privacy16/shielded-result-return/corrected.compact",
+          "sha256": "0e6b6f9a18b010cde50471d092097955d155014cb2376bd548999a670e9c3fe2"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/privacy16/shielded-result-return/lookalike.compact",
+          "sha256": "452fe74ccf81d51c718d6458efb4cf7aa302ffe2f762523785524d5525463ef5"
+        }
+      },
+      "targets": [
+        {
+          "detector": "declared-secret-publication",
+          "positiveLines": [
+            3
+          ]
+        },
+        {
+          "detector": "exported-shielded-descriptor",
+          "positiveLines": [
+            3
+          ]
+        }
+      ],
+      "policies": {
+        "secrets": [
+          {
+            "circuit": "drain",
+            "parameter": "coin",
+            "sinkKinds": [
+              "exported-return"
+            ]
+          }
+        ]
+      },
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "declared-secret-publication-61",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "known-bugs/counter-shielded-burn-amount-width-positive.compact",
+          "sha256": "d37d5b0f881fa3e470600e6bf6cc34ff3a8c24b038090c6ef351324f86edd8db"
+        },
+        "corrected": {
+          "file": "known-bugs/counter-shielded-burn-amount-width-corrected.compact",
+          "sha256": "bf76d28c699e13f60b871220c0820e671b78ab6e37856c02ee3d6472137d6670"
+        },
+        "lookalike": {
+          "file": "known-bugs/counter-shielded-burn-amount-width-lookalike.compact",
+          "sha256": "3eecefb17b45aff1d5f01d5fe60d236bc61462cdcdfa2f6c6c302ef4458205da"
+        }
+      },
+      "targets": [
+        {
+          "detector": "shielded-burn-amount-width",
+          "positiveLines": [
+            29
+          ]
+        }
+      ],
+      "policies": null,
+      "groundTruthStatus": "existing-scoped-sites",
+      "id": "shielded-burn-amount-width-62",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/state16/shielded-burn-amount-width-case-45-positive.compact",
+          "sha256": "d86250f4e0d3a9e0a5dceea1d78f4d8bb1fdb57616dc789d3df3d286d8d6ca73"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/state16/shielded-burn-amount-width-case-45-corrected.compact",
+          "sha256": "08787cde0c85b489b5bdd10f7cd1891f311292a8a5749d23bc838d8948f167fb"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/state16/shielded-burn-amount-width-case-45-lookalike.compact",
+          "sha256": "28f7e0b53f52d83a3594b27764699b7e828fa28542050f8fbe42ed1d1cec86d1"
+        }
+      },
+      "targets": [
+        {
+          "detector": "shielded-burn-amount-width",
+          "positiveLines": [
+            5,
+            8
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "shielded-burn-amount-width-63",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 3,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/privacy16/network-domain-approval/positive.compact",
+          "sha256": "b165a1fe98c47d52aaa49b8605b74d504f9d385506d010aa49ac39b616aac4be"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/privacy16/network-domain-approval/corrected.compact",
+          "sha256": "035c310a79216d46ba2ddcc48a0d0b165f4701762ba4f83b99a873edadaef34d"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/privacy16/network-domain-approval/lookalike.compact",
+          "sha256": "b165a1fe98c47d52aaa49b8605b74d504f9d385506d010aa49ac39b616aac4be"
+        }
+      },
+      "targets": [],
+      "groundTruthStatus": "pending-mapped-sites",
+      "id": "static-boundary-64",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/privacy16/contract-recipient-claim/positive.compact",
+          "sha256": "eff28e74f8166394cc1ad3e88aefd70ba8528932a6bc4087db4451750690869a"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/privacy16/contract-recipient-claim/corrected.compact",
+          "sha256": "e36d29ab276b35c6a369e2ae01b006db502848329098dd469d74cab4184f6230"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/privacy16/contract-recipient-claim/lookalike.compact",
+          "sha256": "731578a4e413a51665eac64cfc945af02db75f9451e0a8d0597c8db2dc48f092"
+        }
+      },
+      "targets": [],
+      "groundTruthStatus": "pending-mapped-sites",
+      "id": "static-boundary-65",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 3,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/validation16/unique-record-registration-positive.compact",
+          "sha256": "5951f8cc92845cb20c6d570540646d1060557ce4c4fe9810c51345908ab9aad2"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/validation16/unique-record-registration-corrected.compact",
+          "sha256": "be52a7e8458955d5c930725a1b467e08c742c9fd3a99dff0c82f92cad72fddce"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/validation16/unique-record-registration-lookalike.compact",
+          "sha256": "5a5c462cf3bd4b8025a91aa2547f6741d197ddf2feaae6b67e99929f6935ed00"
+        }
+      },
+      "targets": [],
+      "groundTruthStatus": "pending-mapped-sites",
+      "id": "static-boundary-66",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 3,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/auth16/operation-intent-policy-case-49-positive.compact",
+          "sha256": "c04d6ad83b3c4eeba0424f4924985bedb1a27d0cdae1e81256b8b45d2e1e29ad"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/auth16/operation-intent-policy-case-49-corrected.compact",
+          "sha256": "29f8c01685cb96ceed285b6772a05ac66edfa11e1ae8c5e117987b431706ad61"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/auth16/operation-intent-policy-case-49-lookalike.compact",
+          "sha256": "0ecdcc7afe44afce3e4a6253461a06d211d793c8c480588ce3fe5cfe53389508"
+        }
+      },
+      "targets": [],
+      "groundTruthStatus": "pending-mapped-sites",
+      "id": "static-boundary-67",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "known-bugs/counter-field-recomposition-positive.compact",
+          "sha256": "9b81578ca53b247f047719b436c28445fe57de0d1215e116b6e6666bfe9ea5ca"
+        },
+        "corrected": {
+          "file": "known-bugs/counter-field-recomposition-corrected.compact",
+          "sha256": "963cd8848ef0108ffd81d268af7cc4da28012034f8b9abd17d165b26fb88f434"
+        },
+        "lookalike": {
+          "file": "known-bugs/counter-field-recomposition-lookalike.compact",
+          "sha256": "b8a56e557f4f251f41176597474c65345cf7a469847324c2c36dd108abe1a6f3"
+        }
+      },
+      "targets": [
+        {
+          "detector": "field-recomposition-range-review",
+          "positiveLines": [
+            32
+          ]
+        }
+      ],
+      "policies": null,
+      "groundTruthStatus": "existing-scoped-sites",
+      "id": "field-recomposition-range-review-68",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/privacy16/field-quotient-remainder/positive.compact",
+          "sha256": "9b81578ca53b247f047719b436c28445fe57de0d1215e116b6e6666bfe9ea5ca"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/privacy16/field-quotient-remainder/corrected.compact",
+          "sha256": "963cd8848ef0108ffd81d268af7cc4da28012034f8b9abd17d165b26fb88f434"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/privacy16/field-quotient-remainder/lookalike.compact",
+          "sha256": "b8a56e557f4f251f41176597474c65345cf7a469847324c2c36dd108abe1a6f3"
+        }
+      },
+      "targets": [
+        {
+          "detector": "field-recomposition-range-review",
+          "positiveLines": [
+            32
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "field-recomposition-range-review-69",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/state16/write-only-ledger-case-51-positive.compact",
+          "sha256": "673b5eb5c82b84217137f73cc90faefc09835ebeb6794556305039933cea0bc3"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/state16/write-only-ledger-case-51-corrected.compact",
+          "sha256": "30ea6932e9fcb5b59499a015f1f3d802c096034e0702ce6ca4d957b4b3cc3018"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/state16/write-only-ledger-case-51-lookalike.compact",
+          "sha256": "9648ca8df39e79ace35045b74793ef32d8800fd2d7a2ec4e72bc7be55485e590"
+        }
+      },
+      "targets": [
+        {
+          "detector": "write-only-ledger",
+          "positiveLines": [
+            3
+          ],
+          "correctedLines": [
+            3
+          ],
+          "lookalikeLines": [
+            3
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "write-only-ledger-70",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 3,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/validation16/stored-enrollment-positive.compact",
+          "sha256": "0eb2562d0afcf1305b18ed0a3a695a0b91234f7545741eae811427337bdbf7de"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/validation16/stored-enrollment-corrected.compact",
+          "sha256": "58397b27fcde55c907881b05cd37847ee7b8149d720ff1f1e883c894c9819dba"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/validation16/stored-enrollment-lookalike.compact",
+          "sha256": "2bb3891027bcb2af4d8a3e76cca20a4a9f9a1fe3c579335fb70002d6cb6cd448"
+        }
+      },
+      "targets": [
+        {
+          "detector": "identity-signature-key",
+          "positiveLines": [
+            6
+          ],
+          "lookalikeLines": [
+            7
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "identity-signature-key-71",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 3,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/auth16/unguarded-sensitive-state-write-case-54-positive.compact",
+          "sha256": "390b4e30f8694635ff8db01d109c5be5e34b5391542e0fe030cbb707740bd3c5"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/auth16/unguarded-sensitive-state-write-case-54-corrected.compact",
+          "sha256": "5e9ea431b169e3d213c7767e63567efe51ae06faa13f13739e6bfd619baf4b0a"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/auth16/unguarded-sensitive-state-write-case-54-lookalike.compact",
+          "sha256": "b7e4594f5aa88086117bd7c5d423d8dcad5f4df511323d5c59ea857f48759f02"
+        }
+      },
+      "targets": [],
+      "groundTruthStatus": "pending-mapped-sites",
+      "id": "static-boundary-72",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 3,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/auth16/spoofable-authorization-case-55-positive.compact",
+          "sha256": "1430bd9249d6c386d61b7d43c887a00fdc51530cda96b56746d89ff5fe42bfa0"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/auth16/spoofable-authorization-case-55-corrected.compact",
+          "sha256": "38f776c8d66f68219468bc8d04d8bc6ba2c3ad453ddcd5f24f141237c2e51fe2"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/auth16/spoofable-authorization-case-55-lookalike.compact",
+          "sha256": "cf2556bc578f71cb0d97ba0d570a4de70afd4e712003323dde949d95917a5418"
+        }
+      },
+      "targets": [
+        {
+          "detector": "spoofable-authorization",
+          "positiveLines": [
+            5
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "spoofable-authorization-73",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 3,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/auth16/spoofable-authorization-case-56-positive.compact",
+          "sha256": "ec2d543b4d4de08f1ad6da07ca03ff77cc3a20cb51a8f3fce34086e89c6c10db"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/auth16/spoofable-authorization-case-56-corrected.compact",
+          "sha256": "0f657fbf0af2ceb50ad57b7e6d7fbf8e76991df999d55d344ef36361fb0b1d2a"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/auth16/spoofable-authorization-case-56-lookalike.compact",
+          "sha256": "cf2556bc578f71cb0d97ba0d570a4de70afd4e712003323dde949d95917a5418"
+        }
+      },
+      "targets": [
+        {
+          "detector": "spoofable-authorization",
+          "positiveLines": [
+            6
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "spoofable-authorization-74",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 3,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/auth16/spoofable-authorization-case-57-positive.compact",
+          "sha256": "1430bd9249d6c386d61b7d43c887a00fdc51530cda96b56746d89ff5fe42bfa0"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/auth16/spoofable-authorization-case-57-corrected.compact",
+          "sha256": "38f776c8d66f68219468bc8d04d8bc6ba2c3ad453ddcd5f24f141237c2e51fe2"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/auth16/spoofable-authorization-case-57-lookalike.compact",
+          "sha256": "cf2556bc578f71cb0d97ba0d570a4de70afd4e712003323dde949d95917a5418"
+        }
+      },
+      "targets": [
+        {
+          "detector": "spoofable-authorization",
+          "positiveLines": [
+            5
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "spoofable-authorization-75",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "known-bugs/counter-native-key-gate-positive.compact",
+          "sha256": "8a513faedfbdd4ad53ef5e48b2e72f181a09cad6c3e4882ec84d2fddc9182cd2"
+        },
+        "corrected": {
+          "file": "known-bugs/counter-native-key-gate-corrected.compact",
+          "sha256": "e96587bedf42a11158176dd81b5f810b3607e89d8ff565c233926b3eeae6b13e"
+        },
+        "lookalike": {
+          "file": "known-bugs/counter-native-key-gate-lookalike.compact",
+          "sha256": "f8d30cdd59c5ed6340ab145e671df06359b389ebb06dd58777ad08b50ee88644"
+        }
+      },
+      "targets": [
+        {
+          "detector": "native-key-authentication-review",
+          "positiveLines": [
+            21
+          ]
+        }
+      ],
+      "policies": null,
+      "groundTruthStatus": "existing-scoped-sites",
+      "id": "native-key-authentication-review-76",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 3,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/auth16/native-key-authentication-review-case-58-positive.compact",
+          "sha256": "05472a19be52fcabe7872a656e4811c33a77080596cc9ee912e780bff50f4388"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/auth16/native-key-authentication-review-case-58-corrected.compact",
+          "sha256": "b8fe001c53c8c1b8ffdddf3e3c71bedd80edd65be8c7d4569e2153d5dd541113"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/auth16/native-key-authentication-review-case-58-lookalike.compact",
+          "sha256": "cf2556bc578f71cb0d97ba0d570a4de70afd4e712003323dde949d95917a5418"
+        }
+      },
+      "targets": [
+        {
+          "detector": "native-key-authentication-review",
+          "positiveLines": [
+            9
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "native-key-authentication-review-77",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 3,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/auth16/spoofable-authorization-case-59-positive.compact",
+          "sha256": "1430bd9249d6c386d61b7d43c887a00fdc51530cda96b56746d89ff5fe42bfa0"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/auth16/spoofable-authorization-case-59-corrected.compact",
+          "sha256": "00df25885a3326e64d0f1da97eebd11cba72c1ba3e262f47e488bbc77da8aa06"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/auth16/spoofable-authorization-case-59-lookalike.compact",
+          "sha256": "cf2556bc578f71cb0d97ba0d570a4de70afd4e712003323dde949d95917a5418"
+        }
+      },
+      "targets": [
+        {
+          "detector": "spoofable-authorization",
+          "positiveLines": [
+            5
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "spoofable-authorization-78",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 3,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/auth16/spoofable-authorization-case-60-positive.compact",
+          "sha256": "edc3cec382e1502e911a4eb3d9210ba5914097c920adf016a72c90334ab0a0fb"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/auth16/spoofable-authorization-case-60-corrected.compact",
+          "sha256": "02afe3cb3ef9617aa4a8ae1aab520406976378a3b7a1de993470961956a87548"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/auth16/spoofable-authorization-case-60-lookalike.compact",
+          "sha256": "cf2556bc578f71cb0d97ba0d570a4de70afd4e712003323dde949d95917a5418"
+        }
+      },
+      "targets": [
+        {
+          "detector": "spoofable-authorization",
+          "positiveLines": [
+            9
+          ]
+        },
+        {
+          "detector": "public-key-membership-authorization",
+          "positiveLines": [
+            7
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "spoofable-authorization-79",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 3,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/auth16/spoofable-authorization-case-61-positive.compact",
+          "sha256": "0857e2309517f32181bfcabce383b4ae1c0a301a6eeca92c221aa38a2337df19"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/auth16/spoofable-authorization-case-61-corrected.compact",
+          "sha256": "b69993dc18d264df9e017adc6945c98306fa02f7da1b3d2d3fcd90fa49c4aa75"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/auth16/spoofable-authorization-case-61-lookalike.compact",
+          "sha256": "cf2556bc578f71cb0d97ba0d570a4de70afd4e712003323dde949d95917a5418"
+        }
+      },
+      "targets": [
+        {
+          "detector": "spoofable-authorization",
+          "positiveLines": [
+            8,
+            9
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "spoofable-authorization-80",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 3,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/auth16/spoofable-authorization-case-62-positive.compact",
+          "sha256": "3412d81d4b4868aeb002e143601fd5631fa6a54c7f94cd70a117a79ab01ecae1"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/auth16/spoofable-authorization-case-62-corrected.compact",
+          "sha256": "38f776c8d66f68219468bc8d04d8bc6ba2c3ad453ddcd5f24f141237c2e51fe2"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/auth16/spoofable-authorization-case-62-lookalike.compact",
+          "sha256": "cf2556bc578f71cb0d97ba0d570a4de70afd4e712003323dde949d95917a5418"
+        }
+      },
+      "targets": [
+        {
+          "detector": "spoofable-authorization",
+          "positiveLines": [
+            6
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "spoofable-authorization-81",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 3,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/auth16/spoofable-authorization-case-63-positive.compact",
+          "sha256": "8efabc67a816d8caacdb11090df4037120bbd8ad529323b2e5840ed5c725a184"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/auth16/spoofable-authorization-case-63-corrected.compact",
+          "sha256": "38f776c8d66f68219468bc8d04d8bc6ba2c3ad453ddcd5f24f141237c2e51fe2"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/auth16/spoofable-authorization-case-63-lookalike.compact",
+          "sha256": "cf2556bc578f71cb0d97ba0d570a4de70afd4e712003323dde949d95917a5418"
+        }
+      },
+      "targets": [
+        {
+          "detector": "spoofable-authorization",
+          "positiveLines": [
+            5
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "spoofable-authorization-82",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 3,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/auth16/spoofable-authorization-case-64-positive.compact",
+          "sha256": "8efabc67a816d8caacdb11090df4037120bbd8ad529323b2e5840ed5c725a184"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/auth16/spoofable-authorization-case-64-corrected.compact",
+          "sha256": "38f776c8d66f68219468bc8d04d8bc6ba2c3ad453ddcd5f24f141237c2e51fe2"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/auth16/spoofable-authorization-case-64-lookalike.compact",
+          "sha256": "cf2556bc578f71cb0d97ba0d570a4de70afd4e712003323dde949d95917a5418"
+        }
+      },
+      "targets": [
+        {
+          "detector": "spoofable-authorization",
+          "positiveLines": [
+            5
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "spoofable-authorization-83",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 3,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/auth16/spoofable-authorization-case-65-positive.compact",
+          "sha256": "21b8e53f398f82a1ef37847ac63610dc5c6cbc97c5b56e997861e9882df195f5"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/auth16/spoofable-authorization-case-65-corrected.compact",
+          "sha256": "92745b9c5571e14d942a7a00ffa39a71b614ebc0a1fc3c25b1d5ea0e0afa5d22"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/auth16/spoofable-authorization-case-65-lookalike.compact",
+          "sha256": "cf2556bc578f71cb0d97ba0d570a4de70afd4e712003323dde949d95917a5418"
+        }
+      },
+      "targets": [
+        {
+          "detector": "spoofable-authorization",
+          "positiveLines": [
+            6
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "spoofable-authorization-84",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 3,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/auth16/spoofable-authorization-case-66-positive.compact",
+          "sha256": "8efabc67a816d8caacdb11090df4037120bbd8ad529323b2e5840ed5c725a184"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/auth16/spoofable-authorization-case-66-corrected.compact",
+          "sha256": "38f776c8d66f68219468bc8d04d8bc6ba2c3ad453ddcd5f24f141237c2e51fe2"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/auth16/spoofable-authorization-case-66-lookalike.compact",
+          "sha256": "cf2556bc578f71cb0d97ba0d570a4de70afd4e712003323dde949d95917a5418"
+        }
+      },
+      "targets": [
+        {
+          "detector": "spoofable-authorization",
+          "positiveLines": [
+            5
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "spoofable-authorization-85",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 3,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/validation16/field-envelope-positive.compact",
+          "sha256": "100c0ca4ace16c328ed501c30d4bdb400b0160decffd56cea12a9009dd99bf81"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/validation16/field-envelope-corrected.compact",
+          "sha256": "42758d212f455257938c62ffe83dbb80b0d5f289422cfe6a1d8905e576d95c2c"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/validation16/field-envelope-lookalike.compact",
+          "sha256": "0dd514c8a5d51c54e52fea4f5d5a4fd7dfcc18bd0a0ab9d9b2a41025af650b2f"
+        }
+      },
+      "targets": [
+        {
+          "detector": "field-recomposition-range-review",
+          "positiveLines": [
+            6
+          ],
+          "correctedLines": [
+            7
+          ],
+          "lookalikeLines": [
+            7
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "field-recomposition-range-review-86",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 3,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/auth16/spoofable-authorization-case-68-positive.compact",
+          "sha256": "51d7d39c951b80cbed4fc1e60aea2b00d259b5ae3873ab317e022c92316bd76a"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/auth16/spoofable-authorization-case-68-corrected.compact",
+          "sha256": "a1758b21120d2079cedf9952f7febd7b10929ce5e8ea1150699f3cb50b6ee52f"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/auth16/spoofable-authorization-case-68-lookalike.compact",
+          "sha256": "912c782dc7966655f05d73e3085cc771b37dc97898350fbb0df6fa258a2f5926"
+        }
+      },
+      "targets": [
+        {
+          "detector": "spoofable-authorization",
+          "positiveLines": [
+            10,
+            12,
+            14,
+            16,
+            18
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "spoofable-authorization-87",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "known-bugs/counter-merkle-leaf-commitment-positive.compact",
+          "sha256": "dcf1e02c8b510e288974eaee7f05f108437bd02ce5677d64b21f6cf4c61671db"
+        },
+        "corrected": {
+          "file": "known-bugs/counter-merkle-leaf-commitment-corrected.compact",
+          "sha256": "547afffb72f26fd20f94f963ae372a1003d99ae2c5ce24eba3e3f5bdf6a37d74"
+        },
+        "lookalike": {
+          "file": "known-bugs/counter-merkle-leaf-commitment-lookalike.compact",
+          "sha256": "42735b6916ca7a00a3d13db1dd9f795facbf29da7ec12cbc9df403f0a00bfec2"
+        }
+      },
+      "targets": [
+        {
+          "detector": "merkle-leaf-binding-review",
+          "positiveLines": [
+            35
+          ]
+        }
+      ],
+      "policies": null,
+      "groundTruthStatus": "existing-scoped-sites",
+      "id": "merkle-leaf-binding-review-88",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/privacy16/operation-ticket/positive.compact",
+          "sha256": "758e50337ea941cd00b02bb8b44cb4cb108d0203e924fd637996097bac341979"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/privacy16/operation-ticket/corrected.compact",
+          "sha256": "2739ba0999ccc7a232c075585abe3d4cc519509f59918dd7464a4d8ccc5c9723"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/privacy16/operation-ticket/lookalike.compact",
+          "sha256": "51fd2ba3c1a8274070a0746eac712455e87e2e15f5717da54484a89317faaa55"
+        }
+      },
+      "targets": [
+        {
+          "detector": "merkle-leaf-binding-review",
+          "positiveLines": [
+            19,
+            26
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "merkle-leaf-binding-review-89",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "known-bugs/counter-merkle-leaf-identity-positive.compact",
+          "sha256": "f1dade64e8a462c1b1af3a794b2b925c93ba235e7ba5e7e860624b5570ab5169"
+        },
+        "corrected": {
+          "file": "known-bugs/counter-merkle-leaf-identity-corrected.compact",
+          "sha256": "f7f1315320ffe54b778624c431890f6d0e50c2defd3d2c9f321ccac68fae6878"
+        },
+        "lookalike": {
+          "file": "known-bugs/counter-merkle-leaf-identity-lookalike.compact",
+          "sha256": "6bae7d867fb46947b8ffd8affd0be624f90e9cf8f97200ff4f5bbb2dd5cb6887"
+        }
+      },
+      "targets": [
+        {
+          "detector": "merkle-leaf-binding-review",
+          "positiveLines": [
+            34
+          ]
+        }
+      ],
+      "policies": null,
+      "groundTruthStatus": "existing-scoped-sites",
+      "id": "merkle-leaf-binding-review-90",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/privacy16/ciphertext-issuer/positive.compact",
+          "sha256": "291ee838c1cddc950d3fb44e0f5aa4a849ff8e0eca584f2a86fad190f41c31f5"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/privacy16/ciphertext-issuer/corrected.compact",
+          "sha256": "d8dba494d4d8ae2c013208c7a0f5ea7aa09a8503920ccd61f8ff98d8cebb180c"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/privacy16/ciphertext-issuer/lookalike.compact",
+          "sha256": "b1322c727b33ee66e0f9579edd8ea61af31f1d17043e35554156d30f6134aee4"
+        }
+      },
+      "targets": [
+        {
+          "detector": "merkle-leaf-binding-review",
+          "positiveLines": [
+            22,
+            28,
+            34
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "merkle-leaf-binding-review-91",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "known-bugs/counter-merkle-leaf-item-positive.compact",
+          "sha256": "419b94adb84e2c13ef6e821b5e985873fbc10b30fa08480056e37e98075ae445"
+        },
+        "corrected": {
+          "file": "known-bugs/counter-merkle-leaf-item-corrected.compact",
+          "sha256": "bad88b99b7a683db4d359676c4503682a22658145516c42ada704cdb59ac7334"
+        },
+        "lookalike": {
+          "file": "known-bugs/counter-merkle-leaf-item-lookalike.compact",
+          "sha256": "65e9cf0a3cb0b682cf5bf5b768fe9cd293b9094ff44aee87cec6a5d1fd2c1c9c"
+        }
+      },
+      "targets": [
+        {
+          "detector": "merkle-leaf-binding-review",
+          "positiveLines": [
+            34
+          ]
+        }
+      ],
+      "policies": null,
+      "groundTruthStatus": "existing-scoped-sites",
+      "id": "merkle-leaf-binding-review-92",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/privacy16/checked-increment/positive.compact",
+          "sha256": "8e7aebe82faceaf9e6d675510ae0735188724bb7347a15d523d5709a01f18735"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/privacy16/checked-increment/corrected.compact",
+          "sha256": "aa02a1105639d17d5347ed82b924f2b9dba8d5365f9d305e3fc7e5ff9d3f18e2"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/privacy16/checked-increment/lookalike.compact",
+          "sha256": "80772e5f978e150a244e6d6753e3f54baedb383cb36c362ea490e6c74ec1d2d4"
+        }
+      },
+      "targets": [
+        {
+          "detector": "merkle-leaf-binding-review",
+          "positiveLines": [
+            19,
+            25
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "merkle-leaf-binding-review-93",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 3,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/auth16/spoofable-authorization-case-72-positive.compact",
+          "sha256": "0ab13ca9cb30cdc64cd9adcfb5107c19c9c452d30b53304773e449258a7ff2fc"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/auth16/spoofable-authorization-case-72-corrected.compact",
+          "sha256": "a5b6f8677f532d776c9ac3cf245e65a88b62e1734c252ded127c9b38d1d72a0f"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/auth16/spoofable-authorization-case-72-lookalike.compact",
+          "sha256": "93d6c0e8f0764a7f9f7437ed588378f4751c7e1d76fb37b607ee33f8c2bdbe3c"
+        }
+      },
+      "targets": [
+        {
+          "detector": "spoofable-authorization",
+          "positiveLines": [
+            11
+          ]
+        },
+        {
+          "detector": "public-key-membership-authorization",
+          "positiveLines": [
+            12
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "spoofable-authorization-94",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "known-bugs/counter-identity-signature-positive.compact",
+          "sha256": "c7939a0d746c2be91f69165ec43e5661bd82b52303a5a3c67c78b6d70540bf96"
+        },
+        "corrected": {
+          "file": "known-bugs/counter-identity-signature-corrected.compact",
+          "sha256": "fae74d882471cee0d54c491c381435d85b357c304fea168ced13ffa09497f6b4"
+        },
+        "lookalike": {
+          "file": "known-bugs/counter-identity-signature-lookalike.compact",
+          "sha256": "4041b7e7cc1b1c4f26994959c8673294f34681ff1ac8a1a92bd77aa04ce2f957"
+        }
+      },
+      "targets": [
+        {
+          "detector": "identity-signature-key",
+          "positiveLines": [
+            29
+          ]
+        }
+      ],
+      "policies": null,
+      "groundTruthStatus": "existing-scoped-sites",
+      "id": "identity-signature-key-95",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 3,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/validation16/signature-input-key-positive.compact",
+          "sha256": "619b0ca2a5941319299616129e22015cf428407f5850d1648f6a1b0a84af9041"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/validation16/signature-input-key-corrected.compact",
+          "sha256": "e05d2a005c608525ab6a7faf226e22cbcf62774a5e8cd29de2407fd275680e75"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/validation16/signature-input-key-lookalike.compact",
+          "sha256": "fcc50c88197e26f8fd614f270275eb55d931c959db924bee7a7855fa3a3093bd"
+        }
+      },
+      "targets": [
+        {
+          "detector": "identity-signature-key",
+          "positiveLines": [
+            4,
+            7
+          ],
+          "lookalikeLines": [
+            5,
+            9
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "identity-signature-key-96",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 3,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/validation16/stored-device-key-positive.compact",
+          "sha256": "19145730c13a6754cb11fa4a12ff1e1b3c43618358d58d658267a50ee041caf3"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/validation16/stored-device-key-corrected.compact",
+          "sha256": "dbcb9108a667154b6c56921748136ea04b2b6be01e5976460695676c924ddff3"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/validation16/stored-device-key-lookalike.compact",
+          "sha256": "4ac177d4c99049a7447b4a8680ad356282829af7f9459d95352976cfeae3fae5"
+        }
+      },
+      "targets": [
+        {
+          "detector": "identity-signature-key",
+          "positiveLines": [
+            10,
+            13
+          ],
+          "lookalikeLines": [
+            11,
+            15
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "identity-signature-key-97",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 3,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/auth16/quorum-signer-uniqueness-review-case-76-positive.compact",
+          "sha256": "ce9f97fca3e363d49fdaea55ede94ef93d64ab64ed29f4952ba798bc042290e5"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/auth16/quorum-signer-uniqueness-review-case-76-corrected.compact",
+          "sha256": "99876e3ed74e009ee8306cdf08fbae76e14a6ffe723b108385de5b88f3b5bc42"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/auth16/quorum-signer-uniqueness-review-case-76-lookalike.compact",
+          "sha256": "5bd0e0ce6c44f70b4ddbc13f6e5b1e8bade9b6069929752061443d13b661ce32"
+        }
+      },
+      "targets": [
+        {
+          "detector": "quorum-signer-uniqueness-review",
+          "positiveLines": [
+            19
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "quorum-signer-uniqueness-review-98",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": true,
+      "checks": {
+        "positive": {
+          "file": "known-bugs/counter-initializable-composition-positive.compact",
+          "sha256": "4bdfe43265704100d876436ba9368d5601aae7f598e6a1f38f5111c3ec7a8203"
+        },
+        "corrected": {
+          "file": "known-bugs/counter-initializable-composition-corrected.compact",
+          "sha256": "21b16bbe7de741a1515c2d001ba49a12cd786e570d00f0504412837e28fb3543"
+        },
+        "lookalike": {
+          "file": "known-bugs/counter-initializable-composition-lookalike.compact",
+          "sha256": "4330fb845078aa02bf7241077489b1dad38312b66b1ffd97e3d79897051162d2"
+        }
+      },
+      "targets": [
+        {
+          "detector": "openzeppelin-preconditions",
+          "positiveLines": [
+            29,
+            33
+          ]
+        }
+      ],
+      "policies": {
+        "builtins": [
+          "openzeppelin-initializable"
+        ]
+      },
+      "groundTruthStatus": "existing-scoped-sites",
+      "id": "openzeppelin-preconditions-99",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/state16/shared-module-once-gate-case-77-positive.compact",
+          "sha256": "41f2816745bb1607062c0fde4b73c5f90c7fb968215b65e78a970a389759f384"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/state16/shared-module-once-gate-case-77-corrected.compact",
+          "sha256": "640e4d0cee74a0dcb428fe9ec3790aa733bfa8de3138ec69220839cb5b54a2c8"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/state16/shared-module-once-gate-case-77-lookalike.compact",
+          "sha256": "640e4d0cee74a0dcb428fe9ec3790aa733bfa8de3138ec69220839cb5b54a2c8"
+        }
+      },
+      "targets": [
+        {
+          "detector": "shared-module-once-gate",
+          "positiveLines": [
+            4
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "shared-module-once-gate-100",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 3,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/auth16/public-key-membership-authorization-case-78-positive.compact",
+          "sha256": "16d645b7db8f2843c3942a10339c9827ca93700aaa43e1c97043d9a3fd9a2bfb"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/auth16/public-key-membership-authorization-case-78-corrected.compact",
+          "sha256": "543888a1d4cf4599f6a12f98e3de7ce3dc16bea15c767fa51aadd70a5c45b2ad"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/auth16/public-key-membership-authorization-case-78-lookalike.compact",
+          "sha256": "ddca0581752305a034448e950ad8e3901266a5a4ddb06b6f375230a28258b54f"
+        }
+      },
+      "targets": [
+        {
+          "detector": "public-key-membership-authorization",
+          "positiveLines": [
+            15
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "public-key-membership-authorization-101",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 3,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/auth16/static-boundary-case-79-positive.compact",
+          "sha256": "daa1d57032d20377b1e3dad6286a9de54370ee4c9b4be6326fdf0ebd2c10d9f7"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/auth16/static-boundary-case-79-corrected.compact",
+          "sha256": "07ebba6296796d10a0002c8b0a2220f87f65ff681b704d0a65ae6a4d5289ea3b"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/auth16/static-boundary-case-79-lookalike.compact",
+          "sha256": "ee9306a99f0f7bcdd926d0821d53379e7888bb87d275be100793415149f68b08"
+        }
+      },
+      "targets": [],
+      "groundTruthStatus": "pending-mapped-sites",
+      "id": "static-boundary-102",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/state16/resettable-list-nonce-case-18-recipient-positive.compact",
+          "sha256": "c5ec59caf874fa521a5f5a7a553b655de01ebf22a6fea0b831c3de523ad40765"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/state16/resettable-list-nonce-case-18-recipient-corrected.compact",
+          "sha256": "429d90d9758b44365b3d1cd1745617d460e945c4b38b8b9759278d7bd1a7834a"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/state16/resettable-list-nonce-case-18-recipient-lookalike.compact",
+          "sha256": "c9adf09067df63214852678f4918138896293c58617eb92525e54218ec7fb4e5"
+        }
+      },
+      "targets": [
+        {
+          "detector": "resettable-list-nonce",
+          "positiveLines": [
+            15
+          ]
+        },
+        {
+          "detector": "resettable-memo-nonce-review",
+          "positiveLines": [
+            16
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "resettable-list-nonce-103",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/caller-zero32/caller-key-zero-entry-review-case-29-positive.compact",
+          "sha256": "368763c4f226be09725b40f9c5ab8c75f3ec582146f6eca5cd658d2b96eeb245"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/caller-zero32/caller-key-zero-entry-review-case-29-corrected.compact",
+          "sha256": "1aaf61173245d2994e604adddce0ab8c2ff3dc718026984d3ee9282c042ffb97"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/caller-zero32/caller-key-zero-entry-review-case-29-lookalike.compact",
+          "sha256": "bee2242a185593a8eba1a1be0662604f407f5e2fabc157c91ea59b5124df2bd8"
+        }
+      },
+      "targets": [
+        {
+          "detector": "caller-key-zero-entry-review",
+          "positiveLines": [
+            6
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "caller-key-zero-entry-review-104",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": true,
+      "checks": {
+        "positive": {
+          "file": "drafts/membership34/metadata-canonical/metadata-canonical-positive.compact",
+          "sha256": "5cbda411a5bda8e336b6f94bd9217c64053e087941d628e6a056b73d1a883297"
+        },
+        "corrected": {
+          "file": "drafts/membership34/metadata-canonical/metadata-canonical-corrected.compact",
+          "sha256": "629e8d887f1e11b05608fddf95bde08044199592d5d017e926389a923b6b4d0a"
+        },
+        "lookalike": {
+          "file": "drafts/membership34/metadata-canonical/metadata-canonical-lookalike.compact",
+          "sha256": "8df598f27984216a25dd590fc36389ff97e6f95686e4ba3bc35a55062389600f"
+        }
+      },
+      "targets": [
+        {
+          "detector": "stale-nft-metadata",
+          "positiveLines": [
+            30
+          ]
+        }
+      ],
+      "policies": {
+        "currentNftMetadata": [
+          {
+            "owners": "_owners",
+            "metadata": "cachedURI",
+            "consumer": "replaceToken"
+          }
+        ]
+      },
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "stale-nft-metadata-105",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "drafts/recomposition35/owned/field-envelope-envelope-positive.compact",
+          "sha256": "d3e7d2114b798e6c183871c1610713c48cb427a5c353b8aa5abdc0dcaffe9cd2"
+        },
+        "corrected": {
+          "file": "drafts/recomposition35/owned/field-envelope-envelope-corrected.compact",
+          "sha256": "60783c0e13cd70d6fa192124f28695c25d87851537c99c5ea06d1cf780a516f9"
+        },
+        "lookalike": {
+          "file": "drafts/recomposition35/owned/field-envelope-envelope-lookalike.compact",
+          "sha256": "93770376c42ef0be1b79d263d12543b9dfe1b7190a88cb661ddeb34baa35bfe1"
+        }
+      },
+      "targets": [
+        {
+          "detector": "field-recomposition-range-review",
+          "positiveLines": [
+            7
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "field-recomposition-range-review-106",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 3,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "drafts/htlc36/owned/htlc-positive.compact",
+          "sha256": "991cee980d55ff9e46d7b533b45ebb4e387facd1cdaad070b743d9faca22fb67"
+        },
+        "corrected": {
+          "file": "drafts/htlc36/owned/htlc-corrected.compact",
+          "sha256": "2310e222e34bad29ef0b2d565c927ec581618b024d082c14246e0eddf960c196"
+        },
+        "lookalike": {
+          "file": "drafts/htlc36/owned/htlc-lookalike.compact",
+          "sha256": "8a733af96eb6f43d640ea3e012cf6ff7884ef2fd3b6e5897039feb5e542f5b17"
+        }
+      },
+      "targets": [
+        {
+          "detector": "spoofable-authorization",
+          "positiveLines": [
+            36,
+            48
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "spoofable-authorization-107",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "drafts/state37/membership-lifecycle/owned/merkle-membership-not-enforced-case-36-positive.compact",
+          "sha256": "38681d78282a11f2d30b55a1b1383fd932d1b366228d4c36d77ceffb3696f339"
+        },
+        "corrected": {
+          "file": "drafts/state37/membership-lifecycle/owned/merkle-membership-not-enforced-case-36-corrected.compact",
+          "sha256": "b9958ef172cad5de17316189b908277b1c6b136327ae7848150f022f4e857eb2"
+        },
+        "lookalike": {
+          "file": "drafts/state37/membership-lifecycle/owned/merkle-membership-not-enforced-case-36-lookalike.compact",
+          "sha256": "b93c78af86f0aa5f738dca669b54956e0a15ac0e13e05a25a1ff41b6ef176358"
+        }
+      },
+      "targets": [
+        {
+          "detector": "merkle-membership-not-enforced",
+          "positiveLines": [
+            38
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "merkle-membership-not-enforced-108",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "drafts/state39/membership-lifecycle-byte/membership-lifecycle-byte-positive.compact",
+          "sha256": "d1bafdfef87ede016d0c05aea6daa07bce0c990fa75bf662dda37d567ad43abb"
+        },
+        "corrected": {
+          "file": "drafts/state39/membership-lifecycle-byte/membership-lifecycle-byte-corrected.compact",
+          "sha256": "6574353a40e962389d11fcd8aa3492a429dcd9b1d9b61122a0eb72c37e1f463c"
+        },
+        "lookalike": {
+          "file": "drafts/state39/membership-lifecycle-byte/membership-lifecycle-byte-lookalike.compact",
+          "sha256": "5046efef50c896d1456e293ceee56be3edf62cd5b5d7d661c23d66de817b533c"
+        }
+      },
+      "targets": [
+        {
+          "detector": "merkle-membership-not-enforced",
+          "positiveLines": [
+            38
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "merkle-membership-not-enforced-109",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "drafts/auth39/secret-binding-positive.compact",
+          "sha256": "264446118d0e59ce3fe90f4765e44598ebc570fad6ecb7624758b8e761f7a6f0"
+        },
+        "corrected": {
+          "file": "drafts/auth39/secret-binding-corrected.compact",
+          "sha256": "f3fd4f6bdf6ebb16c5dc6892591e3385ea77b0813ecc7501be2758278d7f74c0"
+        },
+        "lookalike": {
+          "file": "drafts/auth39/secret-binding-lookalike.compact",
+          "sha256": "1666d93f6df51d63a6042357095cd56a31fd11bb29b37f491dedf35f787cf9cb"
+        }
+      },
+      "targets": [],
+      "groundTruthStatus": "pending-mapped-sites",
+      "id": "static-boundary-110",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/privacy16/domain-separated-owner/positive.compact",
+          "sha256": "3f2876111b0edccac03a93bec90b3ad976ce031de1d3cb79dc058c942e9d7ab1"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/privacy16/domain-separated-owner/corrected.compact",
+          "sha256": "196319fa034387fd858375dbdc477b06e15b904753d79c5ee0f01cb4a02e683f"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/privacy16/domain-separated-owner/lookalike.compact",
+          "sha256": "90bb1a6a6ba4c571b8f96cd0330392f5ff03cce96b2dfc2adbafab42a82dd387"
+        }
+      },
+      "targets": [
+        {
+          "detector": "public-two-component-domain-review",
+          "positiveLines": [
+            7
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "public-two-component-domain-review-111",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 3,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "drafts/operation-intent44/positive.compact",
+          "sha256": "69d5f50971f120dc3c34a263e65a188b2108f7ac3a4740e219a9c85ead50d66a"
+        },
+        "corrected": {
+          "file": "drafts/operation-intent44/corrected.compact",
+          "sha256": "a7998b565f790bd600df4153dd68d26d9f0fa3d877971d3ed517c4c63d30e94f"
+        },
+        "lookalike": {
+          "file": "drafts/operation-intent44/lookalike.compact",
+          "sha256": "deb0303e037ab2113b9d1d504a82a7beef0df9865da519b5f47ece2869b3ebda"
+        }
+      },
+      "targets": [
+        {
+          "detector": "operation-intent-policy",
+          "positiveLines": [
+            12,
+            16
+          ]
+        }
+      ],
+      "policies": {
+        "operationIntent": [
+          {
+            "circuit": "updateDocument",
+            "ledgers": [
+              "document"
+            ],
+            "controllerCommitment": "controllerCommitment",
+            "nonce": "authorizationNonce",
+            "operation": "1",
+            "version": "1",
+            "statement": {
+              "self": "selfAddress",
+              "operation": "operation",
+              "version": "version",
+              "nonce": "nonce"
+            },
+            "inputs": [
+              {
+                "field": "input",
+                "parameter": "next",
+                "writeValue": "document"
+              }
+            ]
+          },
+          {
+            "circuit": "revokeDocument",
+            "ledgers": [
+              "document"
+            ],
+            "controllerCommitment": "controllerCommitment",
+            "nonce": "authorizationNonce",
+            "operation": "2",
+            "version": "1",
+            "statement": {
+              "self": "selfAddress",
+              "operation": "operation",
+              "version": "version",
+              "nonce": "nonce"
+            },
+            "inputs": [
+              {
+                "field": "input",
+                "ledger": "document"
+              }
+            ]
+          }
+        ]
+      },
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "operation-intent-policy-112",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 3,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "drafts/enrollment44/positive.compact",
+          "sha256": "a7a9dc85198d991d270787ff4253f0420eec7aa3994b0ff10e62aca957eae389"
+        },
+        "corrected": {
+          "file": "drafts/enrollment44/corrected.compact",
+          "sha256": "3b7c9b9cd7953afac91909adce394e4ae8c371bd7e31d1e32dcfff2328e01649"
+        },
+        "lookalike": {
+          "file": "drafts/enrollment44/lookalike.compact",
+          "sha256": "469ea59d2817928bfda1e282a99b93f0d91b192116ae063d2eccf923644c7dc3"
+        }
+      },
+      "targets": [
+        {
+          "detector": "stored-schnorr-key-enrollment-review",
+          "positiveLines": [
+            10
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "stored-schnorr-key-enrollment-review-113",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 3,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "drafts/coverage45/anchor-guard-policy/positive.compact",
+          "sha256": "49461268f5a4e5f5445da403cf1fad9fe42a62a8712b32d5123e4445e1301cd0"
+        },
+        "corrected": {
+          "file": "drafts/coverage45/anchor-guard-policy/corrected.compact",
+          "sha256": "43f2a17855848629e8cf5d21c2113ed5e17bea564b81e1ef84b5845a234e5be3"
+        },
+        "lookalike": {
+          "file": "drafts/coverage45/anchor-guard-policy/lookalike.compact",
+          "sha256": "e30508ee3b14dd1913cc0d33c272601d954d8b5d9c0c1b32256057456a198fcf"
+        }
+      },
+      "targets": [
+        {
+          "detector": "unguarded-sensitive-state-write",
+          "positiveLines": [
+            21
+          ]
+        }
+      ],
+      "policies": {
+        "authorization": [
+          {
+            "state": "anchor",
+            "guard": "requireOwner"
+          }
+        ]
+      },
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "unguarded-sensitive-state-write-114",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "drafts/contract-recipient45/positive.compact",
+          "sha256": "eff28e74f8166394cc1ad3e88aefd70ba8528932a6bc4087db4451750690869a"
+        },
+        "corrected": {
+          "file": "drafts/contract-recipient45/corrected.compact",
+          "sha256": "e36d29ab276b35c6a369e2ae01b006db502848329098dd469d74cab4184f6230"
+        },
+        "lookalike": {
+          "file": "drafts/contract-recipient45/lookalike.compact",
+          "sha256": "7f70e76d745083bfafcd4c425b2c3a1b48f2434071a060fb3951a5073fd2e5c0"
+        }
+      },
+      "targets": [
+        {
+          "detector": "shielded-contract-recipient-review",
+          "positiveLines": [
+            4
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "shielded-contract-recipient-review-115",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 3,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "drafts/signature46/caller-key/positive.compact",
+          "sha256": "619b0ca2a5941319299616129e22015cf428407f5850d1648f6a1b0a84af9041"
+        },
+        "corrected": {
+          "file": "drafts/signature46/caller-key/corrected.compact",
+          "sha256": "e05d2a005c608525ab6a7faf226e22cbcf62774a5e8cd29de2407fd275680e75"
+        },
+        "lookalike": {
+          "file": "drafts/signature46/controls/canonical-generators-dual.compact",
+          "sha256": "094ee280e642b59fe4606721ea2273a1893a59abefe1c6e8bf7f57ecb11011f7"
+        }
+      },
+      "targets": [
+        {
+          "detector": "signature-key-identity-exclusion-review",
+          "positiveLines": [
+            4,
+            7
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "signature-key-identity-exclusion-review-116",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 3,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "drafts/signature46/persistent-key/positive.compact",
+          "sha256": "555c43921f31a84ebba20e86776b2757676fb95aea854615b9d938921a53d83d"
+        },
+        "corrected": {
+          "file": "drafts/signature46/persistent-key/corrected.compact",
+          "sha256": "82ada30cace5b9ea27ab255bc288fd6f6e49680625383f826794d35eed729745"
+        },
+        "lookalike": {
+          "file": "drafts/signature46/controls/canonical-generators-dual.compact",
+          "sha256": "094ee280e642b59fe4606721ea2273a1893a59abefe1c6e8bf7f57ecb11011f7"
+        }
+      },
+      "targets": [
+        {
+          "detector": "signature-key-identity-exclusion-review",
+          "positiveLines": [
+            11,
+            15
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "signature-key-identity-exclusion-review-117",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "drafts/auth39/secret-binding-positive.compact",
+          "sha256": "264446118d0e59ce3fe90f4765e44598ebc570fad6ecb7624758b8e761f7a6f0"
+        },
+        "corrected": {
+          "file": "drafts/auth39/secret-binding-corrected.compact",
+          "sha256": "f3fd4f6bdf6ebb16c5dc6892591e3385ea77b0813ecc7501be2758278d7f74c0"
+        },
+        "lookalike": {
+          "file": "drafts/auth39/secret-binding-lookalike.compact",
+          "sha256": "1666d93f6df51d63a6042357095cd56a31fd11bb29b37f491dedf35f787cf9cb"
+        }
+      },
+      "targets": [
+        {
+          "detector": "secret-binding-divergence-review",
+          "positiveLines": [
+            35
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "secret-binding-divergence-review-118",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "drafts/zero-list50/positive.compact",
+          "sha256": "90a78e33ac137886fede92f80070ee486efb34423b45276739817b7cc8b08db4"
+        },
+        "corrected": {
+          "file": "drafts/zero-list50/corrected.compact",
+          "sha256": "c32597e9d7bf87c04291616b4a6e2d4bae45ac7d1130988efcf755b616c79111"
+        },
+        "lookalike": {
+          "file": "drafts/zero-list50/lookalike.compact",
+          "sha256": "091dafae8663a2f609642be1eee1d7f4d22be84dc05a32f1b9f160335ad0e9c0"
+        }
+      },
+      "targets": [
+        {
+          "detector": "zero-transfer-retained-list-review",
+          "positiveLines": [
+            11
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "zero-transfer-retained-list-review-119",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 3,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "drafts/memo-identity44/positive.compact",
+          "sha256": "0806d57e88f85720857546167de5bbaff8712e09b46299126d171faa530facd7"
+        },
+        "corrected": {
+          "file": "drafts/memo-identity44/corrected.compact",
+          "sha256": "83b00a67eee486872e86962761c15db1b527802d9c440da11bbf1da14fecc0da"
+        },
+        "lookalike": {
+          "file": "drafts/memo-identity44/lookalike.compact",
+          "sha256": "a93ececdb79006825c55fb5b87cae7669e73cb54f0d32a90a21bd7313c002c43"
+        }
+      },
+      "targets": [
+        {
+          "detector": "membership-identity-binding-review",
+          "positiveLines": [
+            58
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "membership-identity-binding-review-120",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 3,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "synthetic-regressions/state16/configured-membership-capacity-review-case-43-native-positive.compact",
+          "sha256": "50a3b9c0f93d9ba34f6d347c66aa1fad6511940c4d0f22010050637f9f6f2ad5"
+        },
+        "corrected": {
+          "file": "synthetic-regressions/state16/configured-membership-capacity-review-case-43-native-corrected.compact",
+          "sha256": "a386122cf47c109601262746d177da53a7f4f9d7337b5882b7e54bad6d846b54"
+        },
+        "lookalike": {
+          "file": "synthetic-regressions/state16/configured-membership-capacity-review-case-43-native-lookalike.compact",
+          "sha256": "36d549f19ca5b29472e5c94062fae32993502a47e4125b4ef0c3c5c82d48c68c"
+        }
+      },
+      "targets": [
+        {
+          "detector": "closed-membership-capacity-review",
+          "positiveLines": [
+            82
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "closed-membership-capacity-review-121",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "drafts/map-getter56/counter/positive.compact",
+          "sha256": "1835f3e08a7813f206b985bd1216f7334334f2be20df0ad3fc7509f884edb41c"
+        },
+        "corrected": {
+          "file": "drafts/map-getter56/counter/corrected-map-read.compact",
+          "sha256": "2a5b11037500da686870c2e0d8a9652bc28635b3718e035e4f40fc74c180cb09"
+        },
+        "lookalike": {
+          "file": "drafts/map-getter56/counter/lookalike-auxiliary.compact",
+          "sha256": "864bb95f9e87475eb27600bb5369b1eda2fe9fb78dac8fb8595c9b8729344cca"
+        }
+      },
+      "targets": [
+        {
+          "detector": "source-claim-map-getter-review",
+          "positiveLines": [
+            33
+          ]
+        }
+      ],
+      "policies": {
+        "sourceMapGetters": [
+          {
+            "setter": "setAdmin",
+            "getter": "getRoleAdmin",
+            "map": "roleAdmin",
+            "setterKey": "role",
+            "setterValue": "admin",
+            "getterKey": "role",
+            "quote": "// Documentation claims DEFAULT_ADMIN_ROLE is customizable by roleAdmin entry."
+          }
+        ]
+      },
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "source-claim-map-getter-review-122",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    },
+    {
+      "compilerVersion": "0.34.0",
+      "zkirVersion": 2,
+      "requiresOZ": false,
+      "checks": {
+        "positive": {
+          "file": "drafts/arithmetic-endpoint57/positive.compact",
+          "sha256": "babe436908e320ee0639196add986f6ab52b7ae3fccdea2ac2f7bb8b1181dd0e"
+        },
+        "corrected": {
+          "file": "drafts/arithmetic-endpoint57/corrected.compact",
+          "sha256": "624c5002e525e7d88e3a3d952a7d70c6b5bb9d0cf11e24927abf6f467afe5536"
+        },
+        "lookalike": {
+          "file": "drafts/arithmetic-endpoint57/lookalike.compact",
+          "sha256": "c939c5142a8f7cc3c835285c235544f118f3fad4caef9ac48fb8a173dd44bc24"
+        }
+      },
+      "targets": [
+        {
+          "detector": "unshielded-refund-endpoint-review",
+          "positiveLines": [
+            58
+          ]
+        }
+      ],
+      "groundTruthStatus": "source-reviewed-sites",
+      "id": "unshielded-refund-endpoint-review-123",
+      "scope": "Synthetic source pattern; expectations apply only to the selected detector and mapped sites."
+    }
+  ]
+}

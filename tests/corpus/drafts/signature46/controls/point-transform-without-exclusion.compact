@@ -1,0 +1,6 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export circuit verifyTransformed(msg: Vector<1, Field>, sig: JubjubSchnorrSignature, pk: JubjubPoint): Boolean {
+  const transformed = ecMul(pk, 8 as JubjubScalar);
+  return jubjubSchnorrVerify<1>(msg, sig, transformed);
+}

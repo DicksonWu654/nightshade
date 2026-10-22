@@ -1,0 +1,25 @@
+// Guard dominates the write for the same copied key; authorization remains
+// conditional. The wrapper boundary must not break the key relationship.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+
+export ledger approvals: Map<Uint<128>, Bytes<32>>;
+export ledger tokenExists: Set<Uint<128>>;
+
+circuit writeApproval(id: Uint<128>, spender: Bytes<32>): [] {
+  approvals.insert(disclose(id), disclose(spender));
+}
+
+export circuit setApproval(id: Uint<128>, spender: Bytes<32>, auth: Bytes<32>): [] {
+  const approvalId = disclose(id);
+  assert(tokenExists.member(disclose(approvalId)), "token exists");
+  if (disclose(auth) != default<Bytes<32>>) {
+    assert(disclose(auth) == disclose(spender), "authorized");
+  }
+  writeApproval(disclose(approvalId), disclose(spender));
+}
+
+export circuit consume(id: Uint<128>): [] {
+  assert(tokenExists.member(disclose(id)), "token exists");
+  assert(approvals.member(disclose(id)), "approval exists");
+}

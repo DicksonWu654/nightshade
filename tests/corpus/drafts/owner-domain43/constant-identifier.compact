@@ -1,0 +1,7 @@
+// A fixed public identifier does not represent a two-input private commitment.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger releaseId: Bytes<32>;
+constructor() {
+  releaseId = disclose(persistentHash<Bytes<32>>(pad(32, "release")));
+}

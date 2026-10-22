@@ -1,0 +1,11 @@
+import CompactStandardLibrary;
+// Owner control exists, but the target commitment is accepted in one step.
+export ledger owner: Bytes<32>;
+witness currentOwnerSecret(): Bytes<32>;
+circuit currentOwner(): Bytes<32> { return persistentHash<Bytes<32>>(currentOwnerSecret()); }
+export circuit transferOwnership(next: Bytes<32>): [] {
+  assert(currentOwner() == owner, "current owner");
+  assert(next != pad(32, ""), "non-default");
+  owner = disclose(next);
+}
+export circuit ownerAction(): [] { assert(currentOwner() == owner, "owner"); }

@@ -1,0 +1,14 @@
+// Documentation-only/open fix: explain accepted memo growth; transfer semantics stay unchanged.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger registeredAccounts: Set<Bytes<32>>;
+export ledger recipientMemos: Map<Bytes<32>, List<Bytes<32>>>;
+export circuit registerAccount(account: Bytes<32>): [] {
+ registeredAccounts.insert(disclose(account));
+ recipientMemos.insertDefault(disclose(account));
+}
+export circuit transfer(caller: Bytes<32>, recipient: Bytes<32>, memoCiphertext: Bytes<32>, amount: Uint<64>): [] {
+ assert(registeredAccounts.member(disclose(caller)), "registered caller");
+ recipientMemos.lookup(disclose(recipient)).pushFront(disclose(memoCiphertext));
+}
+export circuit prune(recipient: Bytes<32>): [] { recipientMemos.lookup(disclose(recipient)).resetToDefault(); }

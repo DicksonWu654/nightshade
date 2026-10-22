@@ -1,0 +1,7 @@
+{
+  "contract.compact": {
+    "status": "complete",
+    "findings": [{ "detectorId": "ledger-bound-preimage-publication", "severity": "medium", "line": 12, "column": 3 }]
+  },
+  "corrected.compact": { "status": "complete", "findings": [] }
+}

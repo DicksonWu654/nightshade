@@ -1,0 +1,10 @@
+// Owned synthetic curve-point derivation.
+pragma language_version >= 0.23.0;
+module KeyDerivation {
+  import CompactStandardLibrary;
+  export pure circuit derivePk(seed: Bytes<32>): JubjubPoint {
+    const digest = persistentHash<Vector<1, Bytes<32>>>([seed]);
+    const scalar = degradeToTransient(digest);
+    return ecMulGenerator(scalar);
+  }
+}

@@ -1,0 +1,10 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger enrolled: JubjubPoint;
+constructor(seed: JubjubPoint) { enrolled = disclose(seed); }
+export circuit verifyCheckedAlias(msg: Vector<1, Field>, sig: JubjubSchnorrSignature): Boolean {
+  const snapshot = enrolled;
+  assert(snapshot != default<JubjubPoint>, "nonidentity snapshot");
+  const keyAlias = snapshot;
+  return jubjubSchnorrVerify<1>(msg, sig, keyAlias);
+}

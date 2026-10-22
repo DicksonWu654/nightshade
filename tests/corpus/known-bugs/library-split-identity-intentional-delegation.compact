@@ -1,0 +1,45 @@
+// Owned observation case for static-boundary-case-20.
+// Expected report: split-witness-identity should flag the distinct identities
+// for review. This fixture intentionally delegates a credit from an authorized
+// administrator to a separately chosen beneficiary; the report is not a claim
+// of vulnerability or proof that such delegation is incorrect.
+pragma language_version >= 0.20;
+
+import CompactStandardLibrary;
+
+module AccessModule {
+  export ledger authorizedIdentityHash: Bytes<32>;
+  witness authorizationSecret(): Bytes<32>;
+
+  export circuit identity(): Bytes<32> {
+    return persistentHash<Vector<2, Bytes<32>>>([pad(32, "auth:"), authorizationSecret()]);
+  }
+
+  export circuit requireAuthorization(): [] {
+    assert(identity() == authorizedIdentityHash, "authorized identity");
+  }
+}
+
+module AssetModule {
+  export ledger balances: Map<Bytes<32>, Uint<64>>;
+  witness beneficiarySecret(): Bytes<32>;
+
+  export circuit identity(): Bytes<32> {
+    return persistentHash<Vector<2, Bytes<32>>>([pad(32, "auth:"), beneficiarySecret()]);
+  }
+
+  export circuit credit(amount: Uint<64>): [] {
+    const beneficiary = identity();
+    const previous = balances.lookup(disclose(beneficiary));
+    balances.insert(disclose(beneficiary), disclose((previous + amount) as Uint<64>));
+  }
+}
+
+import AccessModule prefix Access_;
+import AssetModule prefix Asset_;
+
+export circuit administratorCreditsBeneficiary(amount: Uint<64>): [] {
+  Access_requireAuthorization();
+  // Intentional delegation: administrator identity and beneficiary differ.
+  Asset_credit(amount);
+}

@@ -1,0 +1,9 @@
+pragma language_version >= 0.23;
+import CompactStandardLibrary;
+export ledger minimum7: Uint<64>;
+export ledger accepted7: Boolean;
+constructor() { minimum7 = 1; accepted7 = false; }
+export circuit accept7(amount: Uint<64>): [] {
+  assert(disclose(amount >= minimum7), "amount");
+  accepted7 = true;
+}

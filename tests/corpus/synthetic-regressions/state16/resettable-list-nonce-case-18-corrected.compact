@@ -1,0 +1,13 @@
+// Synthetic source-pattern regression.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger recipientMemos: List<Bytes<32>>;
+export ledger nonceEpoch: Counter;
+export circuit credit(recipient: Either<ZswapCoinPublicKey, ContractAddress>, amount: Uint<64>): [] {
+ const nonce = evolveNonce(nonceEpoch, pad(32, "source-domain-489644"));
+ const ephemeral = evolveNonce(nonceEpoch, pad(32, "source-domain-4ec491"));
+ nonceEpoch.increment(1);
+ mintShieldedToken(pad(32, "source-domain-2c2c0c"), disclose(amount), nonce, disclose(recipient));
+ recipientMemos.pushFront(ephemeral);
+}
+export circuit prune(): [] { recipientMemos.resetToDefault(); }

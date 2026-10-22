@@ -1,0 +1,3 @@
+pragma language_version >= 0.26.0;
+include "helper";
+export circuit entry(value: Field): Field { return pass(value); }

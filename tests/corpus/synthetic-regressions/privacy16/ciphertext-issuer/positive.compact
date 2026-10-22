@@ -1,0 +1,49 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger round: Counter;
+export ledger addEffects: Counter;
+export ledger mintTHFEffects: Counter;
+export ledger mintTBTCEffects: Counter;
+ledger allowed: MerkleTree<2, Field>;
+ledger nullifiers: Set<Field>;
+witness ticketPath(candidate: Field): MerkleTreePath<2, Field>;
+witness votePath(candidate: Field): MerkleTreePath<2, Field>;
+witness issuerPath(candidate: Field): MerkleTreePath<2, Field>;
+witness itemPath(candidate: Field): MerkleTreePath<2, Field>;
+witness authPath(candidate: Field): MerkleTreePath<2, Field>;
+witness secret(): Bytes<32>;
+witness ticketSecret(): Bytes<32>;
+witness voteSecret(): Bytes<32>;
+witness issuerKey(): Bytes<32>;
+witness item(): Field;
+export circuit commitVote(): [] {
+ const voterKey = transientHash<Bytes<32>>(voteSecret());
+ const p = votePath(voterKey);
+ assert(allowed.checkRoot(disclose(merkleTreePathRoot<2, Field>(p))), "voter membership");
+ round.increment(1);
+}
+export circuit revealVote(): [] {
+ const voterKey = transientHash<Bytes<32>>(voteSecret());
+ const p = votePath(voterKey);
+ assert(allowed.checkRoot(disclose(merkleTreePathRoot<2, Field>(p))), "voter membership");
+ round.increment(1);
+}
+export circuit checkIfAuthorizedIssuer(): [] {
+ const key = transientHash<Bytes<32>>(issuerKey());
+ const p = issuerPath(key);
+ assert(allowed.checkRoot(disclose(merkleTreePathRoot<2, Field>(p))), "issuer membership");
+}
+// Synthetic source-pattern regression.
+// minimal owned stand-ins; original signatures and application state are unknown.
+export circuit add(): [] {
+ checkIfAuthorizedIssuer();
+ addEffects.increment(1);
+}
+export circuit mintTHF(): [] {
+ checkIfAuthorizedIssuer();
+ mintTHFEffects.increment(1);
+}
+export circuit mintTBTC(): [] {
+ checkIfAuthorizedIssuer();
+ mintTBTCEffects.increment(1);
+}

@@ -1,0 +1,80 @@
+// SPDX-License-Identifier: MIT
+// Adapted from OpenZeppelin Compact Contracts MockShieldedAccessControl.compact.
+// Source: contracts/src/access/test/mocks/MockShieldedAccessControl.compact
+// Revision: ec1331cd8195694c747d291e8fc8ab6d2914a976
+// Source SHA-256: b9152bdd53f5db203c4e444a59f71964f4d305de202c02b41a70cc2ebba3d18d
+//
+// WARNING: FOR TESTING PURPOSES ONLY.
+// This contract exposes internal circuits and bypasses safety checks that the
+// corresponding production contract relies on. DO NOT deploy or use this
+// contract in any production application.
+//
+// Owned focused seed: retain constructor initialization and protected role wrappers.
+// Remove the isInit branch, exposed raw _grantRole, other mutation/hash wrappers,
+// canProveRole wrapper and unrelated ledger/type exports from the upstream mock.
+
+pragma language_version >= 0.26.0;
+
+import CompactStandardLibrary;
+
+// Identity negative: the local module is a stub with matching API names and types.
+module ShieldedAccessControl {
+  import CompactStandardLibrary;
+
+  export new type RoleIdentifier = Bytes<32>;
+  export new type AccountIdentifier = Bytes<32>;
+  export ledger _isInitialized: Boolean;
+
+  export circuit initialize(instanceSalt: Bytes<32>): [] {
+    assert(instanceSalt != default<Bytes<32>>, "Namesake: nonzero salt");
+    _isInitialized = true;
+  }
+
+  export pure circuit DEFAULT_ADMIN_ROLE(): RoleIdentifier {
+    return default<Bytes<32>> as RoleIdentifier;
+  }
+
+  export circuit assertOnlyRole(role: RoleIdentifier): [] {
+    assert(_isInitialized, "Namesake: initialized");
+  }
+
+  export circuit grantRole(role: RoleIdentifier, accountId: AccountIdentifier): [] {
+    assertOnlyRole(role);
+  }
+
+  export circuit getRoleAdmin(role: RoleIdentifier): RoleIdentifier {
+    return DEFAULT_ADMIN_ROLE();
+  }
+}
+
+import ShieldedAccessControl prefix ShieldedAccessControl_;
+
+constructor(
+  instanceSalt: Bytes<32>,
+  initialRole: ShieldedAccessControl_RoleIdentifier,
+  initialAccountId: ShieldedAccessControl_AccountIdentifier
+) {
+  ShieldedAccessControl_initialize(instanceSalt);
+  // Identity negative: this composer intentionally resembles the positive seed.
+}
+
+export pure circuit DEFAULT_ADMIN_ROLE(): ShieldedAccessControl_RoleIdentifier {
+  return ShieldedAccessControl_DEFAULT_ADMIN_ROLE();
+}
+
+export circuit assertOnlyRole(role: ShieldedAccessControl_RoleIdentifier): [] {
+  ShieldedAccessControl_assertOnlyRole(role);
+}
+
+export circuit grantRole(
+                 role: ShieldedAccessControl_RoleIdentifier,
+                 accountId: ShieldedAccessControl_AccountIdentifier
+                 ): [] {
+  ShieldedAccessControl_grantRole(role, accountId);
+}
+
+export circuit getRoleAdmin(
+                 role: ShieldedAccessControl_RoleIdentifier
+                 ): ShieldedAccessControl_RoleIdentifier {
+  return ShieldedAccessControl_getRoleAdmin(role);
+}

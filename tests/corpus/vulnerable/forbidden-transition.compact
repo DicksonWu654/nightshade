@@ -1,0 +1,6 @@
+pragma language_version >= 0.26.0;
+export enum Phase { OPEN, CLOSED }
+export ledger phase: Phase;
+export circuit reopen(): [] {
+  phase = Phase.OPEN;
+}

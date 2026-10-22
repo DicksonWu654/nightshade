@@ -1,0 +1,11 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+struct Request { amount: Uint<64>; nonce: Bytes<32>; key: ZswapCoinPublicKey; }
+circuit issueOne(request: Request): Uint<64> {
+  mintShieldedToken(pad(32, "claim52"), disclose(request.amount), disclose(request.nonce), left<ZswapCoinPublicKey, ContractAddress>(disclose(request.key)));
+  return request.amount;
+}
+// Contract claim: recipients cannot transfer issued coins to other parties.
+export circuit issueBatch(requests: Vector<1, Request>): [] {
+  map(issueOne, requests);
+}

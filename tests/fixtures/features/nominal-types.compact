@@ -1,0 +1,19 @@
+pragma language_version >= 0.26.0;
+
+new type Amount = Uint<8>;
+new type Amounts = Vector<2, Amount>;
+new type Encoded = Bytes<2>;
+enum Stage { START, END }
+new type Phase = Stage;
+struct Record { amount: Amount; phase: Phase; }
+new type Wrapped = Record;
+
+circuit add(first: Amount, second: Amount): Amount {
+  return first + second;
+}
+
+export circuit entry(values: Amounts): [Wrapped, Encoded] {
+  const record = Wrapped { amount: add(values[0], values[1]), phase: Phase.START };
+  const encoded = values as Encoded;
+  return [record, encoded];
+}

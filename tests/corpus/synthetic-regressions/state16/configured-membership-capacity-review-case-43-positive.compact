@@ -1,0 +1,15 @@
+// Owned static source-shape fixture. Not an execution or proof reproduction.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger registered: Set<Bytes<32>>;
+export ledger threshold: Uint<8>;
+constructor(signer: Bytes<32>) { registered.insert(disclose(signer)); threshold = 1 as Uint<8>; }
+witness signerA(): Bytes<32>; witness signerB(): Bytes<32>;
+circuit verifyTwo(): Boolean {
+ const a = signerA(); const b = signerB();
+ assert(a != b, "distinct signers");
+ assert(registered.member(disclose(a)), "signer A registered");
+ assert(registered.member(disclose(b)), "signer B registered");
+ return true;
+}
+export circuit gatedOperation(): [] { assert(disclose(threshold) >= 1, "threshold met"); assert(verifyTwo(), "two approvals"); }

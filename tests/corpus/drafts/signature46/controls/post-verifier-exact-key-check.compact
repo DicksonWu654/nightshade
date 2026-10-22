@@ -1,0 +1,10 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger enrolled: JubjubPoint;
+constructor(seed: JubjubPoint) { enrolled = disclose(seed); }
+export circuit verifyThenCheckSnapshot(msg: Vector<1, Field>, sig: JubjubSchnorrSignature): Boolean {
+  const snapshot = enrolled;
+  const verified = jubjubSchnorrVerify<1>(msg, sig, snapshot);
+  assert(snapshot != default<JubjubPoint>, "identity snapshot excluded on successful path");
+  return verified;
+}

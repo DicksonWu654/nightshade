@@ -1,0 +1,12 @@
+export ledger owner: Bytes<32>;
+export ledger stored: Field;
+witness identity(): Bytes<32>;
+
+circuit ownPublicKey(): Bytes<32> { return owner; }
+export circuit publicValidation(next: Field): [] {
+  assert(ownPublicKey() == owner, "public value, no witness");
+  stored = disclose(next);
+}
+export circuit onlyComparison(): Boolean {
+  return disclose(identity() == owner);
+}

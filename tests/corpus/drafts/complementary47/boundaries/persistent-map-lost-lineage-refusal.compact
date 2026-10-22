@@ -1,0 +1,12 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger splitRemainders: Map<Bytes<32>, Uint<128>>;
+export circuit sendAfterDynamicRead(color: Bytes<32>, recipient: Either<ContractAddress, UserAddress>, total: Uint<128>, part: Uint<128>, writeKey: Bytes<32>, readKey: Bytes<32>): [] {
+  assert(disclose(total) > 0 as Uint<128>, "positive total");
+  assert(disclose(part) <= disclose(total), "part within total");
+  const remainder = total - part;
+  splitRemainders.insert(disclose(writeKey), disclose(remainder));
+  sendUnshielded(disclose(color), disclose(part), disclose(recipient));
+  const sentRemainder = splitRemainders.lookup(disclose(readKey));
+  sendUnshielded(disclose(color), disclose(sentRemainder), disclose(recipient));
+}

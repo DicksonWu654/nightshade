@@ -1,0 +1,20 @@
+// Owned quiet control: zero spend bypasses all allowance access and mutation.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger allowances: Map<Bytes<32>, Uint<64>>;
+export ledger balances: Map<Bytes<32>, Map<Bytes<32>, Uint<64>>>;
+export circuit allowance(key: Bytes<32>): Uint<64> {
+ if (allowances.member(disclose(key))) return allowances.lookup(disclose(key));
+ return 0 as Uint<64>;
+}
+export circuit spend(key: Bytes<32>, source: Bytes<32>, to: Bytes<32>, token: Bytes<32>, amount: Uint<64>): [] {
+ if (disclose(amount) > 0) {
+  assert(allowances.member(disclose(key)), "allowance key exists");
+  const approved = allowances.lookup(disclose(key));
+  allowances.insert(disclose(key), disclose((approved - disclose(amount)) as Uint<64>));
+  const prior = balances.lookup(disclose(source)).lookup(disclose(token));
+  balances.lookup(disclose(source)).insert(disclose(token), disclose((prior - disclose(amount)) as Uint<64>));
+  const received = balances.lookup(disclose(to)).lookup(disclose(token));
+  balances.lookup(disclose(to)).insert(disclose(token), disclose((received + disclose(amount)) as Uint<64>));
+ }
+}

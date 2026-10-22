@@ -1,0 +1,15 @@
+// Intentional empty-only clear policy: nonempty memo state cannot be reset.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger memos: Map<Bytes<32>, List<Bytes<32>>>;
+export circuit initialize(wallet: Bytes<32>): [] {
+ assert(!memos.member(disclose(wallet)), "wallet initialized once");
+ memos.insertDefault(disclose(wallet));
+}
+export circuit credit(recipient: Bytes<32>, memoCiphertext: Bytes<32>): [] {
+ memos.lookup(disclose(recipient)).pushFront(disclose(memoCiphertext));
+}
+export circuit clearMemos(wallet: Bytes<32>): [] {
+ assert(memos.lookup(disclose(wallet)).isEmpty(), "only an empty list may be cleared");
+ memos.lookup(disclose(wallet)).resetToDefault();
+}

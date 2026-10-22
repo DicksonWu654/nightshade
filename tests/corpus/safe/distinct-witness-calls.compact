@@ -1,0 +1,13 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger ownerHash: Bytes<32>;
+export ledger published: Field;
+witness getValue(): Field;
+constructor(initialHash: Bytes<32>) {
+  ownerHash = disclose(initialHash);
+}
+export circuit update(): [] {
+  const checked = getValue();
+  assert(persistentHash<Field>(checked) == ownerHash, "not authorized");
+  published = disclose(getValue());
+}

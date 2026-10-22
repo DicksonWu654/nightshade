@@ -1,0 +1,8 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export circuit schnorr(msg: Vector<1, Field>, sig: JubjubSchnorrSignature, pk: JubjubPoint): Boolean {
+  return jubjubSchnorrVerify<1>(msg, sig, pk);
+}
+export circuit ecdsa(msg: Bytes<32>, sig: Secp256k1EcdsaSignature, pk: Secp256k1Point): Boolean {
+  return secp256k1EcdsaVerify(msg, sig, pk);
+}

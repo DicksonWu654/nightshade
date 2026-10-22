@@ -1,0 +1,6 @@
+pragma language_version >= 0.26.0;
+witness values(): Vector<2, Field>;
+export ledger published: Field;
+export circuit entry(): [] {
+  for (const value of values()) { published = disclose(value); }
+}

@@ -1,0 +1,17 @@
+import CompactStandardLibrary;
+// Application authorization policy: authenticate action, contract domain, nonce and inputs.
+struct OperationAuthorization { domain: Bytes<32>; operation: Field; nonce: Uint<64>; input: Field; }
+export ledger authorizationDomain: Bytes<32>;
+export ledger controllerCommitment: Bytes<32>;
+export ledger authorizationNonce: Uint<64>;
+export ledger document: Field;
+witness controllerSignature(): Secp256k1EcdsaSignature;
+witness controllerKey(): Secp256k1Point;
+circuit controllerId(pk: Secp256k1Point): Bytes<32> { return persistentHash<Vector<2, Secp256k1Base>>([secp256k1PointX(pk), secp256k1PointY(pk)]); }
+circuit authorize(operation: Field, input: Field): [] {
+  assert(controllerId(controllerKey()) == controllerCommitment, "registered controller key");
+  const statement = OperationAuthorization { domain: authorizationDomain, operation: operation, nonce: authorizationNonce, input: input };
+  assert(secp256k1EcdsaVerify(keccak256<OperationAuthorization>(statement), controllerSignature(), controllerKey()), "controller operation signature");
+}
+export circuit updateDocument(next: Field): [] { authorize(1 as Field, next); document = disclose(next); authorizationNonce = (authorizationNonce + 1) as Uint<64>; }
+export circuit revokeDocument(): [] { authorize(2 as Field, document); document = document - document; authorizationNonce = (authorizationNonce + 1) as Uint<64>; }

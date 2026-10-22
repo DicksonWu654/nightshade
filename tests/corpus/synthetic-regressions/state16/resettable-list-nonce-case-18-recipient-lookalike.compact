@@ -1,0 +1,22 @@
+// Intentional control: memo List is only routing/count metadata; both outputs use fresh witnesses.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger recipientMemos: Map<Bytes<32>, List<Bytes<32>>>;
+witness freshCoinNonce(): Bytes<32>;
+witness freshMemoEphemeral(): Bytes<32>;
+export circuit initRecipient(recipientKey: Bytes<32>): [] {
+ assert(!recipientMemos.member(disclose(recipientKey)), "recipient List absent");
+ recipientMemos.insertDefault(disclose(recipientKey));
+}
+export circuit credit(recipientKey: Bytes<32>, recipient: Either<ZswapCoinPublicKey, ContractAddress>, amount: Uint<64>): [] {
+ assert(recipient.is_left, "shielded recipient");
+ assert(recipient.left.bytes == disclose(recipientKey), "memo owner matches mint recipient");
+ const memoCount = recipientMemos.lookup(disclose(recipientKey)).length();
+ const nonce = disclose(freshCoinNonce());
+ const ephemeral = disclose(freshMemoEphemeral());
+ mintShieldedToken(pad(32, "source-domain-2c2c0c"), disclose(amount), nonce, disclose(recipient));
+ recipientMemos.lookup(disclose(recipientKey)).pushFront(ephemeral);
+}
+export circuit prune(recipientKey: Bytes<32>): [] {
+ recipientMemos.lookup(disclose(recipientKey)).resetToDefault();
+}

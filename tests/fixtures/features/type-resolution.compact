@@ -1,0 +1,13 @@
+pragma language_version >= 0.26.0;
+import { some, Maybe as Optional, List as Queue } from CompactStandardLibrary;
+
+struct Maybe<T> { value: Boolean; }
+struct Box<T, #N> { values: Vector<N, T>; }
+export ledger queue: Queue<Field>;
+
+export circuit entry(secret: Field): Field {
+  const wrapped: Optional<Field> = some<Field>(secret);
+  const box = Box<Optional<Field>, 1> { values: [wrapped] };
+  queue.pushFront(disclose(box.values[0].value));
+  return queue.head().value;
+}

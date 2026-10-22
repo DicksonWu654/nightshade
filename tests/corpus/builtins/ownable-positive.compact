@@ -1,0 +1,6 @@
+import CompactStandardLibrary;
+import "access/Ownable" prefix O_;
+constructor() { O_initialize(left<Bytes<32>, ContractAddress>(pad(32, "owner"))); }
+export circuit entry(): [] {
+  O_initialize(left<Bytes<32>, ContractAddress>(pad(32, "owner")));
+}

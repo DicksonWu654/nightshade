@@ -1,0 +1,12 @@
+// The commitment write occurs before the salt restriction in source order.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+struct OwnerCommitment { salt: Bytes<32>; owner: Bytes<32>; }
+export ledger commitment: Bytes<32>;
+export ledger initialized: Boolean;
+export circuit initialize(salt: Bytes<32>, ownerSecret: Bytes<32>): [] {
+  assert(!initialized, "already initialized");
+  commitment = disclose(persistentHash<OwnerCommitment>(OwnerCommitment { salt: salt, owner: ownerSecret }));
+  assert(salt != pad(32, ""), "default salt forbidden");
+  initialized = true;
+}

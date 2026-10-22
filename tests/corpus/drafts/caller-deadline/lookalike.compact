@@ -1,0 +1,25 @@
+// Adapted from midnightntwrk/example-counter; owned deadline regression.
+// SPDX-License-Identifier: Apache-2.0
+pragma language_version >= 0.23;
+import CompactStandardLibrary;
+
+export ledger round: Counter;
+export ledger baseAmount: Uint<64>;
+sealed ledger feeAmount: Uint<64>;
+export ledger processed: Boolean;
+
+constructor() {
+  baseAmount = 5;
+  feeAmount = 2;
+  processed = false;
+}
+
+export circuit increment(): [] {
+  round.increment(1);
+}
+
+export circuit process(amount: Uint<64>): [] {
+  const minimum = (baseAmount + feeAmount) as Uint<64>;
+  assert(disclose(amount >= minimum), "Amount is too small");
+  processed = true;
+}

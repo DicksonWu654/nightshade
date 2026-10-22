@@ -1,0 +1,5 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger enrolled: JubjubPoint;
+constructor(seed: JubjubPoint) { assert(seed != default<JubjubPoint>, "nonidentity constructor seed"); enrolled = disclose(seed); }
+export circuit signedAction(msg: Vector<1, Field>, sig: JubjubSchnorrSignature): [] { assert(jubjubSchnorrVerify<1>(msg, sig, enrolled), "signature"); }

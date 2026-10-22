@@ -1,0 +1,12 @@
+pragma language_version >= 0.23.0;
+import CompactStandardLibrary;
+pure circuit secretToField(secret: Bytes<32>): Field {
+  return degradeToTransient(persistentHash<Vector<1, Bytes<32>>>([secret]));
+}
+pure circuit derivePoint(secret: Bytes<32>): JubjubPoint {
+  return ecMulGenerator(secretToField(secret));
+}
+export circuit quiet(): [] {
+  const empty: Vector<0, Bytes<32>> = [];
+  const points = map(derivePoint, empty);
+}

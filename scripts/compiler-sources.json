@@ -1,0 +1,155 @@
+{
+  "version": 1,
+  "description": "Official Compact compiler release and source hashes; binaries are external build inputs.",
+  "compiler": {
+    "version": "0.34.0",
+    "sha256": "15646793d3ff7f36cd81aa63419163e29d9893538bb4a6911a21012e8735b537",
+    "flags": [
+      "--skip-zk"
+    ],
+    "extraProfileFlag": {
+      "zkir3": "--feature-zkir-v3"
+    }
+  },
+  "compilerProfiles": {
+    "0.28.0": {
+      "version": "0.28.0",
+      "languageVersion": "0.20.0",
+      "runtimeVersion": "0.14.0",
+      "flags": [
+        "--skip-zk"
+      ],
+      "archiveUrl": "https://github.com/midnightntwrk/compact/releases/download/compactc-v0.28.0/compactc_v0.28.0_x86_64-unknown-linux-musl.zip",
+      "archiveSha256": "44943fa23a57755242e3c1fdf4b706a1949c09eea54ee2753ab8f7784b7f0183",
+      "binarySha256": "c7c94dc934078dfbbd5687efbf4e38db236b531dce27deb37adcfe614e1ce94c",
+      "sourceCommit": "dce2f11d28460d6379e45e770952a2fbbe1d2ecd",
+      "sources": {
+        "standard-library.compact": "949f46cfc1f7878a374a9b924b5b48a843ff058bf7962d4156206630f469fc80",
+        "midnight-natives.ss": "10fafddede38b64d9cf8674b9d8dcba9dca939c585de72ac5e2945ddd8fe93d8",
+        "midnight-ledger.ss": "cfb581dbb443f39ae50cd7ee4655b84cc57afb3f82d4dc9a21fdb12aea07b4a0"
+      },
+      "scope": "Prototype ZKIR2 subset: struct-backed NativePoint curve natives, Opaque hashing and include/import file lookup are explicitly incomplete; library helpers do not auto-receive, so redundant-self-shielded-receive is unavailable."
+    },
+    "0.29.0": {
+      "version": "0.29.0",
+      "languageVersion": "0.21.0",
+      "runtimeVersion": "0.14.0",
+      "flags": [
+        "--skip-zk"
+      ],
+      "archiveUrl": "https://github.com/midnightntwrk/compact/releases/download/compactc-v0.29.0/compactc_v0.29.0_x86_64-unknown-linux-musl.zip",
+      "archiveSha256": "b01616d6eb6e1325b085e022e91e29838e99d3434554105057ceab4c04db0b38",
+      "binarySha256": "f736ec490c2259ad5fcfb6bb1a1cd166a3b8e37be848f655818558d018282382",
+      "sourceCommit": "f17a98c1c1557c4a1e4bf391e0018543aa358bdd",
+      "sources": {
+        "standard-library.compact": "9150c4c9c0bea961e5631980349aca27c5e509423946b6880f3205be2d78eb13",
+        "midnight-natives.ss": "94e13eaccd505b0756734a77c07a070cac5f1f6483a675e4e98e444706a67231",
+        "midnight-ledger.ss": "cfb581dbb443f39ae50cd7ee4655b84cc57afb3f82d4dc9a21fdb12aea07b4a0"
+      },
+      "scope": "Prototype ZKIR2 subset: struct-backed NativePoint curve natives, Opaque hashing and include/import file lookup are explicitly incomplete."
+    },
+    "0.34.0": {
+      "version": "0.34.0",
+      "sha256": "15646793d3ff7f36cd81aa63419163e29d9893538bb4a6911a21012e8735b537",
+      "flags": [
+        "--skip-zk"
+      ],
+      "extraProfileFlag": {
+        "zkir3": "--feature-zkir-v3"
+      },
+      "languageVersion": "0.26.0",
+      "runtimeVersion": "0.19.0",
+      "sourceCommit": "1f671fc27818df2b2676b3a97f85b2b821756243"
+    },
+    "0.30.0": {
+      "version": "0.30.0",
+      "languageVersion": "0.22.0",
+      "runtimeVersion": "0.15.0",
+      "flags": [
+        "--skip-zk"
+      ],
+      "archiveUrl": "https://github.com/midnightntwrk/compact/releases/download/compactc-v0.30.0/compactc_v0.30.0_x86_64-unknown-linux-musl.zip",
+      "archiveSha256": "06641b55befd35384ece539f7b12b65cb2cf6fb49996d27ef17a02fcacad4d2d",
+      "sourceCommit": "705c2274b5f7bf6c309f9811143b1832281f7876",
+      "sources": {
+        "standard-library.compact": "86196ccf76fab382c39005dba79e863c77f502d858d47a5547f263efab476884",
+        "midnight-natives.ss": "de209d348a0a4648e2668ceb6fa508c8758bff7640e06de270c58e8f06fdc0a7",
+        "midnight-ledger.ss": "b711672074e0e050f5be259af51ab09570613fbce1f10999a91f3c72140cf43c"
+      }
+    },
+    "0.31.1": {
+      "version": "0.31.1",
+      "languageVersion": "0.23.0",
+      "runtimeVersion": "0.16.0",
+      "flags": [
+        "--skip-zk"
+      ],
+      "archiveUrl": "https://github.com/midnightntwrk/compact/releases/download/compactc-v0.31.1/compactc_v0.31.1_x86_64-unknown-linux-musl.zip",
+      "archiveSha256": "e291b4bab4d4e857707008f8b1c25c2b8e0c843f6c737d0ee6c0d9ac69a6bbfb",
+      "sourceCommit": "0da5b0452eb0c1053d42418bf34b12cc29c7d63e",
+      "sources": {
+        "standard-library.compact": "86196ccf76fab382c39005dba79e863c77f502d858d47a5547f263efab476884",
+        "midnight-natives.ss": "de209d348a0a4648e2668ceb6fa508c8758bff7640e06de270c58e8f06fdc0a7",
+        "midnight-ledger.ss": "b711672074e0e050f5be259af51ab09570613fbce1f10999a91f3c72140cf43c"
+      }
+    },
+    "0.35.0-rc.1": {
+      "version": "0.35.0-rc.1",
+      "reportedVersion": "0.35.0-rc.1 (debb05f94 2026-09-29)",
+      "languageVersion": "0.27.0",
+      "runtimeVersion": "0.20.0",
+      "prerelease": true,
+      "flags": [
+        "--skip-zk"
+      ],
+      "archiveUrl": "https://github.com/LFDT-Minokawa/compact/releases/download/compactc-v0.35.0-rc.1/compactc_v0.35.0-rc.1_x86_64-unknown-linux-musl.zip",
+      "archiveSha256": "589ab1a16943c6d9f947687fc98598b3a8a772d56e01bf5ccd3bda9ca4a7c313",
+      "sourceCommit": "debb05f9414b9d1e176741c2be289bb32233f0fc",
+      "sources": {
+        "standard-library.compact": "c7ccf7e34687528b786a2742cad518322b214308347ba178c09013b301fefdc3",
+        "midnight-natives.ss": "f421389fada84aae499bed8ff408ecd405c8f8150c08035d1eadf6e2fb9e6f3f",
+        "midnight-ledger.ss": "62ee65650aded0c2b7434deff963915a35cf6013e96f29a49a0ea8c44c87e225"
+      },
+      "scope": "ZKIR2 modeled subset; kernel.caller, dynamic calls and RC ZKIR3 unqualified and explicitly incomplete."
+    },
+    "0.35.0": {
+      "version": "0.35.0",
+      "reportedVersion": "0.35.0 (debb05f94 2026-09-29)",
+      "languageVersion": "0.27.0",
+      "runtimeVersion": "0.20.0",
+      "prerelease": false,
+      "flags": [
+        "--skip-zk"
+      ],
+      "archiveUrl": "https://github.com/LFDT-Minokawa/compact/releases/download/compactc-v0.35.0/compactc_v0.35.0_x86_64-unknown-linux-musl.zip",
+      "archiveSha256": "70f22fb8209cc5a8504b2b3d91796cfdab2d71d88807ceef12fab87fed03bae2",
+      "sourceCommit": "debb05f9414b9d1e176741c2be289bb32233f0fc",
+      "sources": {
+        "standard-library.compact": "c7ccf7e34687528b786a2742cad518322b214308347ba178c09013b301fefdc3",
+        "midnight-natives.ss": "f421389fada84aae499bed8ff408ecd405c8f8150c08035d1eadf6e2fb9e6f3f",
+        "midnight-ledger.ss": "62ee65650aded0c2b7434deff963915a35cf6013e96f29a49a0ea8c44c87e225"
+      },
+      "scope": "ZKIR2 modeled subset; kernel.caller, dynamic calls and 0.35 ZKIR3 unqualified and explicitly incomplete."
+    },
+    "0.33.0-rc.2": {
+      "version": "0.33.0-rc.2",
+      "reportedVersion": "0.33.0",
+      "languageVersion": "0.25.0",
+      "runtimeVersion": "0.18.0-rc.1",
+      "prerelease": true,
+      "flags": [
+        "--skip-zk"
+      ],
+      "archiveUrl": "https://github.com/LFDT-Minokawa/compact/releases/download/compactc-v0.33.0-rc.2/compactc_v0.33.0-rc.2_x86_64-unknown-linux-musl.zip",
+      "archiveSha256": "3055ab92bbc8d5bb0d6282b661b83761d2a0de2ee37e21cf7107e25aaf2a9aad",
+      "binarySha256": "8f1622cb32b4e55343b02eb20ecac47be7f33f86acaf8b5a0cff79d046ddb38d",
+      "sourceCommit": "566ef0eb66c3442e189b5e2d7ae9e1b99426db26",
+      "sources": {
+        "standard-library.compact": "623e0cafcdd015ce52906b8f61d85cac666d5119393102199a175aeac3dce931",
+        "midnight-natives.ss": "c523ae238c9ada9898be77b3f3463d92dd7a8165e266a2ce358c5b6cd83d37b1",
+        "midnight-ledger.ss": "b711672074e0e050f5be259af51ab09570613fbce1f10999a91f3c72140cf43c"
+      },
+      "scope": "Exact RC2 ZKIR2 subset, nominal opaque points with modern scalar/hash/event semantics; RC2 ZKIR3 unqualified and explicitly incomplete. Explicit compiler validation authenticates the Linux-musl release binary despite its unstamped 0.33.0 report."
+    }
+  }
+}

@@ -1,0 +1,8 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary prefix CSL_;
+circuit sendImmediateShielded(coin: CSL_ShieldedCoinInfo, ignored: CSL_Either<CSL_ZswapCoinPublicKey, CSL_ContractAddress>, amount: Uint<128>): CSL_ShieldedCoinInfo {
+  return coin;
+}
+export circuit pay(coin: CSL_ShieldedCoinInfo, recipient: CSL_Either<CSL_ZswapCoinPublicKey, CSL_ContractAddress>): CSL_ShieldedCoinInfo {
+  return sendImmediateShielded(coin, recipient, 1);
+}

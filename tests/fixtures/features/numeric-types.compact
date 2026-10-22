@@ -1,0 +1,7 @@
+pragma language_version >= 0.26.0;
+circuit bounded(value: Uint<0..511>): Uint<0..511> { return value; }
+export circuit entry(first: Uint<8>, second: Uint<8>): [Uint<0..511>, Field] {
+  const sum = bounded(first + second);
+  const maximum = 52435875175126190479447740508185965837690552500527637822603658699938581184512 as Field;
+  return [sum, maximum + (1 as Field)];
+}

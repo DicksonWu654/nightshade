@@ -1,0 +1,10 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+struct Pair { first: Field; second: Field; }
+witness pair(): Pair;
+export circuit entry(): Field {
+  const original = pair();
+  const clean = Pair { ...original, first: 0 as Field };
+  const { second: selected } = clean;
+  return disclose(selected);
+}

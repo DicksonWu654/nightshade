@@ -1,0 +1,7 @@
+// Owned static source-shape fixture. Not an execution or proof reproduction.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+// No non-transferability contract claim: holder-controlled user coin issuance is intentional.
+export circuit issue(amount: Uint<64>, nonce: Bytes<32>, userKey: ZswapCoinPublicKey): [] {
+  mintShieldedToken(pad(32, "owned:claim"), disclose(amount), disclose(nonce), left<ZswapCoinPublicKey, ContractAddress>(disclose(userKey)));
+}

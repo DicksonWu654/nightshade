@@ -1,0 +1,22 @@
+pragma language_version 0.26.0;
+import CompactStandardLibrary;
+
+// Separate owned fixture: populate only through typed constructor/circuit calls.
+export ledger values: List<Uint<8>>;
+
+constructor() {
+  values.pushFront(3);
+}
+
+export circuit push(value: Uint<8>): [] {
+  values.pushFront(disclose(value));
+}
+
+export circuit guardedPop(): [] {
+  assert(!values.isEmpty(), "owned guarded List requires nonempty");
+  values.popFront();
+}
+
+export circuit inspect(): [Boolean, Uint<64>, Maybe<Uint<8>>] {
+  return [values.isEmpty(), values.length(), values.head()];
+}

@@ -1,0 +1,18 @@
+pragma language_version >= 0.26.0;
+import { Counter, Map } from CompactStandardLibrary;
+export ledger count: Counter;
+export ledger stored: Map<Field,Uint<16>>;
+struct Box { value: Uint<16>; }
+
+circuit widen(value: Uint<8>): Uint<16> {
+  const box = Box { value };
+  return box.value;
+}
+
+export circuit entry(secret: Uint<8>, flag: Boolean): Uint<16> {
+  const value: Uint<16> = widen(secret);
+  stored.insert(0 as Field,disclose(value));
+  count += 1;
+  if (disclose(flag)) return stored.lookup(0 as Field);
+  return value;
+}

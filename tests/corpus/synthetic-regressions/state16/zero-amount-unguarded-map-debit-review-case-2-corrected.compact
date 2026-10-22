@@ -1,0 +1,14 @@
+// Owned static source-shape fixture. Not an execution or proof reproduction.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger balances: Map<Bytes<32>, Map<Bytes<32>, Uint<64>>>;
+export ledger totalSupply: Map<Bytes<32>, Uint<64>>;
+export circuit update(source: Bytes<32>, to: Bytes<32>, token: Bytes<32>, amount: Uint<64>): [] {
+ assert(balances.lookup(disclose(source)).member(disclose(token)), "source token initialized");
+ const fromPrior = balances.lookup(disclose(source)).lookup(disclose(token));
+ const fromNext = (fromPrior - disclose(amount)) as Uint<64>;
+ balances.lookup(disclose(source)).insert(disclose(token), disclose(fromNext));
+ const toPrior = balances.lookup(disclose(to)).lookup(disclose(token));
+ balances.lookup(disclose(to)).insert(disclose(token), disclose((toPrior + disclose(amount)) as Uint<64>));
+ totalSupply.lookup(disclose(token));
+}

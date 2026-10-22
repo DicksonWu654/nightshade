@@ -1,0 +1,21 @@
+// Synthetic source-pattern regression.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+
+export ledger approvals: Map<Uint<128>, Bytes<32>>;
+export ledger tokenExists: Set<Uint<128>>;
+
+// Mock boundary: the library-internal entry is directly exported.
+export circuit _approve(id: Uint<128>, spender: Bytes<32>, auth: Bytes<32>): [] {
+  if (disclose(auth) != default<Bytes<32>>) {
+    assert(tokenExists.member(disclose(id)), "token exists");
+    assert(disclose(auth) == disclose(spender), "authorized");
+  }
+  approvals.insert(disclose(id), disclose(spender));
+}
+
+// Downstream consumers rely on approvals being restricted to existing tokens.
+export circuit consumeApproval(id: Uint<128>): [] {
+  assert(tokenExists.member(disclose(id)), "token exists");
+  assert(approvals.member(disclose(id)), "approval exists");
+}

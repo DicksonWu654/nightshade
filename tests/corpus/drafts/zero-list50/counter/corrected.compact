@@ -1,0 +1,39 @@
+// This file is part of midnightntwrk/example-counter.
+// Copyright (C) Midnight Foundation
+// SPDX-License-Identifier: Apache-2.0
+// Licensed under the Apache License, Version 2.0 (the "License");
+// You may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+pragma language_version >= 0.20;
+
+import CompactStandardLibrary;
+
+// public state
+export ledger round: Counter;
+
+// transition function changing public state
+export circuit increment(): [] {
+  round.increment(1);
+}
+
+// Owned Map getter-shaped Counter extension; no contention or impact claim.
+pragma language_version >= 0.26.0;
+export ledger recipientMemos: Map<Bytes<32>, List<Bytes<32>>>;
+export circuit initRecipient(recipient: Bytes<32>): [] { recipientMemos.insertDefault(disclose(recipient)); }
+export circuit credit(recipient: Bytes<32>, memoCiphertext: Bytes<32>, amount: Uint<64>): [] {
+  const amountSnapshot = disclose(amount);
+  assert(amountSnapshot > 0 as Uint<64>, "positive transfer amount");
+  const recipientSnapshot = disclose(recipient);
+  const previousLength = recipientMemos.lookup(recipientSnapshot).length();
+  sendUnshielded(default<Bytes<32>>, amountSnapshot, right<ContractAddress, UserAddress>(UserAddress { bytes: recipientSnapshot }));
+  recipientMemos.lookup(recipientSnapshot).pushFront(disclose(memoCiphertext));
+}

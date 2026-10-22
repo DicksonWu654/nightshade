@@ -1,0 +1,19 @@
+// Owned static source-shape fixture. Not an execution or proof reproduction.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger revoked: Set<Bytes<32>>;
+ledger roleTree: MerkleTree<2, Field>;
+export ledger roleCommitments: Map<Bytes<32>, Map<Bytes<32>, Bytes<32>>>;
+witness caller(): Bytes<32>;
+witness rolePath(commitment: Bytes<32>): MerkleTreePath<2, Bytes<32>>;
+circuit roleCommitment(account: Bytes<32>, role: Bytes<32>): Bytes<32> { return roleCommitments.lookup(disclose(account)).lookup(disclose(role)); }
+export circuit renounce(account: Bytes<32>, role: Bytes<32>, nullifier: Bytes<32>): [] {
+ assert(disclose(account) == disclose(caller()), "caller owns account");
+ const commitment = roleCommitment(account, role);
+ const p = rolePath(disclose(commitment));
+ assert(p.leaf == disclose(commitment), "path leaf is queried role commitment");
+ const digest = merkleTreePathRootNoLeafHash<2>(p);
+ assert(roleTree.checkRoot(disclose(digest)), "role commitment exists");
+ assert(disclose(nullifier) == persistentHash<Bytes<32>>(disclose(commitment)), "nullifier matches role commitment");
+ revoked.insert(disclose(nullifier));
+}

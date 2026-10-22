@@ -1,0 +1,43 @@
+// SPDX-License-Identifier: MIT
+// Adapted from OpenZeppelin Compact Contracts MockOwnable.compact.
+// Source: contracts/src/access/test/mocks/MockOwnable.compact
+// Revision: ec1331cd8195694c747d291e8fc8ab6d2914a976
+// Source SHA-256: 0fe6531c186c0944712eab6df5b0a7ac667d9bd50770459dec8fd90b3093c1e6
+//
+// WARNING: FOR TESTING PURPOSES ONLY. DO NOT deploy this owned seed.
+// Retain the pinned mock's owner, transfer and renunciation wrappers. Replace
+// conditional initialization with a normal left-owner constructor; remove the
+// generic unsafe/internal transfer exposures and add one focused handover.
+
+pragma language_version >= 0.26.0;
+
+import CompactStandardLibrary;
+import "access/Ownable" prefix Ownable_;
+
+export ledger count: Counter;
+
+constructor(initialOwner: Bytes<32>) {
+  Ownable_initialize(left<Bytes<32>, ContractAddress>(initialOwner));
+}
+
+export circuit owner(): Either<Bytes<32>, ContractAddress> {
+  return Ownable_owner();
+}
+
+export circuit transferOwnership(newOwner: Either<Bytes<32>, ContractAddress>): [] {
+  Ownable_transferOwnership(newOwner);
+}
+
+export circuit renounceOwnership(): [] {
+  Ownable_renounceOwnership();
+}
+
+export circuit increment(): [] {
+  Ownable_assertOnlyOwner();
+  count.increment(1);
+}
+
+export circuit handover(next: Bytes<32>): [] {
+  assert(next != default<Bytes<32>>, "nonzero destination");
+  Ownable_transferOwnership(left<Bytes<32>, ContractAddress>(next));
+}

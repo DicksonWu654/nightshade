@@ -1,0 +1,6 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+import "Foreign" prefix Foreign_;
+export circuit issue(amount: Uint<64>, nonce: Bytes<32>, key: ZswapCoinPublicKey): [] {
+  Foreign_issueForUser(amount, nonce, key);
+}

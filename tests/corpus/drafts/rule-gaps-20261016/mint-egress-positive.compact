@@ -1,0 +1,15 @@
+pragma language_version >= 0.23;
+import CompactStandardLibrary;
+
+export ledger totalSupply: Uint<64>;
+
+constructor() { totalSupply = 0; }
+
+export circuit mint(amount: Uint<64>): [] {
+  totalSupply = (totalSupply + disclose(amount)) as Uint<64>;
+  mintUnshieldedToken(pad(32, "gap:mint"), disclose(amount), disclose(left<ContractAddress, UserAddress>(kernel.self())));
+}
+
+export circuit withdraw(amount: Uint<64>, recipient: UserAddress): [] {
+  sendUnshielded(pad(32, "gap:mint"), disclose(amount), disclose(right<ContractAddress, UserAddress>(recipient)));
+}

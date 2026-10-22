@@ -1,0 +1,14 @@
+pragma language_version >= 0.26.0;
+import { JubjubScalar } from CompactStandardLibrary;
+new type Byte = Uint<8>;
+new type Encoded = Bytes<2>;
+
+circuit encode(value: Uint<8>): Encoded {
+  return Bytes[value, 1] as Encoded;
+}
+
+export circuit entry(secret: Uint<8>): [Field, Uint<16>, Byte] {
+  const encoded = encode(secret);
+  const unpacked = encoded as Vector<2, Byte>;
+  return [secret as JubjubScalar as Field, encoded as Uint<16>, unpacked[0]];
+}

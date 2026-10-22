@@ -1,0 +1,14 @@
+// Owned composition-policy example; no runtime state-aliasing claim.
+pragma language_version >= 0.20;
+module First {
+  import "security/Initializable" prefix I_;
+  export circuit initialize(): [] { I_initialize(); }
+}
+module Second {
+  import "security/Initializable" prefix I_;
+  export circuit initialize(): [] { I_initialize(); }
+}
+import First prefix F_;
+import Second prefix S_;
+export circuit initializeFirst(): [] { F_initialize(); }
+export circuit initializeSecond(): [] { S_initialize(); }

@@ -1,0 +1,10 @@
+// Owned static source-shape fixture; review expectation only.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger balances: Map<Bytes<32>, Map<Bytes<32>, Uint<64>>>;
+export circuit debit(parent: Bytes<32>, key: Bytes<32>, amount: Uint<64>): [] {
+  if (disclose(amount) == 0 as Uint<64> && balances.member(disclose(parent)) && balances.lookup(disclose(parent)).member(disclose(key))) {
+    const prior = balances.lookup(disclose(parent)).lookup(disclose(key));
+    balances.lookup(disclose(parent)).insert(disclose(key), disclose((prior - amount) as Uint<64>));
+  }
+}

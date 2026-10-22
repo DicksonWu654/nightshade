@@ -1,0 +1,34 @@
+// SPDX-License-Identifier: MIT
+// Owned source-first adaptation of OpenZeppelin Compact Contracts
+// ShieldedAccessControl, revision ec1331cd8195694c747d291e8fc8ab6d2914a976.
+// Canonical module: access/ShieldedAccessControl.compact
+// Synthetic source-pattern regression.
+// The imported module below is the pinned owned dependency, not a local namesake.
+// No runtime, proof, protocol-authentication, or impact reproduction is claimed.
+
+pragma language_version >= 0.26.0;
+
+import CompactStandardLibrary;
+import "access/ShieldedAccessControl" prefix ShieldedAccessControl_;
+
+constructor(
+  instanceSalt: Bytes<32>,
+  initialAdmin: ShieldedAccessControl_AccountIdentifier
+) {
+  ShieldedAccessControl_initialize(instanceSalt);
+// Synthetic source-pattern regression.
+  ShieldedAccessControl__grantRole(
+    ShieldedAccessControl_DEFAULT_ADMIN_ROLE(), initialAdmin
+  );
+}
+
+export pure circuit DEFAULT_ADMIN_ROLE(): ShieldedAccessControl_RoleIdentifier {
+  return ShieldedAccessControl_DEFAULT_ADMIN_ROLE();
+}
+
+export circuit grantRole(
+  role: ShieldedAccessControl_RoleIdentifier,
+  accountId: ShieldedAccessControl_AccountIdentifier
+): [] {
+  ShieldedAccessControl_grantRole(role, accountId);
+}

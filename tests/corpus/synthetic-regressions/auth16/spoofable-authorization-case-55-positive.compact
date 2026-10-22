@@ -1,0 +1,6 @@
+import CompactStandardLibrary;
+// Record-shaped ownPublicKey authorization or stored-key association.
+export ledger owner: Bytes<32>;
+export ledger value: Field;
+export circuit ownerAction(): [] { assert(ownPublicKey().bytes == owner, "caller"); value = value + 1; }
+

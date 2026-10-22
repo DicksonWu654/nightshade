@@ -1,0 +1,7 @@
+// Owned static source-shape fixture. Not an execution or proof reproduction.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+// Contract-owned policy is explicitly contract-mediated issuance; documentation claim removed.
+export circuit issue(amount: Uint<64>, nonce: Bytes<32>): [] {
+  mintShieldedToken(pad(32, "owned:claim"), disclose(amount), disclose(nonce), right<ZswapCoinPublicKey, ContractAddress>(kernel.self()));
+}

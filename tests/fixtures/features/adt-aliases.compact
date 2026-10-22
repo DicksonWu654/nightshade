@@ -1,0 +1,11 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+struct Box { value: Field; visible: Field; }
+type Boxes = Map<Field, Box>;
+type Nested = Map<Field, Boxes>;
+export ledger table: Nested;
+export circuit entry(value: Field, index: Field): Field {
+  table.insertDefault(1 as Field);
+  table.lookup(1 as Field).insert(disclose(index), Box { value: disclose(value), visible: 0 as Field });
+  return table.lookup(1 as Field).lookup(disclose(index)).value;
+}

@@ -1,0 +1,21 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger identity: Map<Bytes<32>, Bytes<32>>;
+export ledger encryption: Map<Bytes<32>, Bytes<32>>;
+export ledger balance: Map<Bytes<32>, Uint<64>>;
+witness firstSecret(): Bytes<32>;
+witness secondSecret(): Bytes<32>;
+circuit first(secret: Bytes<32>): Bytes<32> { return persistentHash<Vector<2, Bytes<32>>>([pad(32, "account"), secret]) as Bytes<32>; }
+circuit second(secret: Bytes<32>): Bytes<32> { return persistentHash<Vector<2, Bytes<32>>>([pad(32, "encryption"), secret]) as Bytes<32>; }
+export circuit compared(k: Bytes<32>, other: Bytes<32>, middle: Bytes<32>): [] {
+  assert(first(firstSecret()) == identity.lookup(disclose(k)), "identity");
+  assert(k == middle, "first equality");
+  assert(middle == other, "second equality");
+  assert(second(secondSecret()) == encryption.lookup(disclose(other)), "encryption");
+  balance.insert(disclose(k), 0 as Uint<64>);
+}
+export circuit peer(k: Bytes<32>): [] {
+  assert(first(firstSecret()) == identity.lookup(disclose(k)), "identity");
+  assert(second(secondSecret()) == encryption.lookup(disclose(k)), "encryption");
+  balance.insert(disclose(k), 0 as Uint<64>);
+}

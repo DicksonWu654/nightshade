@@ -1,0 +1,6 @@
+import CompactStandardLibrary;
+// Metadata-only descriptor comparisons are treated as enough to issue.
+export ledger authorizedKey: Bytes<32>;
+export ledger issued: Field;
+export circuit assertAuthorizedIssuerDescriptor(descriptor: Bytes<32>, signer: Bytes<32>): [] { assert(descriptor == authorizedKey, "descriptor"); assert(signer == descriptor, "signer match"); }
+export circuit issueCredential(descriptor: Bytes<32>, signer: Bytes<32>): [] { assertAuthorizedIssuerDescriptor(descriptor, signer); issued = issued + 1; }

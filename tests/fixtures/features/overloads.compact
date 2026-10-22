@@ -1,0 +1,6 @@
+pragma language_version >= 0.26.0;
+circuit pass(value: Boolean): Field { return 0 as Field; }
+circuit pass(value: Field): Field { return value; }
+export circuit entry(value: Field): Field {
+  return pass(value);
+}

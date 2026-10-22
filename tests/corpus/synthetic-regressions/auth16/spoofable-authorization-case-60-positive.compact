@@ -1,0 +1,9 @@
+import CompactStandardLibrary;
+// Record-shaped ownPublicKey authorization or stored-key association.
+export ledger owner: Bytes<32>;
+export ledger value: Field;
+export ledger roles: Set<Bytes<32>>;
+constructor() { roles.insert(disclose(ownPublicKey().bytes)); }
+circuit checkRole(): [] { assert(roles.member(disclose(ownPublicKey().bytes)), "role"); }
+export circuit grantRole(next: Bytes<32>): [] { checkRole(); roles.insert(disclose(next)); }
+export circuit transferOwned(next: Bytes<32>): [] { assert(owner == ownPublicKey().bytes, "owner"); owner = disclose(next); }

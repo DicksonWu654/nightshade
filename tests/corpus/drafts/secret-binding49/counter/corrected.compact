@@ -1,0 +1,53 @@
+// This file is part of midnightntwrk/example-counter.
+// Copyright (C) Midnight Foundation
+// SPDX-License-Identifier: Apache-2.0
+// Licensed under the Apache License, Version 2.0 (the "License");
+// You may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+pragma language_version >= 0.20;
+
+import CompactStandardLibrary;
+
+// public state
+export ledger round: Counter;
+
+// transition function changing public state
+export circuit increment(): [] {
+  round.increment(1);
+}
+
+// Owned corrected source shape: every balance writer requires both exact bindings.
+witness accountSecret(): Bytes<32>;
+witness encryptionSecret(): Bytes<32>;
+export ledger accountIdentity: Map<Bytes<32>, Bytes<32>>;
+export ledger encryptionIdentity: Map<Bytes<32>, Bytes<32>>;
+export ledger balances: Map<Bytes<32>, Uint<64>>;
+
+circuit accountDigest(secret: Bytes<32>): Bytes<32> {
+  return persistentHash<Vector<2, Bytes<32>>>([pad(32, "Counter account identity v1"), secret]) as Bytes<32>;
+}
+circuit encryptionDigest(secret: Bytes<32>): Bytes<32> {
+  return persistentHash<Vector<2, Bytes<32>>>([pad(32, "Counter encryption identity v1"), secret]) as Bytes<32>;
+}
+
+export circuit resetBalance(account: Bytes<32>): [] {
+  const exactKey = disclose(account);
+  assert(accountDigest(accountSecret()) == accountIdentity.lookup(exactKey), "account identity");
+  assert(encryptionDigest(encryptionSecret()) == encryptionIdentity.lookup(exactKey), "encryption identity");
+  balances.insert(exactKey, 0 as Uint<64>);
+}
+export circuit moveBalance(source: Bytes<32>, amount: Uint<64>): [] {
+  const exactKey = disclose(source);
+  assert(accountDigest(accountSecret()) == accountIdentity.lookup(exactKey), "account identity");
+  assert(encryptionDigest(encryptionSecret()) == encryptionIdentity.lookup(exactKey), "encryption identity");
+  balances.insert(exactKey, (balances.lookup(exactKey) - disclose(amount)) as Uint<64>);
+}

@@ -1,0 +1,9 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+circuit forwardCoin(coin: ShieldedCoinInfo): ShieldedSendResult {
+  return sendImmediateShielded(coin, right<ZswapCoinPublicKey, ContractAddress>(default<ContractAddress>), 1);
+}
+export circuit quiet(): [] {
+  const empty: Vector<0, ShieldedCoinInfo> = [];
+  map(forwardCoin, empty);
+}

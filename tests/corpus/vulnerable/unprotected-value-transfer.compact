@@ -1,0 +1,4 @@
+import CompactStandardLibrary;
+export circuit withdraw(recipient: Either<ContractAddress, UserAddress>): [] {
+  sendUnshielded(default<Bytes<32>>, 1, disclose(recipient));
+}

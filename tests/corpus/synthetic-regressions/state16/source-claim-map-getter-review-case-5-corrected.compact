@@ -1,0 +1,5 @@
+// Synthetic source-pattern regression.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+// Documentation describes fixed default administrator semantics; no customization ledger is exposed.
+export circuit getRoleAdmin(role: Bytes<32>): Bytes<32> { return default<Bytes<32>>; }

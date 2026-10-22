@@ -1,0 +1,9 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+module Local {
+  export circuit jubjubSchnorrVerify<#N>(msg: Vector<N, Field>, sig: JubjubSchnorrSignature, pk: JubjubPoint): Boolean { return true; }
+}
+import Local prefix App_;
+export circuit callNamesake(msg: Vector<1, Field>, sig: JubjubSchnorrSignature, pk: JubjubPoint): Boolean {
+  return App_jubjubSchnorrVerify<1>(msg, sig, pk);
+}

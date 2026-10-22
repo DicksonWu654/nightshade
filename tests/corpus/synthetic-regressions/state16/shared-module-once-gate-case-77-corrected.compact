@@ -1,0 +1,8 @@
+// Owned two-module import composition shape. Compiler pathname/module identity behavior remains an integration concern.
+pragma language_version >= 0.20;
+import CompactStandardLibrary;
+module First { ledger initialized: Boolean; export circuit initialize(): [] { assert(!initialized, "First once"); initialized = true; } }
+module Second { ledger initialized: Boolean; export circuit initialize(): [] { assert(!initialized, "Second once"); initialized = true; } }
+import First prefix F_; import Second prefix S_;
+export circuit initializeFirst(): [] { F_initialize(); }
+export circuit initializeSecond(): [] { S_initialize(); }

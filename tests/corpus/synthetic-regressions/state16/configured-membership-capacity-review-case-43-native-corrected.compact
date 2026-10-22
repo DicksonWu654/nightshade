@@ -1,0 +1,90 @@
+// This file is part of midnightntwrk/example-counter.
+// Copyright (C) Midnight Foundation
+// SPDX-License-Identifier: Apache-2.0
+// Licensed under the Apache License, Version 2.0 (the "License");
+// You may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+pragma language_version >= 0.20;
+
+import CompactStandardLibrary;
+
+// public state
+export ledger round: Counter;
+
+// transition function changing public state
+export circuit increment(): [] {
+  round.increment(1);
+}
+
+// Owned native-source correction. The minimum slot count is enforced at configuration.
+// Signature validity and path feasibility are not executed or proved.
+export ledger registered: Set<Bytes<32>>;
+export ledger threshold: Uint<8>;
+
+struct SignerClaim {
+  commitment: Bytes<32>;
+  signature: Secp256k1EcdsaSignature;
+  key: Secp256k1Point;
+}
+
+circuit signerCommitment(key: Secp256k1Point): Bytes<32> {
+  return persistentHash<Vector<2, Secp256k1Base>>([
+    secp256k1PointX(key), secp256k1PointY(key)
+  ]);
+}
+
+constructor(signers: Vector<4, Secp256k1Point>, signerCount: Uint<8>) {
+  assert(disclose(signerCount) >= 2 as Uint<8>, "approval width requires two signers");
+  assert(disclose(signerCount) <= 4 as Uint<8>, "signer capacity");
+  const id0 = signerCommitment(disclose(signers[0]));
+  const id1 = signerCommitment(disclose(signers[1]));
+  const id2 = signerCommitment(disclose(signers[2]));
+  const id3 = signerCommitment(disclose(signers[3]));
+  if (disclose(signerCount) > 1 as Uint<8>) {
+    assert(disclose(signers[0]) != disclose(signers[1]), "distinct signer keys");
+    assert(id0 != id1, "distinct registered identities");
+  }
+  if (disclose(signerCount) > 2 as Uint<8>) {
+    assert(disclose(signers[0]) != disclose(signers[2]), "distinct signer keys");
+    assert(disclose(signers[1]) != disclose(signers[2]), "distinct signer keys");
+    assert(id0 != id2, "distinct registered identities");
+    assert(id1 != id2, "distinct registered identities");
+  }
+  if (disclose(signerCount) > 3 as Uint<8>) {
+    assert(disclose(signers[0]) != disclose(signers[3]), "distinct signer keys");
+    assert(disclose(signers[1]) != disclose(signers[3]), "distinct signer keys");
+    assert(disclose(signers[2]) != disclose(signers[3]), "distinct signer keys");
+    assert(id0 != id3, "distinct registered identities");
+    assert(id1 != id3, "distinct registered identities");
+    assert(id2 != id3, "distinct registered identities");
+  }
+  if (disclose(signerCount) > 0 as Uint<8>) { registered.insert(id0); }
+  if (disclose(signerCount) > 1 as Uint<8>) { registered.insert(id1); }
+  if (disclose(signerCount) > 2 as Uint<8>) { registered.insert(id2); }
+  if (disclose(signerCount) > 3 as Uint<8>) { registered.insert(id3); }
+  threshold = 1 as Uint<8>;
+}
+
+export circuit gatedOperation(claims: Vector<2, SignerClaim>, message: Bytes<32>): [] {
+  assert(registered.member(disclose(claims[0].commitment)), "registered signer 0");
+  assert(claims[0].commitment == signerCommitment(claims[0].key), "signer 0 key binding");
+  const valid0 = secp256k1EcdsaVerify(disclose(message), claims[0].signature, claims[0].key);
+  assert(valid0, "signature 0");
+  assert(registered.member(disclose(claims[1].commitment)), "registered signer 1");
+  assert(claims[1].commitment == signerCommitment(claims[1].key), "signer 1 key binding");
+  const valid1 = secp256k1EcdsaVerify(disclose(message), claims[1].signature, claims[1].key);
+  assert(valid1, "signature 1");
+  const accepted: Uint<8> = ((valid0 ? 1 as Uint<8> : 0 as Uint<8>) + (valid1 ? 1 as Uint<8> : 0 as Uint<8>)) as Uint<8>;
+  assert(claims[0].commitment != claims[1].commitment, "distinct approvals");
+  assert(accepted >= threshold, "threshold");
+  round.increment(1);
+}

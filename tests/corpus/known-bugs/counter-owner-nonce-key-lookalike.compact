@@ -1,0 +1,16 @@
+pragma language_version >= 0.20;
+
+import CompactStandardLibrary;
+
+export ledger ownerCommitment: Bytes<32>;
+export ledger actions: Counter;
+
+witness secretNonce(): Bytes<32>;
+
+constructor(commitment: Bytes<32>) {
+  ownerCommitment = disclose(commitment);
+}
+
+export circuit previewOwnerCommitment(): Boolean {
+  return disclose(persistentHash<Vector<2, Bytes<32>>>([ownPublicKey().bytes, secretNonce()]) == ownerCommitment);
+}

@@ -1,0 +1,13 @@
+// Owned quiet control: membership and returned lookup use distinct inputs.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger allowances: Map<Bytes<32>, Uint<64>>;
+export circuit allowance(actualKey: Bytes<32>, otherKey: Bytes<32>): Uint<64> {
+ if (allowances.member(disclose(otherKey))) return allowances.lookup(disclose(actualKey));
+ return 0 as Uint<64>;
+}
+export circuit spend(actualKey: Bytes<32>, amount: Uint<64>): [] {
+ assert(allowances.member(disclose(actualKey)), "actual key exists");
+ const approved = allowances.lookup(disclose(actualKey));
+ allowances.insert(disclose(actualKey), disclose((approved - disclose(amount)) as Uint<64>));
+}

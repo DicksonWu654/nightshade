@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "roots": ["contract.compact"],
+  "compilerVersion": "0.34.0",
+  "zkirVersion": 2,
+  "failOn": "medium",
+  "minConfidence": "medium",
+  "budgets": { "maxSteps": 40000, "maxPaths": 256, "maxValues": 50000 },
+  "execution": { "timeoutMs": 60000, "heapMiB": 512, "maxOutputBytes": 16777216 }
+}

@@ -1,0 +1,37 @@
+pragma language_version >= 0.26.0;
+
+import CompactStandardLibrary;
+
+export ledger table: Map<Field, Field>;
+export ledger seen: Set<Field>;
+export ledger nested: Map<Field, Map<Field, Field>>;
+export ledger count: Counter;
+
+export circuit entry(key: Field, value: Field, flag: Boolean): [Uint<64>, Uint<64>, Uint<64>, Uint<64>] {
+  table.resetToDefault();
+  table.insert(1 as Field, disclose(value));
+  table.insert(1 as Field, 7 as Field);
+  table.insertDefault(2 as Field);
+  table.remove(3 as Field);
+
+  seen.resetToDefault();
+  seen.insert(1 as Field);
+  seen.insert(1 as Field);
+  seen.remove(2 as Field);
+
+  nested.resetToDefault();
+  nested.insertDefault(1 as Field);
+  nested.lookup(1 as Field).insert(2 as Field, disclose(value));
+  nested.lookup(1 as Field).resetToDefault();
+  nested.lookup(1 as Field).insert(disclose(key), 3 as Field);
+
+  count.resetToDefault();
+  count.increment(2);
+  count.decrement(1);
+
+  if (disclose(flag) && table.member(1 as Field)) {
+    assert(table.lookup(1 as Field) == 7 as Field, "replacement");
+  }
+
+  return [table.size(), seen.size(), nested.lookup(1 as Field).size(), count.read()];
+}

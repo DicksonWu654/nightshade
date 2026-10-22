@@ -1,0 +1,16 @@
+// The writer enforces same-key token existence, but the consumer asks only
+// whether an approval exists. Do not invent a downstream co-relation.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+
+export ledger approvals: Map<Uint<128>, Bytes<32>>;
+export ledger tokenExists: Set<Uint<128>>;
+
+export circuit setApproval(id: Uint<128>, spender: Bytes<32>): [] {
+  assert(tokenExists.member(disclose(id)), "token exists");
+  approvals.insert(disclose(id), disclose(spender));
+}
+
+export circuit consume(id: Uint<128>): [] {
+  assert(approvals.member(disclose(id)), "approval exists");
+}

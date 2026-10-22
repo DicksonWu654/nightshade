@@ -1,0 +1,15 @@
+// Separate exported histories must not be joined into a transfer-plus-append witness.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger recipientMemos: Map<Bytes<32>, List<Bytes<32>>>;
+export circuit initRecipient(recipient: Bytes<32>): [] { recipientMemos.insertDefault(disclose(recipient)); }
+export circuit sendOnly(recipient: Bytes<32>, amount: Uint<64>): [] {
+  const amountSnapshot = disclose(amount);
+  const recipientSnapshot = disclose(recipient);
+  sendUnshielded(default<Bytes<32>>, amountSnapshot, right<ContractAddress, UserAddress>(UserAddress { bytes: recipientSnapshot }));
+}
+export circuit appendOnly(recipient: Bytes<32>, memoCiphertext: Bytes<32>): [] {
+  const recipientSnapshot = disclose(recipient);
+  recipientMemos.lookup(recipientSnapshot).length();
+  recipientMemos.lookup(recipientSnapshot).pushFront(disclose(memoCiphertext));
+}

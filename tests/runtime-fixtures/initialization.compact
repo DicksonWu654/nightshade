@@ -1,0 +1,19 @@
+import CompactStandardLibrary;
+ledger done: Boolean;
+ledger authorized: Boolean;
+export ledger payload: Field;
+constructor() { authorized = true; }
+circuit firstUse(): [] { assert(!done, "already initialized"); }
+circuit authorize(): [] { assert(authorized, "authorized"); }
+
+export circuit initialize_corrected(value: Field): [] { firstUse(); done = true; payload = disclose(value); }
+export circuit initialize_late(value: Field): [] { const old = done; done = true; payload = disclose(value); assert(!old, "first use"); }
+export circuit initialize_repeatable(value: Field): [] { done = true; payload = disclose(value); }
+export circuit initialize_restored(value: Field): [] { firstUse(); done = true; payload = disclose(value); done = false; }
+export circuit initialize_freshInput(value: Field): [] { if (done) { assert(payload != value, "change"); } done = true; payload = disclose(value); }
+export circuit initialize_conditionalGuard(value: Field): [] { if (!done) { firstUse(); } done = true; payload = disclose(value); }
+export circuit initialize_conditionalAuthorization(value: Field): [] { if (!done) { authorize(); } done = true; payload = disclose(value); }
+export circuit initialize_idempotent(): [] { done = true; }
+export circuit initialize_restorePayload(value: Field): [] { const old = payload; payload = disclose(value); payload = old; done = true; }
+export circuit initialize_equal(value: Field): [] { if (done) { assert(value == payload, "same"); } payload = disclose(value); done = true; }
+

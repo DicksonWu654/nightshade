@@ -1,0 +1,44 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+
+ledger tree: MerkleTree<2, Field>;
+export ledger accepted: Bytes<32>;
+witness pathFor(index: Field, input1: Bytes<32>, input2: Bytes<32>): MerkleTreePath<2, Bytes<32>>;
+
+// This user circuit shares the standard-library helper's spelling but is not
+// the canonical root operation used by the checked proofs below.
+circuit merkleTreePathRoot(path: MerkleTreePath<2, Bytes<32>>): MerkleTreeDigest {
+  return MerkleTreeDigest { field: path.leaf as Field };
+}
+
+export circuit namesake(index: Field, input1: Bytes<32>, input2: Bytes<32>): [] {
+  const proof = pathFor(disclose(index), disclose(input1), disclose(input2));
+  const digest = merkleTreePathRoot(proof);
+  assert(tree.checkRoot(disclose(digest)), "checked namesake result");
+  accepted = disclose(input1);
+}
+
+export circuit separate(index: Field, input1: Bytes<32>, input2: Bytes<32>): [] {
+  const intended = pathFor(disclose(index), disclose(input1), disclose(input2));
+  const checked = pathFor(disclose(index), disclose(input1), disclose(input2));
+  assert(intended.leaf == disclose(input1), "other path binding");
+  const digest = merkleTreePathRootNoLeafHash<2>(checked);
+  assert(tree.checkRoot(disclose(digest)), "checked path");
+  accepted = disclose(input1);
+}
+
+export circuit rebuilt(input1: Bytes<32>, input2: Bytes<32>): [] {
+  const supplied = pathFor(0 as Field, disclose(input1), disclose(input2));
+  const checked = MerkleTreePath<2, Bytes<32>> { leaf: disclose(input1), path: supplied.path };
+  const digest = merkleTreePathRootNoLeafHash<2>(checked);
+  assert(tree.checkRoot(disclose(digest)), "rebuilt path");
+  accepted = disclose(input1);
+}
+
+export circuit conversionRoundtrip(index: Field, input1: Bytes<32>, input2: Bytes<32>): [] {
+  const proof = pathFor(disclose(index), disclose(input1), disclose(input2));
+  const digest = merkleTreePathRootNoLeafHash<2>(proof);
+  assert(tree.checkRoot(disclose(digest)), "checked byte path");
+  assert(((proof.leaf as Field) as Bytes<32>) == disclose(input1), "roundtrip is not direct leaf identity");
+  accepted = disclose(input1);
+}

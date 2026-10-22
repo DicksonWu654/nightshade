@@ -1,0 +1,12 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+
+witness fetch<T>(value: T): T;
+circuit identity(value: Field): Field { return value; }
+circuit identity(value: Boolean): Field { return 0 as Field; }
+
+export circuit entry(seed: Field): [Vector<2, Bytes<32>>, Vector<2, Maybe<Field>>] {
+  const values = map(fetch<Field>, [seed, 0 as Field]);
+  const selected = map(identity, values);
+  return disclose([map(persistentHash<Field>, selected), map(some<Field>, selected)]);
+}

@@ -1,0 +1,7 @@
+node_modules/
+dist/
+build/
+prebuilds/
+.cache/
+*.tsbuildinfo
+*.tgz

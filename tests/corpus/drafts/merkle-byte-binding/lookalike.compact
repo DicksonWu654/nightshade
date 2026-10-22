@@ -1,0 +1,14 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+
+ledger tree: MerkleTree<2, Field>;
+export ledger accepted: Bytes<32>;
+witness pathFor(index: Field, input1: Bytes<32>, input2: Bytes<32>): MerkleTreePath<2, Bytes<32>>;
+
+export circuit accept(index: Field, input1: Bytes<32>, input2: Bytes<32>): [] {
+  const proof = pathFor(disclose(index), disclose(input1), disclose(input2));
+  const digest = merkleTreePathRootNoLeafHash<2>(proof);
+  assert(tree.checkRoot(disclose(digest)), "member");
+  assert(proof.leaf == disclose(input2), "wrong byte input");
+  accepted = disclose(input1);
+}

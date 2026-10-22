@@ -1,0 +1,9 @@
+// Synthetic source-pattern regression.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export circuit burn(coin: QualifiedShieldedCoinInfo, recipient: Either<ZswapCoinPublicKey, ContractAddress>, amount: Uint<64>): ShieldedSendResult {
+ return sendShielded(disclose(coin), disclose(recipient), disclose(amount));
+}
+export circuit burnFromSelf(coin: QualifiedShieldedCoinInfo, recipient: Either<ZswapCoinPublicKey, ContractAddress>, amount: Uint<64>): ShieldedSendResult {
+ return sendShielded(disclose(coin), disclose(recipient), disclose(amount));
+}

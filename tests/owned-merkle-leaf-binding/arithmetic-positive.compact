@@ -1,0 +1,12 @@
+import CompactStandardLibrary;
+ledger tree: MerkleTree<2,Field>;
+export ledger accepted: Field;
+struct Claim { proof: MerkleTreePath<2,Field>; payload: Field; }
+witness claim(): Claim;
+export circuit accept(): [] {
+  const supplied = claim();
+  const digest = merkleTreePathRoot<2,Field>(supplied.proof);
+  assert(tree.checkRoot(disclose(digest)), "member");
+  const candidate = transientHash<Field>(supplied.payload);
+  accepted = disclose(candidate + (1 as Field));
+}

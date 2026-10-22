@@ -1,0 +1,46 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+
+export ledger supply: Map<Bytes<32>, Uint<64>>;
+export ledger bounded: Map<Bytes<32>, Uint<64>>;
+export ledger existing: Map<Bytes<32>, Uint<64>>;
+export ledger transient: Map<Bytes<32>, Uint<64>>;
+export ledger cleared: Map<Bytes<32>, Uint<64>>;
+export ledger intentionalZeroRecords: Map<Bytes<32>, Uint<64>>;
+
+export circuit boundedKey(amount: Uint<64>): [] {
+  bounded.insert(pad(32, "public-supply"), disclose(amount));
+}
+
+export circuit existingKey(domain: Bytes<32>, amount: Uint<64>): [] {
+  if (existing.member(disclose(domain))) {
+    existing.insert(disclose(domain), disclose(amount));
+  }
+}
+
+export circuit unrelatedAmountGuard(domain: Bytes<32>, fee: Uint<64>, amount: Uint<64>): [] {
+  if (disclose(fee) > 0) {
+    supply.insert(disclose(domain), disclose(amount));
+  }
+}
+
+export circuit differentKeys(domain: Bytes<32>, other: Bytes<32>, amount: Uint<64>): [] {
+  if (!supply.member(disclose(domain))) {
+    supply.insert(disclose(other), disclose(amount));
+  }
+}
+
+export circuit insertThenDelete(domain: Bytes<32>, amount: Uint<64>): [] {
+  transient.insert(disclose(domain), disclose(amount));
+  transient.remove(disclose(domain));
+}
+
+export circuit insertThenReset(domain: Bytes<32>, amount: Uint<64>): [] {
+  cleared.insert(disclose(domain), disclose(amount));
+  cleared.resetToDefault();
+}
+
+// Intentional zero-valued records are part of this API's documented behavior.
+export circuit recordZero(domain: Bytes<32>): [] {
+  intentionalZeroRecords.insert(disclose(domain), 0 as Uint<64>);
+}

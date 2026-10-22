@@ -1,0 +1,59 @@
+name: Nightshade checks
+
+on:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      full_matrix:
+        description: Run the full Linux/macOS and Node 22/24 matrix
+        type: boolean
+        required: false
+        default: false
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  pull-request:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 24.20.0
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npm run demo
+      - run: node --test dist/tests/release-cli.test.js dist/tests/release-reporting.test.js dist/tests/rule-warning-policy.test.js dist/tests/workflows.test.js dist/tests/package-docs.test.js
+  test:
+    if: github.event_name == 'workflow_dispatch'
+
+    strategy:
+      fail-fast: false
+      matrix: >-
+        ${{ fromJSON(inputs.full_matrix && '{"os":["ubuntu-latest","macos-latest"],"node":[22,24]}' || '{"os":["ubuntu-latest"],"node":[24]}') }}
+    runs-on: ${{ matrix.os }}
+    # Correctness, serial timing, packed consumers and benchmarks all run here.
+    # This job deadline is independent of the analyzer's unchanged scan budgets.
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run test:timing
+      - run: npm run test:package
+      - run: npm run benchmark:performance -- --output "$RUNNER_TEMP/performance.json"
+      - run: npm run benchmark:effects -- --output "$RUNNER_TEMP/effects.json"
+      - run: npm run benchmark:summaries -- --output "$RUNNER_TEMP/summaries.json"
+      - run: npm run benchmark:guards -- --output "$RUNNER_TEMP/guards.json"

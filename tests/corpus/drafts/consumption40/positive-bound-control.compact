@@ -1,0 +1,15 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+
+export ledger used: Set<Bytes<32>>;
+witness nonce(): Bytes<32>;
+
+export circuit sendPositiveAmount(
+  amount: Uint<64>, color: Bytes<32>, destination: Either<ContractAddress, UserAddress>
+): [] {
+  assert(disclose(amount) > 0 as Uint<64>, "positive amount required");
+  const id = nonce();
+  assert(!used.member(disclose(id)), "nonce has not been used");
+  used.insert(disclose(id));
+  sendUnshielded(disclose(color), disclose(amount), disclose(destination));
+}

@@ -1,0 +1,17 @@
+import CompactStandardLibrary;
+
+// Boundary case: the current owner can authorize an immediate commitment replacement.
+export ledger activeOwner: Bytes<32>;
+constructor(initialOwnerCommitment: Bytes<32>) {
+  activeOwner = disclose(initialOwnerCommitment);
+}
+witness currentOwnerSecret(): Bytes<32>;
+circuit currentOwnerCommitment(): Bytes<32> {
+  return persistentHash<Bytes<32>>(currentOwnerSecret());
+}
+
+export circuit transferOwnership(nextOwnerCommitment: Bytes<32>): [] {
+  assert(currentOwnerCommitment() == activeOwner, "current owner");
+  assert(nextOwnerCommitment != pad(32, ""), "non-default owner");
+  activeOwner = disclose(nextOwnerCommitment);
+}

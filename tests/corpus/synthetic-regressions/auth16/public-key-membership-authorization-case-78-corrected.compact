@@ -1,0 +1,17 @@
+import CompactStandardLibrary;
+// Role membership is keyed by a domain-separated, witness-derived caller identity.
+export ledger admins: Set<Bytes<32>>;
+export ledger lpRoles: Set<Bytes<32>>;
+export ledger traders: Set<Bytes<32>>;
+export ledger value: Field;
+witness callerSecret(): Bytes<32>;
+circuit callerId(): Bytes<32> { return persistentHash<Vector<2, Bytes<32>>>([pad(32, "lunar-auth:"), callerSecret()]); }
+circuit hasRole(account: Bytes<32>, role: Field): Boolean {
+  if (role == (0 as Field)) { return admins.member(disclose(account)); }
+  if (role == (1 as Field)) { return lpRoles.member(disclose(account)); }
+  return traders.member(disclose(account));
+}
+export circuit onlyAdmin(): Boolean { return hasRole(callerId(), 0 as Field); }
+export circuit onlyLp(): Boolean { return hasRole(callerId(), 1 as Field); }
+export circuit onlyTrader(): Boolean { return hasRole(callerId(), 2 as Field); }
+export circuit grantRole(account: Bytes<32>): [] { assert(onlyAdmin(), "admin"); admins.insert(disclose(account)); }

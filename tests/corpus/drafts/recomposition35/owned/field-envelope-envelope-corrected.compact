@@ -1,0 +1,13 @@
+// Owned source-shape candidate for bounded Field recomposition; no signature/proof claim.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+witness splitChallenge(): [Uint<7>, Uint<248>];
+export circuit check(hash: Field): [] {
+  const [q, r] = splitChallenge();
+  assert(disclose(q) < 116, "quotient bound");
+  if (disclose(q) < 115) {
+  } else {
+    assert(disclose(r) < 419897588050555816515462086314444731729426576509415695503572133883854979073 as Uint<248>, "top remainder bound");
+  }
+  assert(hash == (q as Field) * (452312848583266388373324160190187140051835877600158453279131187530910662656 as Field) + (r as Field), "challenge decomposition");
+}

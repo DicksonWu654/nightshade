@@ -1,0 +1,45 @@
+// This file is part of midnightntwrk/example-counter.
+// Copyright (C) Midnight Foundation
+// SPDX-License-Identifier: Apache-2.0
+// Licensed under the Apache License, Version 2.0 (the "License");
+// You may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+pragma language_version >= 0.20;
+
+import CompactStandardLibrary;
+
+// public state
+export ledger round: Counter;
+
+// transition function changing public state
+export circuit increment(): [] {
+  round.increment(1);
+}
+// Corrected source shape: every approval write requires the same-key
+// prerequisite, while authorization equality remains conditional.
+export ledger approvalPrerequisites: Set<Uint<64>>;
+export ledger approvals: Map<Uint<64>, Bytes<32>>;
+
+export circuit setApproval(id: Uint<64>, spender: Bytes<32>, auth: Bytes<32>): [] {
+  assert(approvalPrerequisites.member(disclose(id)), "approval prerequisite");
+  if (disclose(auth) != default<Bytes<32>>) {
+    assert(disclose(auth) == disclose(spender), "authorized");
+  }
+  approvals.insert(disclose(id), disclose(spender));
+  round.increment(1);
+}
+
+export circuit consumeApproval(id: Uint<64>): [] {
+  assert(approvalPrerequisites.member(disclose(id)), "approval prerequisite");
+  assert(approvals.member(disclose(id)), "approval exists");
+  round.increment(1);
+}

@@ -1,0 +1,19 @@
+import CompactStandardLibrary;
+// Preserve current-owner control and require the proposed recipient to accept.
+export ledger owner: Bytes<32>;
+ledger pendingOwner: Bytes<32>;
+witness currentOwnerSecret(): Bytes<32>;
+witness pendingSecret(): Bytes<32>;
+circuit currentOwner(): Bytes<32> { return persistentHash<Bytes<32>>(currentOwnerSecret()); }
+export circuit proposeOwnership(next: Bytes<32>): [] {
+  assert(currentOwner() == owner, "current owner");
+  assert(next != pad(32, ""), "non-default");
+  pendingOwner = disclose(next);
+}
+export circuit acceptOwnership(): [] {
+  const id = persistentHash<Bytes<32>>(pendingSecret());
+  assert(id == pendingOwner, "pending owner acceptance");
+  owner = pendingOwner;
+  pendingOwner = pad(32, "");
+}
+export circuit ownerAction(): [] { assert(currentOwner() == owner, "owner"); }

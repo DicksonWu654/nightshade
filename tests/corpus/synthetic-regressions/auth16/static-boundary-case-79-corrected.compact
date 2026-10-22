@@ -1,0 +1,15 @@
+import CompactStandardLibrary;
+// The supported entry point composes descriptor checks with a proof signature check.
+export ledger authorizedKey: Bytes<32>;
+export ledger issued: Field;
+struct IssuerProof { credentialDigest: Bytes<32>; signer: Bytes<32>; }
+witness issuerSignature(): Secp256k1EcdsaSignature;
+witness issuerKey(): Secp256k1Point;
+circuit assertAuthorizedIssuerDescriptor(descriptor: Bytes<32>, signer: Bytes<32>): [] { assert(descriptor == authorizedKey, "descriptor"); assert(signer == descriptor, "signer match"); }
+circuit signerCommitment(pk: Secp256k1Point): Bytes<32> { return persistentHash<Vector<2, Secp256k1Base>>([secp256k1PointX(pk), secp256k1PointY(pk)]); }
+export circuit assertAuthorizedIssuerProof(descriptor: Bytes<32>, proof: IssuerProof): [] {
+  assertAuthorizedIssuerDescriptor(descriptor, proof.signer);
+  assert(signerCommitment(issuerKey()) == proof.signer, "proof signer key binding");
+  assert(secp256k1EcdsaVerify(keccak256<IssuerProof>(proof), issuerSignature(), issuerKey()), "issuer signature");
+}
+export circuit issueCredential(descriptor: Bytes<32>, proof: IssuerProof): [] { assertAuthorizedIssuerProof(descriptor, proof); issued = issued + 1; }

@@ -1,0 +1,6 @@
+import CompactStandardLibrary;
+module AccessControl {
+  export circuit _grantRole(account: Either<Bytes<32>, ContractAddress>): [] {}
+}
+import AccessControl prefix A_;
+export circuit entry(): [] { A__grantRole(right<Bytes<32>, ContractAddress>(default<ContractAddress>)); }

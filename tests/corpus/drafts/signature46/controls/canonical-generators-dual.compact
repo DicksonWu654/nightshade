@@ -1,0 +1,10 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export circuit verifyKnownGenerators(msg: Vector<1, Field>, js: JubjubSchnorrSignature, digest: Bytes<32>, es: Secp256k1EcdsaSignature, secpScalar: Secp256k1Scalar): Boolean {
+  const jubjubGenerator = ecMulGenerator(1 as JubjubScalar);
+  assert(secpScalar != default<Secp256k1Scalar>, "nonzero secp generator scalar");
+  const secpGenerator = ecMulGenerator(secpScalar);
+  const schnorrOk = jubjubSchnorrVerify<1>(msg, js, jubjubGenerator);
+  const ecdsaOk = secp256k1EcdsaVerify(digest, es, secpGenerator);
+  return schnorrOk && ecdsaOk;
+}

@@ -1,0 +1,20 @@
+// Owned correction: each module declares its own Boolean state.
+pragma language_version >= 0.20;
+module First {
+  ledger initialized: Boolean;
+  export circuit initialize(): [] {
+    assert(!initialized, "First already initialized");
+    initialized = true;
+  }
+}
+module Second {
+  ledger initialized: Boolean;
+  export circuit initialize(): [] {
+    assert(!initialized, "Second already initialized");
+    initialized = true;
+  }
+}
+import First prefix F_;
+import Second prefix S_;
+export circuit initializeFirst(): [] { F_initialize(); }
+export circuit initializeSecond(): [] { S_initialize(); }

@@ -1,0 +1,8 @@
+// Owned synthetic public identifier.
+pragma language_version >= 0.23.0;
+module PublicDigest {
+  import CompactStandardLibrary;
+  export pure circuit computeAccountId(seed: Bytes<32>): Bytes<32> {
+    return persistentHash<Vector<1, Bytes<32>>>([seed]);
+  }
+}

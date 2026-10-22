@@ -1,0 +1,12 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+module KeyState {
+ export ledger enrolled: JubjubPoint;
+ export circuit enroll(pk: JubjubPoint): [] { enrolled = disclose(pk); }
+}
+import KeyState prefix K_;
+constructor(seed: JubjubPoint) { assert(seed != default<JubjubPoint>, "constructor seed"); K_enrolled = disclose(seed); }
+export circuit enrollAlias(pk: JubjubPoint): [] { K_enroll(pk); }
+export circuit signedAction(msg: Vector<1, Field>, sig: JubjubSchnorrSignature): [] {
+ assert(jubjubSchnorrVerify<1>(msg, sig, K_enrolled), "signature");
+}

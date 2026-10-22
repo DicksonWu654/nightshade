@@ -1,0 +1,9 @@
+import CompactStandardLibrary;
+// Record-shaped ownPublicKey authorization or stored-key association.
+export ledger owner: Bytes<32>;
+export ledger value: Field;
+export ledger sender: Bytes<32>;
+export ledger receiver: Bytes<32>;
+export circuit deposit(): [] { sender = disclose(ownPublicKey().bytes); }
+export circuit withdraw(): [] { assert(ownPublicKey().bytes == receiver, "receiver"); value = value - value; }
+export circuit reclaim(): [] { assert(ownPublicKey().bytes == sender, "sender"); value = value - value; }

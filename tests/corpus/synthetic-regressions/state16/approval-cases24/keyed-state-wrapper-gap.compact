@@ -1,0 +1,23 @@
+// The public wrapper preserves the id. Token existence constrains only the
+// nonzero-auth path, while the approval write occurs on every path.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+
+export ledger approvals: Map<Uint<128>, Bytes<32>>;
+export ledger tokenExists: Set<Uint<128>>;
+
+circuit writeApproval(id: Uint<128>, spender: Bytes<32>): [] {
+  approvals.insert(disclose(id), disclose(spender));
+}
+
+export circuit setApproval(id: Uint<128>, spender: Bytes<32>, auth: Bytes<32>): [] {
+  if (disclose(auth) != default<Bytes<32>>) {
+    assert(tokenExists.member(disclose(id)), "token exists");
+  }
+  writeApproval(disclose(id), disclose(spender));
+}
+
+export circuit consume(id: Uint<128>): [] {
+  assert(tokenExists.member(disclose(id)), "token exists");
+  assert(approvals.member(disclose(id)), "approval exists");
+}

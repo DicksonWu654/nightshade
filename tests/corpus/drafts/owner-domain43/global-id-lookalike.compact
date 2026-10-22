@@ -1,0 +1,18 @@
+// Owned single-component global identifier; no private owner/salt composition.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger globalId: Bytes<32>;
+export ledger initialized: Boolean;
+export ledger deploymentId: ContractAddress;
+constructor() {
+  initialized = false;
+  deploymentId = kernel.self();
+}
+export circuit initialize(identifier: Bytes<32>): [] {
+  assert(!initialized, "already initialized");
+  globalId = disclose(persistentHash<Bytes<32>>(identifier));
+  initialized = true;
+}
+export circuit identifier(): Bytes<32> {
+  return globalId;
+}

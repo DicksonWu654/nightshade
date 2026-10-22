@@ -1,0 +1,67 @@
+import CompactStandardLibrary;
+
+// Owned extension of the pre-existing quorum source case.
+// This is source-shaped verifier logic, not an executed signature example.
+export ledger registered: Set<Bytes<32>>;
+export ledger actionCount: Uint<8>;
+
+struct SignerClaim {
+  commitment: Bytes<32>;
+  signature: Secp256k1EcdsaSignature;
+  key: Secp256k1Point;
+}
+
+struct VerificationState {
+  validCount: Uint<8>;
+  previousCommitment: Bytes<32>;
+  hasPrevious: Boolean;
+}
+
+circuit signerCommitment(key: Secp256k1Point): Bytes<32> {
+  return persistentHash<Vector<2, Secp256k1Base>>([
+    secp256k1PointX(key),
+    secp256k1PointY(key)
+  ]);
+}
+
+circuit verifyOne(state: VerificationState, claim: SignerClaim): VerificationState {
+  assert(registered.member(disclose(claim.commitment)), "registered");
+  assert(claim.commitment == signerCommitment(claim.key), "key commitment");
+  assert(
+    secp256k1EcdsaVerify(
+      keccak256<Bytes<32>>(claim.commitment),
+      claim.signature,
+      claim.key
+    ),
+    "signature"
+  );
+  assert(
+    !state.hasPrevious || claim.commitment != state.previousCommitment,
+    "adjacent duplicate"
+  );
+  return VerificationState {
+    validCount: state.validCount + 1 as Uint<8>,
+    previousCommitment: claim.commitment,
+    hasPrevious: true
+  };
+}
+
+circuit verifyClaims<#n>(claims: Vector<n, SignerClaim>, threshold: Uint<8>): [] {
+  const initial = VerificationState {
+    validCount: 0 as Uint<8>,
+    previousCommitment: pad(32, ""),
+    hasPrevious: false
+  };
+  const verified = fold(verifyOne, initial, claims);
+  assert(verified.validCount >= threshold, "threshold");
+}
+
+export circuit verifyThree(claims: Vector<3, SignerClaim>, threshold: Uint<8>): [] {
+  verifyClaims<3>(claims, threshold);
+}
+
+// Minimal owned consumer: state changes only after verifier success.
+export circuit consumeThree(claims: Vector<3, SignerClaim>, threshold: Uint<8>): [] {
+  verifyClaims<3>(claims, threshold);
+  actionCount = actionCount + 1 as Uint<8>;
+}

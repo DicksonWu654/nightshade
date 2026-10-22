@@ -1,0 +1,15 @@
+pragma language_version >= 0.26.0;
+import { persistentHash } from CompactStandardLibrary;
+export ledger credentialHash: Bytes<32>;
+witness credential(): Bytes<32>;
+
+circuit copy(value: Bytes<32>): Bytes<32> {
+  return slice<32>(value, 0);
+}
+
+export circuit reveal(): Bytes<32> {
+  const secret = credential();
+  const digest = persistentHash<Bytes<32>>(secret);
+  assert(digest == credentialHash, "credential");
+  return disclose(copy(digest));
+}

@@ -1,0 +1,23 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+struct Pair { first: Field; second: Field; }
+export ledger pair: Pair;
+export ledger count: Counter;
+export ledger table: Map<Field, Field>;
+circuit put(value: Field, key: Field, amount: Uint<16>): Field {
+  pair = Pair { first: disclose(value), second: disclose(key) };
+  table.insert(disclose(key), disclose(value));
+  count.increment(disclose(amount));
+  return value;
+}
+circuit outer(value: Field, key: Field, amount: Uint<16>): Field {
+  return put(value, key, amount);
+}
+export circuit entry(value: Field, key: Field, amount: Uint<16>): Field {
+  pair = Pair { first: 0 as Field, second: 0 as Field };
+  put(value, key, amount);
+  pair = Pair { ...pair, second: 9 as Field };
+  outer(value, key, amount);
+  outer(value, key, amount);
+  return pair.second;
+}

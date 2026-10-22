@@ -1,0 +1,10 @@
+pragma language_version >= 0.26.0;
+module RoleAdminAliases {
+  import CompactStandardLibrary;
+  export ledger roleAdmin: Map<Bytes<32>, Bytes<32>>;
+  export circuit configure(role: Bytes<32>, admin: Bytes<32>): [] { roleAdmin.insert(role, admin); }
+  export circuit adminFor(role: Bytes<32>): Bytes<32> {
+    if (roleAdmin.member(role)) return roleAdmin.lookup(role);
+    return default<Bytes<32>>;
+  }
+}

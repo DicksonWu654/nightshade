@@ -1,0 +1,5 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary prefix L_;
+export circuit pay(coin: L_ShieldedCoinInfo, recipient: L_Either<L_ZswapCoinPublicKey, L_ContractAddress>): L_ShieldedSendResult {
+  return L_sendImmediateShielded(disclose(coin), disclose(recipient), 1);
+}

@@ -1,0 +1,114 @@
+// Synthetic source-pattern regression.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+
+export ledger approvals: Map<Uint<128>, Bytes<32>>;
+export ledger tokenExists: Set<Uint<128>>;
+export ledger auditMap: Map<Uint<128>, Bytes<32>>;
+export ledger auditSet: Set<Uint<128>>;
+
+// Mock boundary: the library-internal entry is directly exported.
+export circuit _approve(id: Uint<128>, spender: Bytes<32>, auth: Bytes<32>, choice00: Boolean, choice01: Boolean, choice02: Boolean, choice03: Boolean, choice04: Boolean, choice05: Boolean, choice06: Boolean, choice07: Boolean, choice08: Boolean, choice09: Boolean, choice10: Boolean, choice11: Boolean, choice12: Boolean): [] {
+  if (disclose(auth) != default<Bytes<32>>) {
+    assert(tokenExists.member(disclose(id)), "token exists");
+    assert(disclose(auth) == disclose(spender), "authorized");
+  }
+  approvals.insert(disclose(id), disclose(spender));
+  if (disclose(choice00)) {
+    auditMap.insert(0, default<Bytes<32>>);
+    auditSet.insert(0);
+  } else {
+    auditMap.insert(1, disclose(spender));
+    auditSet.insert(1);
+  }
+  if (disclose(choice01)) {
+    auditMap.insert(2, default<Bytes<32>>);
+    auditSet.insert(2);
+  } else {
+    auditMap.insert(3, disclose(spender));
+    auditSet.insert(3);
+  }
+  if (disclose(choice02)) {
+    auditMap.insert(4, default<Bytes<32>>);
+    auditSet.insert(4);
+  } else {
+    auditMap.insert(5, disclose(spender));
+    auditSet.insert(5);
+  }
+  if (disclose(choice03)) {
+    auditMap.insert(6, default<Bytes<32>>);
+    auditSet.insert(6);
+  } else {
+    auditMap.insert(7, disclose(spender));
+    auditSet.insert(7);
+  }
+  if (disclose(choice04)) {
+    auditMap.insert(8, default<Bytes<32>>);
+    auditSet.insert(8);
+  } else {
+    auditMap.insert(9, disclose(spender));
+    auditSet.insert(9);
+  }
+  if (disclose(choice05)) {
+    auditMap.insert(10, default<Bytes<32>>);
+    auditSet.insert(10);
+  } else {
+    auditMap.insert(11, disclose(spender));
+    auditSet.insert(11);
+  }
+  if (disclose(choice06)) {
+    auditMap.insert(12, default<Bytes<32>>);
+    auditSet.insert(12);
+  } else {
+    auditMap.insert(13, disclose(spender));
+    auditSet.insert(13);
+  }
+  if (disclose(choice07)) {
+    auditMap.insert(14, default<Bytes<32>>);
+    auditSet.insert(14);
+  } else {
+    auditMap.insert(15, disclose(spender));
+    auditSet.insert(15);
+  }
+  if (disclose(choice08)) {
+    auditMap.insert(16, default<Bytes<32>>);
+    auditSet.insert(16);
+  } else {
+    auditMap.insert(17, disclose(spender));
+    auditSet.insert(17);
+  }
+  if (disclose(choice09)) {
+    auditMap.insert(18, default<Bytes<32>>);
+    auditSet.insert(18);
+  } else {
+    auditMap.insert(19, disclose(spender));
+    auditSet.insert(19);
+  }
+  if (disclose(choice10)) {
+    auditMap.insert(20, default<Bytes<32>>);
+    auditSet.insert(20);
+  } else {
+    auditMap.insert(21, disclose(spender));
+    auditSet.insert(21);
+  }
+  if (disclose(choice11)) {
+    auditMap.insert(22, default<Bytes<32>>);
+    auditSet.insert(22);
+  } else {
+    auditMap.insert(23, disclose(spender));
+    auditSet.insert(23);
+  }
+  if (disclose(choice12)) {
+    auditMap.insert(24, default<Bytes<32>>);
+    auditSet.insert(24);
+  } else {
+    auditMap.insert(25, disclose(spender));
+    auditSet.insert(25);
+  }
+}
+
+// Downstream consumer relies on approvals being restricted to existing tokens.
+export circuit consumeApproval(id: Uint<128>): [] {
+  assert(tokenExists.member(disclose(id)), "token exists");
+  assert(approvals.member(disclose(id)), "approval exists");
+}

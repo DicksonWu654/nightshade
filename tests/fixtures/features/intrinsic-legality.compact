@@ -1,0 +1,11 @@
+pragma language_version >= 0.26.0;
+import { persistentHash, transientHash } from CompactStandardLibrary;
+
+struct Box<T> {
+  value: Field;
+}
+
+export circuit entry(input: Opaque<"string">): Bytes<32> {
+  const value = transientHash<Opaque<"string">>(input);
+  return disclose(persistentHash<Box<Opaque<"string">>>(Box<Opaque<"string">> { value: value }));
+}

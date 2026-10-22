@@ -1,0 +1,3 @@
+// Exported state writer has no in-circuit caller authorization.
+export ledger anchor: Bytes<32>;
+export circuit writeAnchor(next: Bytes<32>): [] { anchor = disclose(next); }

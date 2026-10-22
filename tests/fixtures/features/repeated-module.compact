@@ -1,0 +1,12 @@
+pragma language_version >= 0.26.0;
+module Store {
+  export ledger value: Field;
+  export circuit put(input: Field): [] { value = disclose(input); }
+}
+import Store prefix First_;
+import Store prefix Second_;
+export circuit entry(value: Field): Field {
+  First_put(0 as Field);
+  Second_put(value);
+  return First_value;
+}

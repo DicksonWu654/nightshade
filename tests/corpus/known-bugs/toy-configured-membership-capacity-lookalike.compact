@@ -1,0 +1,9 @@
+pragma language_version >= 0.20;
+
+import CompactStandardLibrary;
+export ledger configured: Set<Bytes<32>>;
+constructor(seed: Bytes<32>) { configured.insert(disclose(seed)); }
+export circuit guarded(a: Bytes<32>): Boolean {
+  assert(configured.member(disclose(a)), "one configured member");
+  return true;
+}

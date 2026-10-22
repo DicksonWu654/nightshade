@@ -1,0 +1,12 @@
+// Owned intentional-lookalike policy: this tree is an append-only grant-event log; duplicate role/account leaves are desired history.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger roleTree: MerkleTree<2, Field>;
+circuit roleAccountCommitment(role: Bytes<32>, account: Bytes<32>): Field {
+ return persistentHash<Vector<2, Bytes<32>>>([disclose(role), disclose(account)]) as Field;
+}
+export circuit grantRole(role: Bytes<32>, account: Bytes<32>): [] {
+ const commitment = roleAccountCommitment(role, account);
+ // Duplicate writes are intentional under the append-only event-log policy.
+ roleTree.insert(disclose(commitment));
+}

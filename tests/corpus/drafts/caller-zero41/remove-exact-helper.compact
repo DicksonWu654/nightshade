@@ -1,0 +1,14 @@
+// Exact-key removal through a helper after a caller-domain insert.
+pragma language_version >= 0.20;
+import CompactStandardLibrary;
+
+export ledger supply: Map<Bytes<32>, Uint<64>>;
+
+circuit removeSupply(domain: Bytes<32>): [] {
+  supply.remove(disclose(domain));
+}
+
+export circuit creditAndRemove(domain: Bytes<32>, amount: Uint<64>): [] {
+  supply.insert(disclose(domain), disclose(amount));
+  removeSupply(domain);
+}

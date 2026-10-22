@@ -1,0 +1,18 @@
+// The matching membership check is invalidated before the write. This path
+// must not count as a live token-existence guard for the approval mutation.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+
+export ledger approvals: Map<Uint<128>, Bytes<32>>;
+export ledger tokenExists: Set<Uint<128>>;
+
+export circuit setApproval(id: Uint<128>, spender: Bytes<32>): [] {
+  assert(tokenExists.member(disclose(id)), "token exists");
+  tokenExists.remove(disclose(id));
+  approvals.insert(disclose(id), disclose(spender));
+}
+
+export circuit consume(id: Uint<128>): [] {
+  assert(tokenExists.member(disclose(id)), "token exists");
+  assert(approvals.member(disclose(id)), "approval exists");
+}

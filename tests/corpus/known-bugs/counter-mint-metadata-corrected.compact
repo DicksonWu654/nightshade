@@ -1,0 +1,15 @@
+pragma language_version >= 0.20;
+
+import CompactStandardLibrary;
+
+export ledger round: Counter;
+
+circuit _mintReward(amount: Uint<64>, nonce: Bytes<32>, recipient: Either<ZswapCoinPublicKey, ContractAddress>): ShieldedCoinInfo {
+  return mintShieldedToken(pad(32, "owned:reward"), amount, nonce, recipient);
+}
+
+export circuit issueReward(amount: Uint<64>, nonce: Bytes<32>, recipient: Either<ZswapCoinPublicKey, ContractAddress>): ShieldedCoinInfo {
+  const minted = _mintReward(disclose(amount), disclose(nonce), disclose(recipient));
+  round.increment(1);
+  return minted;
+}

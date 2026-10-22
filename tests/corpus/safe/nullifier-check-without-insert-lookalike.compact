@@ -1,0 +1,9 @@
+import CompactStandardLibrary;
+export ledger accepted: Field;
+witness token(): Field;
+circuit member(id: Field): Boolean { return id == (0 as Field); }
+export circuit accept(): [] {
+  const id = token();
+  assert(!member(id), "nonzero");
+  accepted = disclose(id);
+}

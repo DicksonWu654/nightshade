@@ -1,0 +1,21 @@
+// Owned synthetic case for resettable-list-nonce-case-18; not an extracted project source.
+pragma language_version >= 0.20;
+
+import CompactStandardLibrary;
+
+// One recipient's ledger memo list, keyed by the owning contract instance.
+export ledger recipientMemos: List<Bytes<32>>;
+
+export circuit credit(
+  recipient: Either<ZswapCoinPublicKey, ContractAddress>,
+  amount: Uint<64>
+): [] {
+  const to = disclose(recipient);
+  const nonce = evolveNonce(recipientMemos.length() as Uint<64>, pad(32, "owned-credit-nonce"));
+  mintShieldedToken(pad(32, "owned-credit"), disclose(amount), nonce, to);
+  recipientMemos.pushFront(nonce);
+}
+
+export circuit prune(): [] {
+  recipientMemos.resetToDefault();
+}

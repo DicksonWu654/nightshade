@@ -1,0 +1,8 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger table: Map<Field, Map<Field, Field>>;
+export circuit entry(value: Field): Field {
+  table.insert(1 as Field, default<Map<Field, Field>>);
+  table.lookup(1 as Field).insert(2 as Field, disclose(value));
+  return table.lookup(1 as Field).lookup(2 as Field);
+}

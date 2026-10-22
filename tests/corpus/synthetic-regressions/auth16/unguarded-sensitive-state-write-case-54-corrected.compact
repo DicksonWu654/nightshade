@@ -1,0 +1,7 @@
+import CompactStandardLibrary;
+// Explicit source policy: only holder of the secret for the stored owner may write.
+export ledger anchor: Bytes<32>;
+export ledger owner: Bytes<32>;
+witness localSecretKey(): Bytes<32>;
+circuit ownerId(sk: Bytes<32>): Bytes<32> { return persistentHash<Bytes<32>>(sk); }
+export circuit writeAnchor(next: Bytes<32>): [] { assert(ownerId(localSecretKey()) == owner, "unauthorized"); anchor = disclose(next); }

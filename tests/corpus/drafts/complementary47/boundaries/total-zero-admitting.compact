@@ -1,0 +1,8 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export circuit noPositiveTotal(color: Bytes<32>, recipient: Either<ContractAddress, UserAddress>, total: Uint<128>, part: Uint<128>): [] {
+  assert(disclose(part) <= disclose(total), "part within total");
+  const remainder = total - part;
+  sendUnshielded(disclose(color), disclose(part), disclose(recipient));
+  sendUnshielded(disclose(color), disclose(remainder), disclose(recipient));
+}

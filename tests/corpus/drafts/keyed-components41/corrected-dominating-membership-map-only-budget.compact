@@ -1,0 +1,86 @@
+// Synthetic source-pattern regression.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+
+export ledger approvals: Map<Uint<128>, Bytes<32>>;
+export ledger tokenExists: Set<Uint<128>>;
+export ledger auditMap: Map<Uint<128>, Bytes<32>>;
+export ledger auditSet: Set<Uint<128>>; // Deliberately untouched: incomplete unrelated component.
+
+export circuit _approve(id: Uint<128>, spender: Bytes<32>, auth: Bytes<32>, choice00: Boolean, choice01: Boolean, choice02: Boolean, choice03: Boolean, choice04: Boolean, choice05: Boolean, choice06: Boolean, choice07: Boolean, choice08: Boolean, choice09: Boolean, choice10: Boolean, choice11: Boolean, choice12: Boolean): [] {
+  assert(tokenExists.member(disclose(id)), "token exists");
+  if (disclose(auth) != default<Bytes<32>>) {
+    assert(disclose(auth) == disclose(spender), "authorized");
+  }
+  approvals.insert(disclose(id), disclose(spender));
+  if (disclose(choice00)) {
+    auditMap.insert(0, default<Bytes<32>>);
+  } else {
+    auditMap.insert(1, disclose(spender));
+  }
+  if (disclose(choice01)) {
+    auditMap.insert(2, default<Bytes<32>>);
+  } else {
+    auditMap.insert(3, disclose(spender));
+  }
+  if (disclose(choice02)) {
+    auditMap.insert(4, default<Bytes<32>>);
+  } else {
+    auditMap.insert(5, disclose(spender));
+  }
+  if (disclose(choice03)) {
+    auditMap.insert(6, default<Bytes<32>>);
+  } else {
+    auditMap.insert(7, disclose(spender));
+  }
+  if (disclose(choice04)) {
+    auditMap.insert(8, default<Bytes<32>>);
+  } else {
+    auditMap.insert(9, disclose(spender));
+  }
+  if (disclose(choice05)) {
+    auditMap.insert(10, default<Bytes<32>>);
+  } else {
+    auditMap.insert(11, disclose(spender));
+  }
+  if (disclose(choice06)) {
+    auditMap.insert(12, default<Bytes<32>>);
+  } else {
+    auditMap.insert(13, disclose(spender));
+  }
+  if (disclose(choice07)) {
+    auditMap.insert(14, default<Bytes<32>>);
+  } else {
+    auditMap.insert(15, disclose(spender));
+  }
+  if (disclose(choice08)) {
+    auditMap.insert(16, default<Bytes<32>>);
+  } else {
+    auditMap.insert(17, disclose(spender));
+  }
+  if (disclose(choice09)) {
+    auditMap.insert(18, default<Bytes<32>>);
+  } else {
+    auditMap.insert(19, disclose(spender));
+  }
+  if (disclose(choice10)) {
+    auditMap.insert(20, default<Bytes<32>>);
+  } else {
+    auditMap.insert(21, disclose(spender));
+  }
+  if (disclose(choice11)) {
+    auditMap.insert(22, default<Bytes<32>>);
+  } else {
+    auditMap.insert(23, disclose(spender));
+  }
+  if (disclose(choice12)) {
+    auditMap.insert(24, default<Bytes<32>>);
+  } else {
+    auditMap.insert(25, disclose(spender));
+  }
+}
+
+export circuit consumeApproval(id: Uint<128>): [] {
+  assert(tokenExists.member(disclose(id)), "token exists");
+  assert(approvals.member(disclose(id)), "approval exists");
+}

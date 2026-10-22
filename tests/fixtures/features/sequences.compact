@@ -1,0 +1,17 @@
+pragma language_version >= 0.26.0;
+
+circuit select([value]: [Uint<8>], value: Uint<8>): Uint<8> {
+  return value;
+}
+
+circuit middle<#Size>(value: Bytes<3>): Bytes<Size> {
+  const offset = 1;
+  return slice<Size>(value, offset);
+}
+
+export circuit entry(secret: Bytes<3>): [Bytes<2>, Uint<8>, Uint<8>] {
+  const bytes = [...secret];
+  const [,selected] = bytes;
+  const [flag,publicValue] = slice<2>([true,7],0);
+  return [middle<2>(secret),select([selected],0),publicValue];
+}

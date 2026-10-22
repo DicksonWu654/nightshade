@@ -1,0 +1,5 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger wrappedSupply: Counter;
+export circuit mint(amount: Uint<64>): [] { wrappedSupply.increment(disclose(amount as Uint<16>)); }
+export circuit burn(amount: Uint<64>): [] { wrappedSupply.decrement(disclose(amount as Uint<16>)); }

@@ -1,0 +1,12 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+struct Ciphertext { c1: JubjubPoint; c2: JubjubPoint; }
+export ledger memo: Ciphertext;
+export circuit initialize(): [] {
+  const identity = ecMulGenerator(0 as JubjubScalar);
+  memo = disclose(Ciphertext { c1: identity, c2: identity });
+}
+export circuit clear(): [] {
+  const identity = ecMulGenerator(0 as JubjubScalar);
+  memo = disclose(Ciphertext { c1: identity, c2: identity });
+}

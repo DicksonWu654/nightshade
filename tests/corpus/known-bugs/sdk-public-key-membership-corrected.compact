@@ -1,0 +1,22 @@
+// Owned static seed adaptation; provenance and exact mutation: ../known-bugs.json.
+import CompactStandardLibrary;
+
+export ledger counter: Counter;
+export ledger reward: QualifiedShieldedCoinInfo;
+export ledger operatorRoles: Map<Bytes<32>, Map<Either<ZswapCoinPublicKey, ContractAddress>, Boolean>>;
+witness dummy(): [];
+witness operatorSecret(): Bytes<32>;
+constructor(operatorId: Bytes<32>) {
+  operatorRoles.insertDefault(default<Bytes<32>>);
+  operatorRoles.lookup(default<Bytes<32>>).insert(left<ZswapCoinPublicKey, ContractAddress>(ZswapCoinPublicKey { bytes: disclose(operatorId) }), true);
+}
+circuit allowed(account: Either<ZswapCoinPublicKey, ContractAddress>): Boolean {
+  return operatorRoles.member(default<Bytes<32>>) && operatorRoles.lookup(default<Bytes<32>>).member(disclose(account));
+}
+export circuit deposit(coin: ShieldedCoinInfo): [] {
+  assert(allowed(left<ZswapCoinPublicKey, ContractAddress>(ZswapCoinPublicKey { bytes: persistentHash<Bytes<32>>(operatorSecret()) })), "operator role");
+  receiveShielded(disclose(coin));
+  reward.writeCoin(disclose(coin), right<ZswapCoinPublicKey, ContractAddress>(kernel.self()));
+  counter.increment(1);
+  dummy();
+}

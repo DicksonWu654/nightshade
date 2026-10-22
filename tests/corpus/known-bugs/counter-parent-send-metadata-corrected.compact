@@ -1,0 +1,15 @@
+pragma language_version >= 0.20;
+
+import CompactStandardLibrary;
+
+export ledger round: Counter;
+
+circuit _deposit(coin: ShieldedCoinInfo, parent: ContractAddress): ShieldedSendResult {
+  return sendImmediateShielded(disclose(coin), right<ZswapCoinPublicKey, ContractAddress>(disclose(parent)), 1);
+}
+
+export circuit forwardToParent(coin: ShieldedCoinInfo, parent: ContractAddress): ShieldedSendResult {
+  const result = _deposit(coin, parent);
+  round.increment(1);
+  return result;
+}

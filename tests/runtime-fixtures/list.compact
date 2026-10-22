@@ -1,0 +1,21 @@
+pragma language_version 0.26.0;
+import CompactStandardLibrary;
+
+// Owned synthetic semantics fixture. These calls are evaluated locally only.
+export ledger items: List<Uint<8>>;
+
+export circuit push(value: Uint<8>): [] {
+  items.pushFront(disclose(value));
+}
+
+export circuit pop(): [] {
+  items.popFront();
+}
+
+export circuit reset(): [] {
+  items.resetToDefault();
+}
+
+export circuit inspect(): [Boolean, Uint<64>, Maybe<Uint<8>>] {
+  return [items.isEmpty(), items.length(), items.head()];
+}

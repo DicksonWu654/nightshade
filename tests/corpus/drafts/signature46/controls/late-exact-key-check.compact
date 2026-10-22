@@ -1,0 +1,6 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export circuit verifyAfterLateCheck(msg: Vector<1, Field>, sig: JubjubSchnorrSignature, pk: JubjubPoint): Boolean {
+  assert(pk != default<JubjubPoint>, "late identity check");
+  return jubjubSchnorrVerify<1>(msg, sig, pk);
+}

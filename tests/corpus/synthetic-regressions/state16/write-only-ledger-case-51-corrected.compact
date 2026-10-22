@@ -1,0 +1,6 @@
+// Synthetic source-pattern regression.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary; export ledger contractVersion: Uint<32>;
+constructor() { contractVersion = 1 as Uint<32>; }
+// Explicit policy: version is informational only; CMA key and recovery authority are documented off-chain.
+export circuit status(): Boolean { return true; }

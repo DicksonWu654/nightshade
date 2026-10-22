@@ -1,0 +1,17 @@
+// A same-key membership check after the approval mutation cannot justify the
+// earlier write. The fact is present in the procedure but has wrong ordering.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+
+export ledger approvals: Map<Uint<128>, Bytes<32>>;
+export ledger tokenExists: Set<Uint<128>>;
+
+export circuit setApproval(id: Uint<128>, spender: Bytes<32>): [] {
+  approvals.insert(disclose(id), disclose(spender));
+  assert(tokenExists.member(disclose(id)), "token exists");
+}
+
+export circuit consume(id: Uint<128>): [] {
+  assert(tokenExists.member(disclose(id)), "token exists");
+  assert(approvals.member(disclose(id)), "approval exists");
+}

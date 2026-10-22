@@ -1,0 +1,8 @@
+// Owned static source-shape fixture; review expectation only.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger balances: Map<Bytes<32>, Uint<64>>;
+export circuit normalize(key: Bytes<32>): [] {
+  const prior = balances.lookup(disclose(key));
+  balances.insert(disclose(key), disclose((prior - 0 as Uint<64>) as Uint<64>));
+}

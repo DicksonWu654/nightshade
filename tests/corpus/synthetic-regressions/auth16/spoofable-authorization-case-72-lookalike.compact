@@ -1,0 +1,5 @@
+import CompactStandardLibrary;
+// Public key is used for routing/preview only; it does not gate sensitive state.
+export ledger value: Field;
+export circuit previewCaller(): Bytes<32> { return ownPublicKey().bytes; }
+export circuit publicWrite(next: Field): [] { value = disclose(next); }

@@ -1,0 +1,16 @@
+// SDK shielded-map fixture with an owned fixed-payment policy; see known-bugs.json.
+import CompactStandardLibrary;
+
+export ledger counter: Counter;
+export ledger reward: QualifiedShieldedCoinInfo;
+
+witness dummy(): [];
+
+export circuit deposit(coin: ShieldedCoinInfo): [] {
+  assert(coin.color == default<Bytes<32>>, "expected color");
+  assert(coin.value == (10 as Uint<128>), "expected amount");
+  receiveShielded(disclose(coin));
+  reward.writeCoin(disclose(coin), right<ZswapCoinPublicKey, ContractAddress>(kernel.self()));
+  counter.increment(1);
+  dummy();
+}

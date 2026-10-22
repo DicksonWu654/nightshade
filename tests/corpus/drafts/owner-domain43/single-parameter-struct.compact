@@ -1,0 +1,8 @@
+// One supplied value wrapped in a one-field struct is still one component.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+struct OwnerInput { owner: Bytes<32>; }
+export ledger ownerId: Bytes<32>;
+export circuit publish(ownerInput: OwnerInput): [] {
+  ownerId = disclose(persistentHash<OwnerInput>(ownerInput));
+}

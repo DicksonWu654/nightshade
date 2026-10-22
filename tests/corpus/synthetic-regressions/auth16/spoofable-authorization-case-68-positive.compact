@@ -1,0 +1,18 @@
+import CompactStandardLibrary;
+// Synthetic source-pattern regression.
+// The four *Example labels below are illustrative minimal state changes, not recovered loan economics.
+export ledger admin: ZswapCoinPublicKey;
+export ledger loanLimit: Uint<64>;
+export ledger interestRateBps: Uint<64>;
+export ledger paused: Boolean;
+export ledger blacklistedPayouts: Set<Bytes<32>>;
+constructor() { admin = disclose(ownPublicKey()); }
+export circuit transferAdmin(nextAdmin: ZswapCoinPublicKey): [] { assert(ownPublicKey() == admin, "admin"); admin = disclose(nextAdmin); }
+// Illustrative invented operation label 1 of 4; the owner did not supply this name.
+export circuit setLoanLimitExample(limit: Uint<64>): [] { assert(ownPublicKey() == admin, "admin"); loanLimit = disclose(limit); }
+// Illustrative invented operation label 2 of 4; the owner did not supply this name.
+export circuit setInterestRateExample(rateBps: Uint<64>): [] { assert(ownPublicKey() == admin, "admin"); interestRateBps = disclose(rateBps); }
+// Illustrative invented operation label 3 of 4; the owner did not supply this name.
+export circuit setPausedExample(nextPaused: Boolean): [] { assert(ownPublicKey() == admin, "admin"); paused = disclose(nextPaused); }
+// Illustrative invented operation label 4 of 4; the owner did not supply this name.
+export circuit blacklistPayoutExample(payoutKey: Bytes<32>): [] { assert(ownPublicKey() == admin, "admin"); blacklistedPayouts.insert(disclose(payoutKey)); }

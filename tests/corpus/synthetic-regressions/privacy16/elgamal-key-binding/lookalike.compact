@@ -1,0 +1,13 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+struct Ciphertext { ephemeral: JubjubPoint; masked: JubjubPoint; }
+export ledger registeredKey: JubjubPoint;
+export ledger lastCiphertext: Ciphertext;
+pure circuit encrypt(pk: JubjubPoint, plaintext: JubjubPoint, r: JubjubScalar): Ciphertext {
+  return Ciphertext { ephemeral: ecMulGenerator(r), masked: ecAdd(ecMul(pk, r), plaintext) };
+}
+export circuit register(key: JubjubPoint): [] { registeredKey = disclose(key); }
+export circuit update(encryptionKey: JubjubPoint, plaintext: JubjubPoint, r: JubjubScalar): [] {
+  // No separate helper key argument is accepted in this lookalike.
+  lastCiphertext = disclose(encrypt(encryptionKey, plaintext, r));
+}

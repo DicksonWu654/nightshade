@@ -1,0 +1,62 @@
+// This file is part of midnightntwrk/example-counter.
+// Copyright (C) Midnight Foundation
+// SPDX-License-Identifier: Apache-2.0
+// Licensed under the Apache License, Version 2.0 (the "License");
+// You may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+pragma language_version >= 0.20;
+
+import CompactStandardLibrary;
+
+// public state
+export ledger round: Counter;
+
+// transition function changing public state
+export circuit increment(): [] {
+  round.increment(1);
+}
+witness refundInputs(): [Uint<128>, Uint<128>, Uint<128>, Uint<128>];
+pure circuit verifyRefund(b: Uint<128>, p: Uint<128>, a: Uint<128>, q: Uint<128>): Boolean {
+  assert(a > 0, "positive allocation");
+  assert(b <= 17592186044415, "bond bound");
+  assert(q <= 17592186044415, "refund bound");
+  assert(p <= 1099511627775, "purchased bound");
+  assert(a <= 1099511627775, "allocation bound");
+  const b44 = b as Uint<44>;
+  const q44 = q as Uint<44>;
+  const p40 = p as Uint<40>;
+  const a40 = a as Uint<40>;
+  const qWide = q44 as Uint<84>;
+  const aWide = a40 as Uint<84>;
+  const bWide = b44 as Uint<84>;
+  const pWide = p40 as Uint<84>;
+  const qa = qWide * aWide;
+  const bp = bWide * pWide;
+  const q44Wide = q44 as Uint<45>;
+  const qPlusOne = q44Wide + 1;
+  const qPlusOneWide = qPlusOne as Uint<85>;
+  const aWide85 = a40 as Uint<85>;
+  const upper = qPlusOneWide * aWide85;
+  return (qa <= bp) && (bp < upper);
+}
+
+
+pure circuit separateFormalChecker(p: Uint<128>, a: Uint<128>): Boolean {
+  assert(p > 1 || a > 1, "not all-one formal pair");
+  return p > 1 || a > 1;
+}
+
+export circuit separatePureCheckerRejectsOne(dest: Either<ContractAddress, UserAddress>): [] {
+  assert(verifyRefund(1 as Uint<128>, 1 as Uint<128>, 1 as Uint<128>, 1 as Uint<128>), "base ratio accepts one");
+  assert(separateFormalChecker(1 as Uint<128>, 1 as Uint<128>), "separate checker rejects one");
+  sendUnshielded(pad(32, ""), 0 as Uint<128>, disclose(dest));
+}

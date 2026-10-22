@@ -1,0 +1,22 @@
+pragma language_version 0.26.0;
+import CompactStandardLibrary;
+
+// Owned synthetic Counter operations. Boundary qualification supplies only fixed
+// synthetic representation states; it makes no transaction-reachability claim.
+export ledger count: Counter;
+
+export circuit increment(amount: Uint<16>): [] {
+  count.increment(disclose(amount));
+}
+
+export circuit decrement(amount: Uint<16>): [] {
+  count.decrement(disclose(amount));
+}
+
+export circuit reset(): [] {
+  count.resetToDefault();
+}
+
+export circuit inspect(threshold: Uint<64>): [Uint<64>, Boolean] {
+  return [count.read(), count.lessThan(disclose(threshold))];
+}

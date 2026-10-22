@@ -1,0 +1,11 @@
+import CompactStandardLibrary;
+// Corrected authorization derives caller identity from a private secret witness.
+export ledger owner: Bytes<32>;
+export ledger value: Field;
+witness callerSecret(): Bytes<32>;
+circuit callerId(): Bytes<32> { return persistentHash<Vector<2, Bytes<32>>>([pad(32, "auth:"), callerSecret()]); }
+export ledger sender: Bytes<32>;
+export ledger receiver: Bytes<32>;
+export circuit deposit(): [] { sender = disclose(callerId()); }
+export circuit withdraw(): [] { assert(callerId() == receiver, "receiver"); value = value - value; }
+export circuit reclaim(): [] { assert(callerId() == sender, "sender"); value = value - value; }

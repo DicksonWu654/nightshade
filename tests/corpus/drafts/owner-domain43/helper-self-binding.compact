@@ -1,0 +1,14 @@
+// The canonical self value flows through a helper into the commitment preimage.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+struct OwnerCommitment { selfAddress: ContractAddress; salt: Bytes<32>; owner: Bytes<32>; }
+ledger commitment: Bytes<32>;
+ledger initialized: Boolean;
+circuit thisContract(): ContractAddress {
+  return kernel.self();
+}
+export circuit initialize(salt: Bytes<32>, ownerSecret: Bytes<32>): [] {
+  assert(!initialized, "already initialized");
+  commitment = disclose(persistentHash<OwnerCommitment>(OwnerCommitment { selfAddress: thisContract(), salt: salt, owner: ownerSecret }));
+  initialized = true;
+}

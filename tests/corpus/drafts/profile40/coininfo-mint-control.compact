@@ -1,0 +1,17 @@
+pragma language_version >= 0.18.0 && <= 0.18.0;
+import CompactStandardLibrary;
+
+export { CoinInfo };
+export ledger issued: Uint<64>;
+
+constructor() {
+  issued = 0;
+}
+
+export circuit acceptAndMint(coin: CoinInfo, amount: Uint<64>, nonce: Bytes<32>): [] {
+  receive(disclose(coin));
+  assert(amount > 0, "amount must be positive");
+  mintToken(pad(32, "profile40_demo"), disclose(amount), disclose(nonce),
+    left<ZswapCoinPublicKey, ContractAddress>(ownPublicKey()));
+  issued = (issued + disclose(amount)) as Uint<64>;
+}

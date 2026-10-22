@@ -1,0 +1,38 @@
+// Synthetic source-pattern regression.
+pragma language_version >= 0.20;
+
+import CompactStandardLibrary;
+
+module AccessModule {
+  export ledger authorizedIdentityHash: Bytes<32>;
+  witness authorizationSecret(): Bytes<32>;
+
+  export circuit identity(): Bytes<32> {
+    return persistentHash<Vector<2, Bytes<32>>>([pad(32, "auth:"), authorizationSecret()]);
+  }
+
+  export circuit requireAuthorization(): [] {
+    assert(identity() == authorizedIdentityHash, "authorized identity");
+  }
+}
+
+module AssetModule {
+  export ledger balances: Map<Bytes<32>, Uint<64>>;
+  export circuit identity(): Bytes<32> { return default<Bytes<32>>; }
+
+  export circuit credit(amount: Uint<64>): [] {
+    const beneficiary = default<Bytes<32>>;
+    const previous = balances.lookup(disclose(beneficiary));
+    balances.insert(disclose(beneficiary), disclose((previous + amount) as Uint<64>));
+  }
+}
+
+import AccessModule prefix Access_;
+import AssetModule prefix Asset_;
+
+export circuit authorizedCredit(amount: Uint<64>): [] {
+  Access_requireAuthorization();
+  // The preview is returned without controlling authorization or a mutation.
+  const previewedAssetIdentity = Asset_identity();
+  assert(previewedAssetIdentity == previewedAssetIdentity, "preview is informational");
+}

@@ -1,0 +1,14 @@
+// Synthetic source-pattern regression.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger roleTree: MerkleTree<2, Field>;
+export ledger insertedRoleAccounts: Set<Field>;
+circuit roleAccountCommitment(role: Bytes<32>, account: Bytes<32>): Field {
+ return persistentHash<Vector<2, Bytes<32>>>([disclose(role), disclose(account)]) as Field;
+}
+export circuit grantRole(role: Bytes<32>, account: Bytes<32>): [] {
+ const commitment = roleAccountCommitment(role, account);
+ assert(!insertedRoleAccounts.member(disclose(commitment)), "role already granted");
+ roleTree.insert(disclose(commitment));
+ insertedRoleAccounts.insert(disclose(commitment));
+}

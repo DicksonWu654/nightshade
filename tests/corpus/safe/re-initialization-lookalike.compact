@@ -1,0 +1,4 @@
+import CompactStandardLibrary;
+export ledger ready: Boolean;
+// Intentionally callable more than once, with no surviving second-call change.
+export circuit initialize(): [] { ready = true; }

@@ -1,0 +1,6 @@
+import "security/Pausable" prefix P_;
+export circuit entry(): [] {
+  P__pause();
+  P__unpause();
+}
+export circuit useful(): [] { P__pause(); }

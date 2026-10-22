@@ -1,0 +1,6 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger count: Counter;
+export circuit update(): [] {
+  for (const index of 0..4) { count += 1; }
+}

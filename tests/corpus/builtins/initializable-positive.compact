@@ -1,0 +1,6 @@
+import "security/Initializable" prefix I_;
+export circuit entry(): [] {
+  I_initialize();
+  I_initialize();
+}
+export circuit useful(): [] { I_initialize(); }

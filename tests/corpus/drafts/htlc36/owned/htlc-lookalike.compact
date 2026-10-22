@@ -1,0 +1,66 @@
+// Independently authored owned HTLC lifecycle analogue; compiler/source review only.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export { ZswapCoinPublicKey, ContractAddress, UserAddress, Either };
+
+export ledger amounts: Map<Bytes<32>, Uint<128>>;
+export ledger expiries: Map<Bytes<32>, Uint<64>>;
+export ledger colors: Map<Bytes<32>, Bytes<32>>;
+export ledger senderAuth: Map<Bytes<32>, Bytes<32>>;
+export ledger receiverAuth: Map<Bytes<32>, Bytes<32>>;
+export ledger senderPayout: Map<Bytes<32>, Either<ContractAddress, UserAddress>>;
+export ledger receiverPayout: Map<Bytes<32>, Either<ContractAddress, UserAddress>>;
+export ledger revealedPreimages: Map<Bytes<32>, Bytes<32>>;
+
+witness senderSecret(): Bytes<32>;
+witness receiverSecret(): Bytes<32>;
+
+circuit senderCredential(secretValue: Bytes<32>): Bytes<32> {
+  return persistentHash<Vector<2, Bytes<32>>>([pad(32, "HTLC sender credential v1"), secretValue]) as Bytes<32>;
+}
+circuit receiverCredential(secretValue: Bytes<32>): Bytes<32> {
+  return persistentHash<Vector<2, Bytes<32>>>([pad(32, "HTLC receiver credential v1"), secretValue]) as Bytes<32>;
+}
+
+export circuit routingPreview(): Bytes<32> { return ownPublicKey().bytes; }
+
+export circuit deposit(
+  color: Bytes<32>, amount: Uint<128>, hash: Bytes<32>, expiry: Uint<64>,
+  designatedReceiver: Bytes<32>, receiverDestination: Either<ContractAddress, UserAddress>,
+  senderDestination: Either<ContractAddress, UserAddress>
+): [] {
+  assert(!amounts.member(disclose(hash)) || amounts.lookup(disclose(hash)) == 0 as Uint<128>, "slot unused or complete");
+  assert(blockTimeLt(disclose(expiry)), "expiry in future");
+  receiveUnshielded(disclose(color), disclose(amount));
+  amounts.insert(disclose(hash), disclose(amount));
+  expiries.insert(disclose(hash), disclose(expiry));
+  colors.insert(disclose(hash), disclose(color));
+  senderAuth.insert(disclose(hash), disclose(senderCredential(senderSecret())));
+  receiverAuth.insert(disclose(hash), disclose(designatedReceiver));
+  receiverPayout.insert(disclose(hash), disclose(receiverDestination));
+  senderPayout.insert(disclose(hash), disclose(senderDestination));
+}
+
+export circuit withdrawWithPreimage(preimage: Bytes<32>): [] {
+  const hash = persistentHash<Bytes<32>>(disclose(preimage));
+  assert(amounts.member(hash) && amounts.lookup(hash) > 0 as Uint<128>, "active amount");
+  assert(blockTimeLte(expiries.lookup(hash)), "within expiry");
+  assert(receiverCredential(receiverSecret()) == receiverAuth.lookup(hash), "receiver authorization");
+  const amount = amounts.lookup(hash);
+  const color = colors.lookup(hash);
+  const destination = receiverPayout.lookup(hash);
+  sendUnshielded(color, amount, destination);
+  revealedPreimages.insert(hash, disclose(preimage));
+  amounts.insert(hash, 0 as Uint<128>);
+}
+
+export circuit reclaimAfterExpiry(hash: Bytes<32>): [] {
+  assert(amounts.member(disclose(hash)) && amounts.lookup(disclose(hash)) > 0 as Uint<128>, "active amount");
+  assert(blockTimeGt(expiries.lookup(disclose(hash))), "after expiry");
+  assert(senderCredential(senderSecret()) == senderAuth.lookup(disclose(hash)), "sender authorization");
+  const amount = amounts.lookup(disclose(hash));
+  const color = colors.lookup(disclose(hash));
+  const destination = senderPayout.lookup(disclose(hash));
+  sendUnshielded(color, amount, destination);
+  amounts.insert(disclose(hash), 0 as Uint<128>);
+}

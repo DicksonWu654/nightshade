@@ -1,0 +1,22 @@
+pragma language_version 0.26.0;
+import CompactStandardLibrary;
+
+// Owned fixed fixture. The adapter supplies an immutable deterministic witness.
+export ledger count: Counter;
+witness next(): Uint<8>;
+
+export circuit accept(): Uint<8> {
+  const value = next();
+  count.increment(1);
+  return disclose(value);
+}
+
+export circuit reject(): [] {
+  const value = next();
+  count.increment(1);
+  assert(value == 255, "owned persistent rejection");
+}
+
+export circuit inspect(): Uint<64> {
+  return count.read();
+}

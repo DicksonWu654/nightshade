@@ -1,0 +1,6 @@
+pragma language_version >= 0.26.0;
+export ledger published: Field;
+witness publicReading(): Field;
+export circuit record(): [] {
+  published = disclose(publicReading());
+}

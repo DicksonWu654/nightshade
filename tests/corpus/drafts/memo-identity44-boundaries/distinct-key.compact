@@ -1,0 +1,23 @@
+// The authenticated wallet and the independently supplied mutation key are distinct parameters.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger memos: Map<Bytes<32>, List<Bytes<32>>>;
+export ledger allowedAdmins: Set<Bytes<32>>;
+witness walletSecret(): Bytes<32>;
+witness administrator(): Bytes<32>;
+export circuit initialize(wallet: Bytes<32>): [] {
+  memos.insertDefault(disclose(wallet));
+}
+export circuit addMemo(wallet: Bytes<32>, memo: Bytes<32>): [] {
+  memos.lookup(disclose(wallet)).pushFront(disclose(memo));
+}
+export circuit allowAdmin(admin: Bytes<32>): [] {
+  allowedAdmins.insert(disclose(admin));
+}
+export circuit adminClear(authenticatedWallet: Bytes<32>, targetWallet: Bytes<32>): [] {
+  const authenticatedId = persistentHash<Bytes<32>>(walletSecret());
+  assert(authenticatedId == disclose(authenticatedWallet), "wallet secret");
+  assert(allowedAdmins.member(disclose(administrator())), "registered administrator");
+  assert(!memos.lookup(disclose(targetWallet)).isEmpty(), "memo exists");
+  memos.lookup(disclose(targetWallet)).popFront();
+}

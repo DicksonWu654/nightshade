@@ -1,0 +1,41 @@
+// Owned static lifecycle fixture. No runtime, proof, or attack reproduction.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+
+export ledger roleTree: MerkleTree<2, Bytes<32>>;
+export ledger revoked: Set<Bytes<32>>;
+export ledger administrators: Set<Bytes<32>>;
+
+witness caller(): Bytes<32>;
+witness rolePath(commitment: Bytes<32>): MerkleTreePath<2, Bytes<32>>;
+
+constructor(administrator: Bytes<32>) {
+  administrators.insert(disclose(administrator));
+}
+
+circuit roleAccountCommitment(role: Bytes<32>, account: Bytes<32>): Bytes<32> {
+  return persistentHash<Vector<2, Bytes<32>>>([disclose(role), disclose(account)]);
+}
+
+circuit revocationKey(commitment: Bytes<32>): Bytes<32> {
+  return persistentHash<Bytes<32>>(disclose(commitment));
+}
+
+export circuit grantRole(role: Bytes<32>, account: Bytes<32>): [] {
+  assert(administrators.member(disclose(caller())), "administrator authorizes grant");
+  const commitment = roleAccountCommitment(role, account);
+  const nullifier = revocationKey(commitment);
+  assert(!revoked.member(disclose(nullifier)), "role/account not revoked");
+  roleTree.insert(disclose(commitment));
+}
+
+export circuit renounceRole(role: Bytes<32>, account: Bytes<32>): [] {
+  assert(disclose(account) == disclose(caller()), "caller owns account");
+  const commitment = roleAccountCommitment(role, account);
+  const nullifier = revocationKey(commitment);
+  const p = rolePath(disclose(commitment));
+  assert(p.leaf == disclose(commitment), "path leaf is queried role/account commitment");
+  const digest = merkleTreePathRoot<2, Bytes<32>>(p);
+  assert(roleTree.checkRoot(disclose(digest)), "role/account commitment is a granted member");
+  revoked.insert(disclose(nullifier));
+}

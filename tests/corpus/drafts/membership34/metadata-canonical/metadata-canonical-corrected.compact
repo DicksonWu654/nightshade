@@ -1,0 +1,35 @@
+// Owned metadata lifecycle canonical-provider composition candidate; no runtime or protocol claim.
+// Library revision: ec1331cd8195694c747d291e8fc8ab6d2914a976.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+import "token/NonFungibleToken" prefix NFT_;
+export ledger cachedURI: Map<Uint<128>, Opaque<"string">>;
+constructor(name: Opaque<"string">, symbol: Opaque<"string">) { NFT_initialize(name, symbol); }
+
+export circuit mint(id: Uint<128>, who: Bytes<32>, value: Opaque<"string">): [] {
+  const owner = left<Bytes<32>, ContractAddress>(disclose(who));
+  NFT__mint(owner, id);
+  cachedURI.insert(disclose(id), disclose(value));
+}
+export circuit burn(id: Uint<128>): [] {
+  NFT__burn(id);
+  cachedURI.remove(disclose(id));
+}
+export circuit remint(id: Uint<128>, who: Bytes<32>, value: Opaque<"string">): Opaque<"string"> {
+  const owner = left<Bytes<32>, ContractAddress>(disclose(who));
+  NFT__mint(owner, id);
+  cachedURI.insert(disclose(id), disclose(value));
+  return cachedURI.lookup(disclose(id));
+}
+// Current-incarnation metadata replaces the old cache value after same-id reissue.
+export circuit replaceToken(recipient: Bytes<32>, tokenId: Uint<128>, oldURI: Opaque<"string">, newURI: Opaque<"string">): Opaque<"string"> {
+  assert(recipient != default<Bytes<32>>, "recipient");
+  const owner = left<Bytes<32>, ContractAddress>(disclose(recipient));
+  NFT__mint(owner, tokenId);
+  cachedURI.insert(disclose(tokenId), disclose(oldURI));
+  NFT__burn(tokenId);
+  cachedURI.remove(disclose(tokenId));
+  NFT__mint(owner, tokenId);
+  cachedURI.insert(disclose(tokenId), disclose(newURI));
+  return cachedURI.lookup(disclose(tokenId));
+}

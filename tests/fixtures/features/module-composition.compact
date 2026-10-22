@@ -1,0 +1,27 @@
+pragma language_version >= 0.26.0;
+
+module Store<T> {
+  export ledger value: Field;
+  export circuit put(input: Field): [] { value = disclose(input); }
+}
+
+module First {
+  import Store<Uint<8>>;
+  export { value, put };
+}
+
+module Container {
+  export module Second {
+    import Store<Uint<0..256>>;
+    export { value, put };
+  }
+}
+
+import First prefix First_;
+import Container;
+import Second prefix Second_;
+
+export circuit entry(secret: Field): Field {
+  First_put(secret);
+  return Second_value;
+}

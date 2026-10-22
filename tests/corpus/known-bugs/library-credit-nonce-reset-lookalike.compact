@@ -1,0 +1,21 @@
+// Owned synthetic lookalike: memo count affects the amount, while the nonce is an input.
+pragma language_version >= 0.20;
+
+import CompactStandardLibrary;
+
+// One recipient's ledger memo list, keyed by the owning contract instance.
+export ledger recipientMemos: List<Bytes<32>>;
+
+export circuit credit(
+  recipient: Either<ZswapCoinPublicKey, ContractAddress>,
+  nonce: Bytes<32>
+): [] {
+  const to = disclose(recipient);
+  const amount = recipientMemos.length() as Uint<64>;
+  mintShieldedToken(pad(32, "owned-credit"), amount, disclose(nonce), to);
+  recipientMemos.pushFront(disclose(nonce));
+}
+
+export circuit prune(): [] {
+  recipientMemos.resetToDefault();
+}

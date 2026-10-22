@@ -1,0 +1,11 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger enrolled: JubjubPoint;
+export circuit replace(oldCandidate: JubjubPoint, next: JubjubPoint): [] {
+  assert(oldCandidate != default<JubjubPoint>, "old candidate nonidentity");
+  enrolled = disclose(next);
+}
+export circuit verifyCurrent(msg: Vector<1, Field>, sig: JubjubSchnorrSignature): Boolean {
+  const snapshot = enrolled;
+  return jubjubSchnorrVerify<1>(msg, sig, snapshot);
+}

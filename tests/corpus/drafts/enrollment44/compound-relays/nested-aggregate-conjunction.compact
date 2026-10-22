@@ -1,0 +1,16 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger enrolled: JubjubPoint;
+export ledger actions: Field;
+constructor(seed: JubjubPoint) {
+  assert(seed != default<JubjubPoint>, "nonidentity constructor seed");
+  enrolled = disclose(seed);
+}
+export circuit enroll(pk: JubjubPoint): [] {
+  enrolled = disclose(pk);
+}
+export circuit signedAction(msg: Vector<1, Field>, sig: JubjubSchnorrSignature, relay: Boolean): [] {
+  const verified = jubjubSchnorrVerify<1>(msg, sig, enrolled);
+  assert(([verified] == [relay]) && relay, "relation");
+  actions = actions + 1 as Field;
+}

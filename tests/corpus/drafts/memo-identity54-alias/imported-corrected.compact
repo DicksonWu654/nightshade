@@ -1,0 +1,5 @@
+pragma language_version >= 0.26.0;
+import { checkedAndBoundPop as clearAlias } from "Aliases";
+export circuit clear(wallet: Bytes<32>): [] {
+  clearAlias(disclose(wallet));
+}

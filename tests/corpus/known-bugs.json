@@ -1,0 +1,1709 @@
+{
+  "version": 1,
+  "scope": "Owned synthetic detector-specific positive, corrected and lookalike regressions. Coverage boundaries are explicit and do not characterize complete contracts.",
+  "cases": [
+    {
+      "id": "authorization-raw-native-witness",
+      "detector": "spoofable-authorization",
+      "file": "vulnerable/spoofable-authorization.compact",
+      "corrected": "safe/spoofable-authorization.compact",
+      "lookalike": "safe/spoofable-authorization-lookalike.compact",
+      "compiler": "0.34.0",
+      "expectedLines": [
+        7
+      ],
+      "test": "tests/spoofable-authorization.test.ts"
+    },
+    {
+      "id": "received-coin-tautological-amount",
+      "detector": "received-coin-not-validated",
+      "file": "vulnerable/received-coin-not-validated.compact",
+      "corrected": "safe/received-coin-not-validated.compact",
+      "lookalike": "safe/received-coin-not-validated-lookalike.compact",
+      "compiler": "0.34.0",
+      "expectedLines": [
+        12
+      ],
+      "test": "tests/received-coin.test.ts"
+    },
+    {
+      "id": "counter-unused-declaration",
+      "detector": "unused-declaration",
+      "file": "informational/unused-declaration-positive.compact",
+      "corrected": "informational/unused-declaration-corrected.compact",
+      "lookalike": "informational/unused-declaration-lookalike.compact",
+      "compiler": "0.34.0",
+      "expectedLines": [
+        24
+      ],
+      "test": "tests/informational.test.ts"
+    },
+    {
+      "id": "counter-dead-code",
+      "detector": "dead-code",
+      "file": "informational/dead-code-positive.compact",
+      "corrected": "informational/dead-code-corrected.compact",
+      "lookalike": "informational/dead-code-lookalike.compact",
+      "compiler": "0.34.0",
+      "expectedLines": [
+        25
+      ],
+      "test": "tests/informational.test.ts"
+    },
+    {
+      "id": "counter-shadowing",
+      "detector": "shadowing",
+      "file": "informational/shadowing-positive.compact",
+      "corrected": "informational/shadowing-corrected.compact",
+      "lookalike": "informational/shadowing-lookalike.compact",
+      "compiler": "0.34.0",
+      "expectedLines": [
+        28
+      ],
+      "test": "tests/informational.test.ts"
+    },
+    {
+      "id": "counter-unnecessary-disclose",
+      "detector": "unnecessary-disclose",
+      "file": "informational/unnecessary-disclose-positive.compact",
+      "corrected": "informational/unnecessary-disclose-corrected.compact",
+      "lookalike": "informational/unnecessary-disclose-lookalike.compact",
+      "compiler": "0.34.0",
+      "expectedLines": [
+        25
+      ],
+      "test": "tests/informational.test.ts"
+    },
+    {
+      "id": "counter-constant-condition",
+      "detector": "constant-condition",
+      "file": "informational/constant-condition-positive.compact",
+      "corrected": "informational/constant-condition-corrected.compact",
+      "lookalike": "informational/constant-condition-lookalike.compact",
+      "compiler": "0.34.0",
+      "expectedLines": [
+        25
+      ],
+      "test": "tests/informational.test.ts"
+    },
+    {
+      "id": "counter-always-true-assertion",
+      "detector": "always-true-assertion",
+      "file": "informational/always-true-assertion-positive.compact",
+      "corrected": "informational/always-true-assertion-corrected.compact",
+      "lookalike": "informational/always-true-assertion-lookalike.compact",
+      "compiler": "0.34.0",
+      "expectedLines": [
+        25
+      ],
+      "test": "tests/informational.test.ts"
+    },
+    {
+      "id": "counter-time-dependence",
+      "detector": "time-dependence",
+      "file": "informational/time-dependence-positive.compact",
+      "corrected": "informational/time-dependence-corrected.compact",
+      "lookalike": "informational/time-dependence-lookalike.compact",
+      "compiler": "0.34.0",
+      "expectedLines": [
+        25
+      ],
+      "test": "tests/informational.test.ts"
+    },
+    {
+      "id": "counter-circuit-cost",
+      "detector": "circuit-cost",
+      "file": "informational/circuit-cost-positive.compact",
+      "corrected": "informational/circuit-cost-corrected.compact",
+      "lookalike": "informational/circuit-cost-lookalike.compact",
+      "compiler": "0.34.0",
+      "expectedLines": [
+        24
+      ],
+      "test": "tests/informational.test.ts"
+    },
+    {
+      "id": "sdk-merkle-receipt",
+      "detector": "merkle-membership-not-enforced",
+      "file": "known-bugs/sdk-merkle-receipt-positive.compact",
+      "corrected": "known-bugs/sdk-merkle-receipt-corrected.compact",
+      "lookalike": "known-bugs/sdk-merkle-receipt-lookalike.compact",
+      "compiler": "0.34.0",
+      "expectedLines": [
+        14
+      ],
+      "test": "tests/known-bugs.test.ts"
+    },
+    {
+      "id": "sdk-nullifier-receipt",
+      "detector": "nullifier-check-without-insert",
+      "file": "known-bugs/sdk-nullifier-receipt-positive.compact",
+      "corrected": "known-bugs/sdk-nullifier-receipt-corrected.compact",
+      "lookalike": "known-bugs/sdk-nullifier-receipt-lookalike.compact",
+      "compiler": "0.34.0",
+      "expectedLines": [
+        11
+      ],
+      "test": "tests/known-bugs.test.ts"
+    },
+    {
+      "id": "sdk-public-key-authorization",
+      "detector": "spoofable-authorization",
+      "file": "known-bugs/sdk-public-key-authorization-positive.compact",
+      "corrected": "known-bugs/sdk-public-key-authorization-corrected.compact",
+      "lookalike": "known-bugs/sdk-public-key-authorization-lookalike.compact",
+      "compiler": "0.34.0",
+      "expectedLines": [
+        13
+      ],
+      "test": "tests/known-bugs.test.ts",
+      "expectedMetadata": {
+        "authorizationKind": "public-key-equality"
+      },
+      "expectedSeverity": "high"
+    },
+    {
+      "id": "sdk-public-key-membership",
+      "detector": "public-key-membership-authorization",
+      "file": "known-bugs/sdk-public-key-membership-positive.compact",
+      "corrected": "known-bugs/sdk-public-key-membership-corrected.compact",
+      "lookalike": "known-bugs/sdk-public-key-membership-lookalike.compact",
+      "compiler": "0.34.0",
+      "expectedLines": [
+        17
+      ],
+      "test": "tests/known-bugs.test.ts",
+      "expectedMetadata": {
+        "authorizationKind": "public-key-membership",
+        "soleGate": "unproven"
+      },
+      "expectedSeverity": "high"
+    },
+    {
+      "id": "sdk-witness-only-authorization",
+      "detector": "spoofable-authorization",
+      "file": "known-bugs/sdk-witness-only-authorization-positive.compact",
+      "corrected": "known-bugs/sdk-witness-only-authorization-corrected.compact",
+      "lookalike": "known-bugs/sdk-witness-only-authorization-lookalike.compact",
+      "compiler": "0.34.0",
+      "expectedLines": [
+        14
+      ],
+      "test": "tests/known-bugs.test.ts",
+      "expectedMetadata": {
+        "authorizationKind": "witness-only-authorization",
+        "soleGate": "unproven"
+      },
+      "expectedSeverity": "high"
+    },
+    {
+      "id": "sdk-predictable-commitment",
+      "detector": "predictable-commitment-randomness",
+      "file": "known-bugs/sdk-predictable-commitment-positive.compact",
+      "corrected": "known-bugs/sdk-predictable-commitment-corrected.compact",
+      "lookalike": "known-bugs/sdk-predictable-commitment-lookalike.compact",
+      "compiler": "0.34.0",
+      "expectedLines": [
+        13
+      ],
+      "test": "tests/known-bugs.test.ts"
+    },
+    {
+      "id": "sdk-unguarded-withdrawal",
+      "detector": "unprotected-value-transfer",
+      "file": "known-bugs/sdk-unguarded-withdrawal-positive.compact",
+      "corrected": "known-bugs/sdk-unguarded-withdrawal-corrected.compact",
+      "lookalike": "known-bugs/sdk-unguarded-withdrawal-lookalike.compact",
+      "compiler": "0.34.0",
+      "expectedLines": [
+        13
+      ],
+      "test": "tests/known-bugs.test.ts"
+    },
+    {
+      "id": "bboard-published-preimage",
+      "detector": "ledger-bound-preimage-publication",
+      "file": "known-bugs/bboard-published-preimage-positive.compact",
+      "corrected": "known-bugs/bboard-published-preimage-corrected.compact",
+      "lookalike": "known-bugs/bboard-published-preimage-lookalike.compact",
+      "compiler": "0.34.0",
+      "expectedLines": [
+        55
+      ],
+      "test": "tests/known-bugs.test.ts"
+    },
+    {
+      "id": "bboard-repeatable-initialize",
+      "detector": "re-initialization",
+      "file": "known-bugs/bboard-repeatable-initialize-positive.compact",
+      "corrected": "known-bugs/bboard-repeatable-initialize-corrected.compact",
+      "lookalike": "known-bugs/bboard-repeatable-initialize-lookalike.compact",
+      "compiler": "0.34.0",
+      "expectedLines": [
+        37
+      ],
+      "test": "tests/known-bugs.test.ts"
+    },
+    {
+      "id": "bboard-impossible-post",
+      "detector": "impossible-assertion",
+      "file": "known-bugs/bboard-impossible-post-positive.compact",
+      "corrected": "known-bugs/bboard-impossible-post-corrected.compact",
+      "lookalike": "known-bugs/bboard-impossible-post-lookalike.compact",
+      "compiler": "0.34.0",
+      "expectedLines": [
+        44
+      ],
+      "test": "tests/known-bugs.test.ts"
+    },
+    {
+      "id": "bboard-sibling-access",
+      "detector": "inconsistent-access-control",
+      "file": "known-bugs/bboard-sibling-access-positive.compact",
+      "corrected": "known-bugs/bboard-sibling-access-corrected.compact",
+      "lookalike": "known-bugs/bboard-sibling-access-lookalike.compact",
+      "compiler": "0.34.0",
+      "expectedLines": [
+        69
+      ],
+      "test": "tests/known-bugs.test.ts"
+    },
+    {
+      "id": "bboard-required-guard",
+      "detector": "unguarded-sensitive-state-write",
+      "file": "known-bugs/bboard-required-guard-positive.compact",
+      "corrected": "known-bugs/bboard-required-guard-corrected.compact",
+      "lookalike": "known-bugs/bboard-required-guard-lookalike.compact",
+      "compiler": "0.34.0",
+      "expectedLines": [
+        69
+      ],
+      "test": "tests/known-bugs.test.ts",
+      "policies": {
+        "authorization": [
+          {
+            "state": "adminNote",
+            "guard": "requireOwner"
+          }
+        ]
+      }
+    },
+    {
+      "id": "bboard-declared-secret",
+      "detector": "declared-secret-publication",
+      "file": "known-bugs/bboard-declared-secret-positive.compact",
+      "corrected": "known-bugs/bboard-declared-secret-corrected.compact",
+      "lookalike": "known-bugs/bboard-declared-secret-lookalike.compact",
+      "compiler": "0.34.0",
+      "expectedLines": [
+        47
+      ],
+      "test": "tests/known-bugs.test.ts",
+      "policies": {
+        "secrets": [
+          {
+            "witness": "localSecretKey",
+            "allowedForms": [
+              "hash"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "bboard-forbidden-transition",
+      "detector": "forbidden-state-transition",
+      "file": "known-bugs/bboard-forbidden-transition-positive.compact",
+      "corrected": "known-bugs/bboard-forbidden-transition-corrected.compact",
+      "lookalike": "known-bugs/bboard-forbidden-transition-lookalike.compact",
+      "compiler": "0.34.0",
+      "expectedLines": [
+        46
+      ],
+      "test": "tests/known-bugs.test.ts",
+      "policies": {
+        "transitions": [
+          {
+            "state": "state",
+            "from": "OCCUPIED",
+            "to": "OCCUPIED"
+          }
+        ]
+      }
+    },
+    {
+      "id": "counter-work-policy",
+      "detector": "circuit-work-budget",
+      "file": "known-bugs/counter-work-policy-positive.compact",
+      "corrected": "known-bugs/counter-work-policy-corrected.compact",
+      "lookalike": "known-bugs/counter-work-policy-lookalike.compact",
+      "compiler": "0.34.0",
+      "expectedLines": [
+        25
+      ],
+      "test": "tests/known-bugs.test.ts",
+      "policies": {
+        "workBudgets": [
+          {
+            "circuit": "increment",
+            "maxUnits": 20
+          }
+        ]
+      }
+    },
+    {
+      "id": "library-pausable-double-pause",
+      "detector": "openzeppelin-preconditions",
+      "file": "known-bugs/library-pausable-double-pause-positive.compact",
+      "corrected": "known-bugs/library-pausable-double-pause-corrected.compact",
+      "lookalike": "known-bugs/library-pausable-double-pause-lookalike.compact",
+      "compiler": "0.34.0",
+      "expectedLines": [
+        30
+      ],
+      "test": "tests/known-bugs.test.ts",
+      "policies": {
+        "builtins": [
+          "openzeppelin-pausable"
+        ]
+      },
+      "requiresOZ": true
+    },
+    {
+      "id": "real-counter-identity-signature",
+      "detector": "identity-signature-key",
+      "file": "known-bugs/counter-identity-signature-positive.compact",
+      "corrected": "known-bugs/counter-identity-signature-corrected.compact",
+      "lookalike": "known-bugs/counter-identity-signature-lookalike.compact",
+      "compiler": "0.34.0",
+      "expectedLines": [
+        29
+      ],
+      "test": "tests/known-bugs.test.ts",
+      "expectedSeverity": "medium"
+    },
+    {
+      "id": "real-counter-ignored-validation",
+      "detector": "ignored-validation-result",
+      "file": "known-bugs/counter-ignored-validation-positive.compact",
+      "corrected": "known-bugs/counter-ignored-validation-corrected.compact",
+      "lookalike": "known-bugs/counter-ignored-validation-lookalike.compact",
+      "compiler": "0.34.0",
+      "expectedLines": [
+        30
+      ],
+      "test": "tests/known-bugs.test.ts",
+      "expectedSeverity": "medium"
+    },
+    {
+      "id": "real-counter-either-payload",
+      "detector": "either-payload-mismatch",
+      "file": "known-bugs/counter-either-payload-positive.compact",
+      "corrected": "known-bugs/counter-either-payload-corrected.compact",
+      "lookalike": "known-bugs/counter-either-payload-lookalike.compact",
+      "compiler": "0.34.0",
+      "expectedLines": [
+        30
+      ],
+      "test": "tests/known-bugs.test.ts",
+      "expectedSeverity": "medium"
+    },
+    {
+      "id": "real-counter-small-domain-hash",
+      "detector": "low-entropy-hash-disclosure",
+      "file": "known-bugs/counter-small-domain-hash-positive.compact",
+      "corrected": "known-bugs/counter-small-domain-hash-corrected.compact",
+      "lookalike": "known-bugs/counter-small-domain-hash-lookalike.compact",
+      "compiler": "0.34.0",
+      "expectedLines": [
+        30
+      ],
+      "test": "tests/known-bugs.test.ts",
+      "expectedMetadata": {
+        "domainEvidence": "declared-type",
+        "evidence": "direct-single-private-source-digest"
+      }
+    },
+    {
+      "id": "real-counter-field-arithmetic",
+      "detector": "field-arithmetic-wraparound",
+      "file": "known-bugs/counter-field-arithmetic-positive.compact",
+      "corrected": "known-bugs/counter-field-arithmetic-corrected.compact",
+      "lookalike": "known-bugs/counter-field-arithmetic-lookalike.compact",
+      "compiler": "0.34.0",
+      "expectedLines": [
+        31
+      ],
+      "test": "tests/known-bugs.test.ts",
+      "expectedSeverity": "medium",
+      "expectedMetadata": {
+        "evidence": "direct-uint-origin-field-operation"
+      }
+    },
+    {
+      "id": "sdk-default-recipient",
+      "detector": "default-recipient-or-owner",
+      "file": "known-bugs/sdk-default-recipient-positive.compact",
+      "corrected": "known-bugs/sdk-default-recipient-corrected.compact",
+      "lookalike": "known-bugs/sdk-default-recipient-lookalike.compact",
+      "compiler": "0.34.0",
+      "expectedLines": [
+        13
+      ],
+      "test": "tests/known-bugs.test.ts",
+      "expectedSeverity": "medium"
+    },
+    {
+      "id": "library-default-owner",
+      "detector": "default-recipient-or-owner",
+      "file": "known-bugs/library-default-owner-positive.compact",
+      "corrected": "known-bugs/library-default-owner-corrected.compact",
+      "lookalike": "known-bugs/library-default-owner-lookalike.compact",
+      "compiler": "0.34.0",
+      "expectedLines": [
+        59
+      ],
+      "test": "tests/known-bugs.test.ts",
+      "expectedSeverity": "medium",
+      "requiresOZ": true
+    },
+    {
+      "id": "sdk-duplicate-shielded-mint",
+      "detector": "duplicate-shielded-mint",
+      "file": "known-bugs/sdk-duplicate-mint-positive.compact",
+      "corrected": "known-bugs/sdk-duplicate-mint-corrected.compact",
+      "lookalike": "known-bugs/sdk-duplicate-mint-lookalike.compact",
+      "compiler": "0.34.0",
+      "expectedLines": [
+        19
+      ],
+      "test": "tests/known-bugs.test.ts",
+      "expectedSeverity": "medium"
+    },
+    {
+      "id": "sdk-unbounded-mint",
+      "detector": "unbounded-mint",
+      "file": "known-bugs/sdk-mint-limit-positive.compact",
+      "corrected": "known-bugs/sdk-mint-limit-corrected.compact",
+      "lookalike": "known-bugs/sdk-mint-limit-lookalike.compact",
+      "compiler": "0.34.0",
+      "expectedLines": [
+        18
+      ],
+      "test": "tests/known-bugs.test.ts",
+      "expectedSeverity": "medium"
+    },
+    {
+      "id": "sdk-unchecked-witness-state",
+      "detector": "unconstrained-witness-to-state",
+      "file": "known-bugs/sdk-witness-state-positive.compact",
+      "corrected": "known-bugs/sdk-witness-state-corrected.compact",
+      "lookalike": "known-bugs/sdk-witness-state-lookalike.compact",
+      "compiler": "0.34.0",
+      "expectedLines": [
+        19
+      ],
+      "test": "tests/known-bugs.test.ts",
+      "expectedSeverity": "medium"
+    },
+    {
+      "id": "real-counter-forwarded-validation",
+      "detector": "ignored-validation-result",
+      "file": "known-bugs/counter-forwarded-validation-positive.compact",
+      "corrected": "known-bugs/counter-forwarded-validation-corrected.compact",
+      "lookalike": "known-bugs/counter-forwarded-validation-lookalike.compact",
+      "compiler": "0.34.0",
+      "expectedLines": [
+        32
+      ],
+      "test": "tests/known-bugs.test.ts",
+      "expectedSeverity": "medium",
+      "expectedMetadata": {
+        "discardedBy": "expression-statement"
+      }
+    },
+    {
+      "id": "real-counter-aliased-validation",
+      "detector": "ignored-validation-result",
+      "file": "known-bugs/counter-aliased-validation-positive.compact",
+      "corrected": "known-bugs/counter-aliased-validation-corrected.compact",
+      "lookalike": "known-bugs/counter-aliased-validation-lookalike.compact",
+      "compiler": "0.34.0",
+      "expectedLines": [
+        32
+      ],
+      "test": "tests/known-bugs.test.ts",
+      "expectedSeverity": "medium",
+      "expectedMetadata": {
+        "discardedBy": "unused-alias-chain"
+      }
+    },
+    {
+      "id": "real-library-role-bootstrap",
+      "detector": "missing-role-bootstrap",
+      "file": "known-bugs/library-role-bootstrap-positive.compact",
+      "corrected": "known-bugs/library-role-bootstrap-corrected.compact",
+      "lookalike": "known-bugs/library-role-bootstrap-lookalike.compact",
+      "compiler": "0.34.0",
+      "expectedLines": [
+        20
+      ],
+      "test": "tests/known-bugs.test.ts",
+      "expectedSeverity": "low",
+      "requiresOZ": true
+    },
+    {
+      "id": "real-library-nft-auxiliary-cache-lifecycle",
+      "detector": "stale-nft-metadata",
+      "file": "known-bugs/library-nft-cache-lifecycle-positive.compact",
+      "corrected": "known-bugs/library-nft-cache-lifecycle-corrected.compact",
+      "lookalike": "known-bugs/library-nft-cache-lifecycle-lookalike.compact",
+      "compiler": "0.34.0",
+      "expectedLines": [
+        26
+      ],
+      "test": "tests/known-bugs.test.ts",
+      "expectedSeverity": "low",
+      "requiresOZ": true,
+      "policies": {
+        "currentNftMetadata": [
+          {
+            "owners": "_owners",
+            "metadata": "cachedURI",
+            "consumer": "replaceToken"
+          }
+        ]
+      },
+      "expectedMetadata": {
+        "evidence": "same-history-exact-payload-preservation"
+      }
+    },
+    {
+      "id": "real-library-contract-owner",
+      "detector": "unsupported-contract-owner",
+      "file": "known-bugs/library-contract-owner-positive.compact",
+      "corrected": "known-bugs/library-contract-owner-corrected.compact",
+      "lookalike": "known-bugs/library-contract-owner-lookalike.compact",
+      "compiler": "0.34.0",
+      "expectedLines": [
+        42
+      ],
+      "expectedSeverity": "medium",
+      "expectedMetadata": {
+        "activeArm": "right"
+      },
+      "test": "tests/known-bugs.test.ts",
+      "requiresOZ": true,
+      "policies": {
+        "callableOwnable": [
+          {
+            "owner": "_owner"
+          }
+        ]
+      }
+    },
+    {
+      "id": "library-public-encryption-secret",
+      "detector": "publicly-derivable-encryption-secret",
+      "file": "known-bugs/library-public-encryption-secret-positive.compact",
+      "corrected": "known-bugs/library-public-encryption-secret-corrected.compact",
+      "lookalike": "known-bugs/library-public-encryption-secret-lookalike.compact",
+      "compiler": "0.31.1",
+      "test": "tests/encryption-secret.test.ts",
+      "expectedLines": [
+        12
+      ],
+      "expectedSeverity": "high"
+    },
+    {
+      "id": "counter-list-reset",
+      "detector": "destructive-list-reset",
+      "file": "known-bugs/counter-list-reset-positive.compact",
+      "corrected": "known-bugs/counter-list-reset-corrected.compact",
+      "lookalike": "known-bugs/counter-list-reset-lookalike.compact",
+      "compiler": "0.34.0",
+      "test": "tests/list-reset.test.ts",
+      "expectedLines": [
+        31
+      ],
+      "expectedSeverity": "low"
+    },
+    {
+      "id": "counter-guard-tag",
+      "detector": "publicly-derived-guard-tag",
+      "file": "known-bugs/counter-guard-tag-positive.compact",
+      "corrected": "known-bugs/counter-guard-tag-corrected.compact",
+      "lookalike": "known-bugs/counter-guard-tag-lookalike.compact",
+      "compiler": "0.34.0",
+      "test": "tests/guard-tag.test.ts",
+      "expectedLines": [
+        32
+      ],
+      "expectedSeverity": "medium"
+    },
+    {
+      "id": "counter-zero-membership",
+      "detector": "zero-amount-initial-membership",
+      "file": "known-bugs/counter-zero-membership-positive.compact",
+      "corrected": "known-bugs/counter-zero-membership-corrected.compact",
+      "lookalike": "known-bugs/counter-zero-membership-lookalike.compact",
+      "compiler": "0.34.0",
+      "test": "tests/zero-membership.test.ts",
+      "expectedLines": [
+        31
+      ],
+      "expectedSeverity": "low",
+      "policies": {
+        "zeroAmountMembership": [
+          {
+            "circuit": "credit",
+            "amount": "amount",
+            "map": "balances"
+          }
+        ]
+      }
+    },
+    {
+      "id": "counter-transient-ledger",
+      "detector": "transient-digest-to-ledger",
+      "file": "known-bugs/counter-transient-ledger-positive.compact",
+      "corrected": "known-bugs/counter-transient-ledger-corrected.compact",
+      "lookalike": "known-bugs/counter-transient-ledger-lookalike.compact",
+      "compiler": "0.34.0",
+      "test": "tests/transient-ledger.test.ts",
+      "expectedLines": [
+        31
+      ],
+      "expectedSeverity": "medium"
+    },
+    {
+      "id": "counter-caller-equality",
+      "detector": "caller-supplied-ledger-equality",
+      "file": "known-bugs/counter-caller-equality-positive.compact",
+      "corrected": "known-bugs/counter-caller-equality-corrected.compact",
+      "lookalike": "known-bugs/counter-caller-equality-lookalike.compact",
+      "expectedLines": [
+        32
+      ],
+      "test": "tests/known-bugs.test.ts",
+      "compiler": "0.34.0",
+      "expectedMetadata": {
+        "evidence": "required-caller-input-ledger-equality",
+        "soleGate": "unproven"
+      },
+      "expectedSeverity": "medium"
+    },
+    {
+      "id": "counter-duplicated-branch-tail",
+      "detector": "duplicated-branch-tail",
+      "file": "known-bugs/counter-branch-tail-positive.compact",
+      "corrected": "known-bugs/counter-branch-tail-corrected.compact",
+      "lookalike": "known-bugs/counter-branch-tail-lookalike.compact",
+      "compiler": "0.34.0",
+      "expectedLines": [
+        30
+      ],
+      "test": "tests/known-bugs.test.ts",
+      "expectedSeverity": "info",
+      "expectedMetadata": {
+        "evidence": "resolved-source-duplicated-terminating-tail"
+      }
+    },
+    {
+      "id": "counter-shielded-coin-runtime-width",
+      "detector": "shielded-coin-runtime-width",
+      "file": "known-bugs/counter-runtime-width-positive.compact",
+      "corrected": "known-bugs/counter-runtime-width-corrected.compact",
+      "lookalike": "known-bugs/counter-runtime-width-lookalike.compact",
+      "compiler": "0.34.0",
+      "expectedLines": [
+        34
+      ],
+      "test": "tests/known-bugs.test.ts",
+      "expectedSeverity": "low",
+      "expectedMetadata": {
+        "evidence": "definite-native-output-constant-exceeds-reference-width",
+        "referenceRuntimeVersion": "0.19.0",
+        "runtimeApplicability": "expressly-assumed-reference-runtime",
+        "runtimeRejection": "not-proven"
+      }
+    },
+    {
+      "id": "counter-generic-witness-maybe-abi",
+      "detector": "generic-witness-maybe-abi",
+      "file": "known-bugs/counter-generic-witness-positive.compact",
+      "corrected": "known-bugs/counter-generic-witness-corrected.compact",
+      "lookalike": "known-bugs/counter-generic-witness-lookalike.compact",
+      "compiler": "0.34.0",
+      "expectedLines": [
+        29
+      ],
+      "test": "tests/known-bugs.test.ts",
+      "expectedSeverity": "low",
+      "expectedMetadata": {
+        "evidence": "shared-generic-witness-mandatory-maybe-payload-guards",
+        "hostFailure": "not-proven",
+        "deployedImpact": "not-proven"
+      }
+    },
+    {
+      "id": "counter-conditional-hash-range",
+      "detector": "conditional-hash-range",
+      "file": "known-bugs/counter-conditional-hash-positive.compact",
+      "corrected": "known-bugs/counter-conditional-hash-corrected.compact",
+      "lookalike": "known-bugs/counter-conditional-hash-lookalike.compact",
+      "compiler": "0.34.0",
+      "expectedLines": [
+        32
+      ],
+      "test": "tests/known-bugs.test.ts",
+      "expectedSeverity": "low",
+      "expectedMetadata": {
+        "evidence": "conditional-uint-subtraction-native-hash-range",
+        "proofFailure": "not-proven",
+        "emittedSlotRetention": "not-proven"
+      }
+    },
+    {
+      "id": "counter-current-root-policy",
+      "detector": "current-root-policy-mismatch",
+      "file": "known-bugs/counter-current-root-positive.compact",
+      "corrected": "known-bugs/counter-current-root-corrected.compact",
+      "lookalike": "known-bugs/counter-current-root-lookalike.compact",
+      "compiler": "0.34.0",
+      "expectedLines": [
+        32
+      ],
+      "test": "tests/known-bugs.test.ts",
+      "expectedSeverity": "medium",
+      "expectedMetadata": {
+        "freshnessPoint": "enforcement",
+        "reason": "query-not-current-only",
+        "staleRootAcceptance": "not-proven"
+      },
+      "policies": {
+        "currentRootMembership": [
+          {
+            "circuit": "record",
+            "ledger": "permitted"
+          }
+        ]
+      }
+    },
+    {
+      "id": "counter-write-only-ledger",
+      "detector": "write-only-ledger",
+      "file": "known-bugs/counter-write-only-ledger-positive.compact",
+      "corrected": "known-bugs/counter-write-only-ledger-corrected.compact",
+      "lookalike": "known-bugs/counter-write-only-ledger-lookalike.compact",
+      "compiler": "0.34.0",
+      "expectedLines": [
+        29
+      ],
+      "test": "tests/informational-seeds.test.ts",
+      "expectedSeverity": "info",
+      "expectedMetadata": {
+        "evidence": "resolved-ledger-writes-no-source-reads",
+        "offchainReads": "not-analyzed",
+        "uselessStorage": "not-claimed"
+      }
+    },
+    {
+      "id": "counter-checkpoint-atomic-update",
+      "detector": "checkpoint-splits-atomic-update",
+      "file": "known-bugs/counter-checkpoint-atomic-positive.compact",
+      "corrected": "known-bugs/counter-checkpoint-atomic-corrected.compact",
+      "lookalike": "known-bugs/counter-checkpoint-atomic-lookalike.compact",
+      "compiler": "0.34.0",
+      "expectedLines": [
+        32
+      ],
+      "test": "tests/known-bugs.test.ts",
+      "expectedSeverity": "low",
+      "policies": {
+        "atomicUpdates": [
+          {
+            "circuit": "increment",
+            "ledgers": [
+              "primary",
+              "mirror"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "counter-exact-balance-threshold",
+      "detector": "exact-balance-threshold",
+      "file": "known-bugs/counter-balance-threshold-positive.compact",
+      "corrected": "known-bugs/counter-balance-threshold-corrected.compact",
+      "lookalike": "known-bugs/counter-balance-threshold-lookalike.compact",
+      "compiler": "0.34.0",
+      "expectedLines": [
+        20
+      ],
+      "test": "tests/known-bugs.test.ts",
+      "expectedSeverity": "info",
+      "expectedConfidence": "high",
+      "optIn": true
+    },
+    {
+      "id": "counter-checked-digest-narrowing",
+      "detector": "checked-digest-narrowing",
+      "file": "known-bugs/counter-digest-narrowing-positive.compact",
+      "corrected": "known-bugs/counter-digest-narrowing-corrected.compact",
+      "lookalike": "known-bugs/counter-digest-narrowing-lookalike.compact",
+      "compiler": "0.34.0",
+      "expectedLines": [
+        22
+      ],
+      "test": "tests/known-bugs.test.ts",
+      "expectedSeverity": "info",
+      "expectedConfidence": "high",
+      "optIn": true
+    },
+    {
+      "id": "library-discarded-comparison",
+      "detector": "discarded-comparison",
+      "file": "known-bugs/library-discarded-comparison-positive.compact",
+      "corrected": "known-bugs/library-discarded-comparison-corrected.compact",
+      "lookalike": "known-bugs/library-discarded-comparison-lookalike.compact",
+      "compiler": "0.34.0",
+      "expectedLines": [
+        68
+      ],
+      "test": "tests/known-bugs.test.ts",
+      "requiresOZ": true,
+      "expectedSeverity": "low",
+      "expectedConfidence": "high"
+    },
+    {
+      "id": "counter-redundant-boolean-branch",
+      "detector": "redundant-boolean-branch",
+      "file": "known-bugs/counter-boolean-branch-positive.compact",
+      "corrected": "known-bugs/counter-boolean-branch-corrected.compact",
+      "lookalike": "known-bugs/counter-boolean-branch-lookalike.compact",
+      "compiler": "0.34.0",
+      "expectedLines": [
+        21
+      ],
+      "test": "tests/known-bugs.test.ts",
+      "expectedSeverity": "info",
+      "expectedConfidence": "high"
+    },
+    {
+      "id": "counter-discarded-shielded-send-result",
+      "detector": "discarded-shielded-send-result",
+      "file": "known-bugs/counter-send-result-positive.compact",
+      "corrected": "known-bugs/counter-send-result-corrected.compact",
+      "lookalike": "known-bugs/counter-send-result-lookalike.compact",
+      "compiler": "0.34.0",
+      "test": "tests/known-bugs.test.ts",
+      "expectedLines": [
+        29
+      ],
+      "expectedSeverity": "info"
+    },
+    {
+      "id": "counter-merkle-leaf-commitment",
+      "detector": "merkle-leaf-binding-review",
+      "file": "known-bugs/counter-merkle-leaf-commitment-positive.compact",
+      "corrected": "known-bugs/counter-merkle-leaf-commitment-corrected.compact",
+      "lookalike": "known-bugs/counter-merkle-leaf-commitment-lookalike.compact",
+      "compiler": "0.34.0",
+      "test": "tests/known-bugs.test.ts",
+      "expectedLines": [
+        35
+      ],
+      "expectedSeverity": "info"
+    },
+    {
+      "id": "counter-merkle-leaf-identity",
+      "detector": "merkle-leaf-binding-review",
+      "file": "known-bugs/counter-merkle-leaf-identity-positive.compact",
+      "corrected": "known-bugs/counter-merkle-leaf-identity-corrected.compact",
+      "lookalike": "known-bugs/counter-merkle-leaf-identity-lookalike.compact",
+      "compiler": "0.34.0",
+      "test": "tests/known-bugs.test.ts",
+      "expectedLines": [
+        34
+      ],
+      "expectedSeverity": "info"
+    },
+    {
+      "id": "counter-merkle-leaf-item",
+      "detector": "merkle-leaf-binding-review",
+      "file": "known-bugs/counter-merkle-leaf-item-positive.compact",
+      "corrected": "known-bugs/counter-merkle-leaf-item-corrected.compact",
+      "lookalike": "known-bugs/counter-merkle-leaf-item-lookalike.compact",
+      "compiler": "0.34.0",
+      "test": "tests/known-bugs.test.ts",
+      "expectedLines": [
+        34
+      ],
+      "expectedSeverity": "info"
+    },
+    {
+      "id": "counter-signed-effect-input",
+      "detector": "signed-effect-input",
+      "file": "known-bugs/counter-signed-effect-positive.compact",
+      "corrected": "known-bugs/counter-signed-effect-corrected.compact",
+      "lookalike": "known-bugs/counter-signed-effect-lookalike.compact",
+      "compiler": "0.34.0",
+      "test": "tests/known-bugs.test.ts",
+      "expectedLines": [
+        31
+      ],
+      "expectedSeverity": "low"
+    },
+    {
+      "id": "counter-signed-coin-approval",
+      "detector": "signed-effect-input",
+      "file": "known-bugs/counter-signed-coin-positive.compact",
+      "corrected": "known-bugs/counter-signed-coin-corrected.compact",
+      "lookalike": "known-bugs/counter-signed-coin-lookalike.compact",
+      "compiler": "0.34.0",
+      "compilerProfile": "zkir3",
+      "zkirVersion": 3,
+      "expectedLines": [
+        36
+      ],
+      "test": "tests/signed-coin-input.test.ts"
+    },
+    {
+      "id": "counter-zero-unshielded-send",
+      "detector": "zero-amount-unshielded-send",
+      "file": "known-bugs/counter-zero-unshielded-send-positive.compact",
+      "corrected": "known-bugs/counter-zero-unshielded-send-corrected.compact",
+      "lookalike": "known-bugs/counter-zero-unshielded-send-lookalike.compact",
+      "compiler": "0.34.0",
+      "test": "tests/zero-amount-send.test.ts",
+      "expectedLines": [
+        29,
+        33
+      ],
+      "expectedSeverity": "info",
+      "optIn": true
+    },
+    {
+      "id": "counter-merkle-insert-dedupe",
+      "detector": "merkle-insert-without-dedupe",
+      "file": "known-bugs/counter-merkle-insert-dedupe-positive.compact",
+      "corrected": "known-bugs/counter-merkle-insert-dedupe-corrected.compact",
+      "lookalike": "known-bugs/counter-merkle-insert-dedupe-lookalike.compact",
+      "compiler": "0.34.0",
+      "test": "tests/merkle-insert.test.ts",
+      "expectedLines": [
+        31
+      ],
+      "expectedSeverity": "info",
+      "optIn": true
+    },
+    {
+      "id": "counter-field-recomposition",
+      "detector": "field-recomposition-range-review",
+      "file": "known-bugs/counter-field-recomposition-positive.compact",
+      "corrected": "known-bugs/counter-field-recomposition-corrected.compact",
+      "lookalike": "known-bugs/counter-field-recomposition-lookalike.compact",
+      "compiler": "0.34.0",
+      "test": "tests/known-bugs.test.ts",
+      "expectedLines": [
+        32
+      ],
+      "expectedSeverity": "info",
+      "optIn": false,
+      "expectedMetadata": {
+        "pathFeasibility": "not-proven",
+        "ambiguity": "not-proven"
+      }
+    },
+    {
+      "id": "counter-redundant-self-receive",
+      "detector": "redundant-self-shielded-receive",
+      "file": "known-bugs/counter-redundant-receive-positive.compact",
+      "corrected": "known-bugs/counter-redundant-receive-corrected.compact",
+      "lookalike": "known-bugs/counter-redundant-receive-lookalike.compact",
+      "compiler": "0.34.0",
+      "test": "tests/redundant-receive.test.ts",
+      "expectedLines": [
+        30
+      ],
+      "expectedSeverity": "info",
+      "optIn": false
+    },
+    {
+      "id": "counter-initializable-composition",
+      "detector": "openzeppelin-preconditions",
+      "file": "known-bugs/counter-initializable-composition-positive.compact",
+      "corrected": "known-bugs/counter-initializable-composition-corrected.compact",
+      "lookalike": "known-bugs/counter-initializable-composition-lookalike.compact",
+      "compiler": "0.34.0",
+      "test": "tests/known-bugs.test.ts",
+      "expectedLines": [
+        29,
+        33
+      ],
+      "expectedSeverity": "medium",
+      "expectedMetadata": {
+        "precondition": "top-level-single-importer"
+      },
+      "policies": {
+        "builtins": [
+          "openzeppelin-initializable"
+        ]
+      },
+      "requiresOZ": true,
+      "optIn": true
+    },
+    {
+      "id": "counter-parent-send-metadata-forwarding",
+      "detector": "discarded-shielded-send-result",
+      "file": "known-bugs/counter-parent-send-metadata-positive.compact",
+      "corrected": "known-bugs/counter-parent-send-metadata-corrected.compact",
+      "lookalike": "known-bugs/counter-parent-send-metadata-lookalike.compact",
+      "compiler": "0.34.0",
+      "test": "tests/known-bugs.test.ts",
+      "expectedLines": [
+        8
+      ],
+      "expectedSeverity": "info"
+    },
+    {
+      "id": "counter-mint-metadata-discard",
+      "detector": "discarded-shielded-send-result",
+      "file": "known-bugs/counter-mint-metadata-positive.compact",
+      "corrected": "known-bugs/counter-mint-metadata-corrected.compact",
+      "lookalike": "known-bugs/counter-mint-metadata-lookalike.compact",
+      "compiler": "0.34.0",
+      "test": "tests/known-bugs.test.ts",
+      "expectedLines": [
+        12
+      ],
+      "expectedSeverity": "info"
+    },
+    {
+      "id": "library-split-witness-identity",
+      "detector": "split-witness-identity",
+      "file": "known-bugs/library-split-identity-positive.compact",
+      "corrected": "known-bugs/library-split-identity-corrected.compact",
+      "lookalike": "known-bugs/library-split-identity-lookalike.compact",
+      "compiler": "0.34.0",
+      "test": "tests/known-bugs.test.ts",
+      "expectedLines": [
+        30
+      ],
+      "expectedSeverity": "low",
+      "optIn": true
+    },
+    {
+      "id": "library-credit-nonce-reset",
+      "detector": "resettable-list-nonce",
+      "file": "known-bugs/library-credit-nonce-reset-positive.compact",
+      "corrected": "known-bugs/library-credit-nonce-reset-corrected.compact",
+      "lookalike": "known-bugs/library-credit-nonce-reset-lookalike.compact",
+      "compiler": "0.34.0",
+      "test": "tests/known-bugs.test.ts",
+      "expectedLines": [
+        15
+      ],
+      "expectedSeverity": "low"
+    },
+    {
+      "id": "counter-split-witness-identity",
+      "detector": "split-witness-identity",
+      "file": "known-bugs/counter-split-identity-positive.compact",
+      "corrected": "known-bugs/counter-split-identity-corrected.compact",
+      "lookalike": "known-bugs/counter-split-identity-lookalike.compact",
+      "compiler": "0.34.0",
+      "test": "tests/known-bugs.test.ts",
+      "expectedLines": [
+        58
+      ],
+      "expectedSeverity": "low"
+    },
+    {
+      "id": "counter-shielded-burn-amount-width",
+      "detector": "shielded-burn-amount-width",
+      "file": "known-bugs/counter-shielded-burn-amount-width-positive.compact",
+      "corrected": "known-bugs/counter-shielded-burn-amount-width-corrected.compact",
+      "lookalike": "known-bugs/counter-shielded-burn-amount-width-lookalike.compact",
+      "compiler": "0.34.0",
+      "test": "tests/known-bugs.test.ts",
+      "expectedLines": [
+        29
+      ],
+      "expectedSeverity": "info"
+    },
+    {
+      "id": "counter-credit-nonce-reset",
+      "detector": "resettable-list-nonce",
+      "file": "known-bugs/counter-resettable-list-nonce-positive.compact",
+      "corrected": "known-bugs/counter-resettable-list-nonce-corrected.compact",
+      "lookalike": "known-bugs/counter-resettable-list-nonce-lookalike.compact",
+      "compiler": "0.34.0",
+      "test": "tests/known-bugs.test.ts",
+      "expectedLines": [
+        37
+      ],
+      "expectedSeverity": "low"
+    },
+    {
+      "id": "counter-mapped-memo-nonce-reset-review",
+      "detector": "resettable-memo-nonce-review",
+      "file": "known-bugs/counter-mapped-memo-nonce-reset-positive.compact",
+      "corrected": "known-bugs/counter-mapped-memo-nonce-reset-corrected.compact",
+      "lookalike": "known-bugs/counter-mapped-memo-nonce-reset-lookalike.compact",
+      "compiler": "0.34.0",
+      "test": "tests/known-bugs.test.ts",
+      "expectedLines": [
+        37
+      ],
+      "expectedSeverity": "info"
+    },
+    {
+      "id": "counter-native-key-credential",
+      "detector": "native-key-authentication-review",
+      "file": "known-bugs/counter-native-key-credential-positive.compact",
+      "corrected": "known-bugs/counter-native-key-credential-corrected.compact",
+      "lookalike": "known-bugs/counter-native-key-credential-lookalike.compact",
+      "compiler": "0.34.0",
+      "test": "tests/native-key.test.ts",
+      "expectedLines": [
+        35
+      ],
+      "expectedSeverity": "info",
+      "optIn": true
+    },
+    {
+      "id": "counter-owner-nonce-native-key",
+      "detector": "native-key-authentication-review",
+      "file": "known-bugs/counter-owner-nonce-key-positive.compact",
+      "corrected": "known-bugs/counter-owner-nonce-key-corrected.compact",
+      "lookalike": "known-bugs/counter-owner-nonce-key-lookalike.compact",
+      "compiler": "0.34.0",
+      "test": "tests/known-bugs.test.ts",
+      "expectedLines": [
+        15
+      ],
+      "expectedSeverity": "info"
+    },
+    {
+      "id": "counter-native-native-key",
+      "detector": "native-key-authentication-review",
+      "file": "known-bugs/counter-native-key-gate-positive.compact",
+      "corrected": "known-bugs/counter-native-key-gate-corrected.compact",
+      "lookalike": "known-bugs/counter-native-key-gate-lookalike.compact",
+      "compiler": "0.34.0",
+      "test": "tests/known-bugs.test.ts",
+      "expectedLines": [
+        21
+      ],
+      "expectedSeverity": "info"
+    },
+    {
+      "id": "owned-counter-enrolled-signature-key-review",
+      "detector": "enrolled-signature-key-review",
+      "file": "signature-key-review/positive.compact",
+      "corrected": "signature-key-review/corrected.compact",
+      "lookalike": "signature-key-review/lookalike.compact",
+      "compiler": "0.34.0",
+      "expectedLines": [
+        29
+      ],
+      "test": "tests/known-bugs.test.ts",
+      "expectedSeverity": "info"
+    },
+    {
+      "id": "owned-counter-quorum-signer-uniqueness-review",
+      "detector": "quorum-signer-uniqueness-review",
+      "file": "quorum-review/positive.compact",
+      "corrected": "quorum-review/corrected.compact",
+      "lookalike": "quorum-review/lookalike.compact",
+      "compiler": "0.34.0",
+      "zkirVersion": 3,
+      "expectedLines": [
+        34
+      ],
+      "test": "tests/quorum.test.ts",
+      "expectedSeverity": "info"
+    },
+    {
+      "id": "counter-published-digest-generator-scalar",
+      "detector": "published-digest-generator-scalar-review",
+      "file": "synthetic-regressions/privacy16/public-scalar-seed21/positive.compact",
+      "corrected": "synthetic-regressions/privacy16/public-scalar-seed21/corrected.compact",
+      "lookalike": "synthetic-regressions/privacy16/public-scalar-seed21/lookalike.compact",
+      "compiler": "0.34.0",
+      "test": "tests/known-bugs.test.ts",
+      "expectedLines": [
+        47
+      ],
+      "expectedSeverity": "info",
+      "optIn": true
+    },
+    {
+      "id": "counter-inconsistent-keyed-state-guard",
+      "detector": "inconsistent-keyed-state-guard",
+      "file": "known-bugs/counter-keyed-state-positive.compact",
+      "corrected": "known-bugs/counter-keyed-state-corrected.compact",
+      "lookalike": "known-bugs/counter-keyed-state-lookalike.compact",
+      "compiler": "0.34.0",
+      "test": "tests/known-bugs.test.ts",
+      "expectedLines": [
+        37
+      ],
+      "expectedSeverity": "info",
+      "expectedMetadata": {
+        "invariantIntent": "unknown"
+      },
+      "optIn": true
+    },
+    {
+      "id": "counter-exported-shielded-descriptor",
+      "detector": "exported-shielded-descriptor",
+      "file": "known-bugs/counter-exported-shielded-descriptor-positive.compact",
+      "corrected": "known-bugs/counter-exported-shielded-descriptor-corrected.compact",
+      "lookalike": "known-bugs/counter-exported-shielded-descriptor-lookalike.compact",
+      "compiler": "0.34.0",
+      "test": "tests/known-bugs.test.ts",
+      "expectedLines": [
+        36
+      ],
+      "expectedSeverity": "info",
+      "expectedMetadata": {
+        "visibility": "application-output",
+        "secrecyPolicyViolation": "not-claimed"
+      },
+      "optIn": true
+    },
+    {
+      "id": "counter-shared-module-once-gate",
+      "detector": "shared-module-once-gate",
+      "file": "known-bugs/counter-shared-module-once-gate-positive.compact",
+      "corrected": "known-bugs/counter-shared-module-once-gate-corrected.compact",
+      "lookalike": "known-bugs/counter-shared-module-once-gate-lookalike.compact",
+      "compiler": "0.34.0",
+      "test": "tests/known-bugs.test.ts",
+      "expectedLines": [
+        37
+      ],
+      "expectedSeverity": "info",
+      "expectedMetadata": {
+        "initializationIntent": "unknown"
+      },
+      "optIn": true
+    },
+    {
+      "id": "configured-membership-capacity-review",
+      "detector": "configured-membership-capacity-review",
+      "file": "known-bugs/counter-configured-membership-capacity-positive.compact",
+      "corrected": "known-bugs/counter-configured-membership-capacity-corrected.compact",
+      "lookalike": "known-bugs/counter-configured-membership-capacity-lookalike.compact",
+      "compiler": "0.34.0",
+      "test": "tests/known-bugs.test.ts",
+      "expectedLines": [
+        33
+      ],
+      "expectedSeverity": "info",
+      "optIn": true
+    },
+    {
+      "id": "caller-key-zero-entry-review",
+      "detector": "caller-key-zero-entry-review",
+      "file": "known-bugs/counter-caller-key-zero-entry-positive.compact",
+      "corrected": "known-bugs/counter-caller-key-zero-entry-corrected.compact",
+      "lookalike": "known-bugs/counter-caller-key-zero-entry-lookalike.compact",
+      "compiler": "0.34.0",
+      "test": "tests/known-bugs.test.ts",
+      "expectedLines": [
+        31
+      ],
+      "expectedSeverity": "info",
+      "optIn": true
+    },
+    {
+      "id": "zero-amount-unguarded-map-debit-review",
+      "detector": "zero-amount-unguarded-map-debit-review",
+      "file": "known-bugs/counter-zero-map-debit-positive.compact",
+      "corrected": "known-bugs/counter-zero-map-debit-corrected.compact",
+      "lookalike": "known-bugs/counter-zero-map-debit-lookalike.compact",
+      "compiler": "0.34.0",
+      "test": "tests/known-bugs.test.ts",
+      "expectedLines": [
+        31
+      ],
+      "expectedSeverity": "info",
+      "optIn": true
+    },
+    {
+      "id": "counter-zero-set-consumption",
+      "detector": "zero-amount-set-consumption-review",
+      "file": "known-bugs/counter-zero-set-consumption-positive.compact",
+      "corrected": "known-bugs/counter-zero-set-consumption-corrected.compact",
+      "lookalike": "known-bugs/counter-zero-set-consumption-lookalike.compact",
+      "compiler": "0.34.0",
+      "test": "tests/known-bugs.test.ts",
+      "expectedLines": [
+        37
+      ],
+      "expectedSeverity": "info"
+    },
+    {
+      "id": "counter-zero-default-getter-membership-review",
+      "detector": "zero-default-getter-membership-review",
+      "file": "known-bugs/counter-zero-default-getter-positive.compact",
+      "corrected": "known-bugs/counter-zero-default-getter-corrected.compact",
+      "lookalike": "known-bugs/counter-zero-default-getter-lookalike.compact",
+      "compiler": "0.34.0",
+      "test": "tests/known-bugs.test.ts",
+      "expectedLines": [
+        36
+      ],
+      "expectedSeverity": "info",
+      "expectedMetadata": {
+        "applicationPolicy": "not-inferred",
+        "crossInvocationEquality": "not-claimed"
+      },
+      "optIn": true
+    },
+    {
+      "id": "counter-public-two-component-domain-review",
+      "detector": "public-two-component-domain-review",
+      "file": "known-bugs/counter-public-domain-positive.compact",
+      "corrected": "known-bugs/counter-public-domain-corrected.compact",
+      "lookalike": "known-bugs/counter-public-domain-lookalike.compact",
+      "compiler": "0.34.0",
+      "test": "tests/known-bugs.test.ts",
+      "expectedLines": [
+        32
+      ],
+      "expectedSeverity": "info",
+      "expectedMetadata": {
+        "componentRoles": "not-inferred",
+        "globallyFeasibleDefaults": "not-proven",
+        "applicationPolicy": "not-inferred"
+      },
+      "optIn": true
+    },
+    {
+      "id": "counter-operation-intent-policy",
+      "detector": "operation-intent-policy",
+      "file": "drafts/operation-intent44/counter-cases/positive.compact",
+      "corrected": "drafts/operation-intent44/counter-cases/corrected.compact",
+      "lookalike": "drafts/operation-intent44/counter-cases/lookalike.compact",
+      "compiler": "0.34.0",
+      "test": "tests/known-bugs.test.ts",
+      "expectedLines": [
+        38,
+        42
+      ],
+      "expectedSeverity": "info",
+      "expectedMetadata": {
+        "impact": "not-proven",
+        "pathFeasibility": "not-proven"
+      },
+      "optIn": true,
+      "policies": {
+        "operationIntent": [
+          {
+            "circuit": "updateDocument",
+            "ledgers": [
+              "document"
+            ],
+            "controllerCommitment": "controllerCommitment",
+            "nonce": "authorizationNonce",
+            "operation": "1",
+            "version": "1",
+            "statement": {
+              "self": "selfAddress",
+              "operation": "operation",
+              "version": "version",
+              "nonce": "nonce"
+            },
+            "inputs": [
+              {
+                "field": "input",
+                "parameter": "next",
+                "writeValue": "document"
+              }
+            ]
+          },
+          {
+            "circuit": "revokeDocument",
+            "ledgers": [
+              "document"
+            ],
+            "controllerCommitment": "controllerCommitment",
+            "nonce": "authorizationNonce",
+            "operation": "2",
+            "version": "1",
+            "statement": {
+              "self": "selfAddress",
+              "operation": "operation",
+              "version": "version",
+              "nonce": "nonce"
+            },
+            "inputs": [
+              {
+                "field": "input",
+                "ledger": "document"
+              }
+            ]
+          }
+        ]
+      },
+      "zkirVersion": 3
+    },
+    {
+      "id": "counter-stored-schnorr-key-enrollment-review",
+      "detector": "stored-schnorr-key-enrollment-review",
+      "file": "drafts/enrollment44/counter/positive.compact",
+      "corrected": "drafts/enrollment44/counter/corrected.compact",
+      "lookalike": "drafts/enrollment44/counter/lookalike.compact",
+      "compiler": "0.34.0",
+      "zkirVersion": 3,
+      "test": "tests/known-bugs.test.ts",
+      "expectedLines": [
+        37
+      ],
+      "expectedSeverity": "info",
+      "expectedMetadata": {
+        "writeIdentityExclusion": "not-modeled",
+        "useIdentityExclusion": "not-modeled",
+        "allWriterCoverage": "complete"
+      },
+      "optIn": true
+    },
+    {
+      "id": "counter-shielded-contract-recipient-review",
+      "detector": "shielded-contract-recipient-review",
+      "file": "drafts/contract-recipient45/counter/positive.compact",
+      "corrected": "drafts/contract-recipient45/counter/corrected.compact",
+      "lookalike": "drafts/contract-recipient45/counter/lookalike.compact",
+      "compiler": "0.34.0",
+      "zkirVersion": 2,
+      "test": "tests/known-bugs.test.ts",
+      "expectedLines": [
+        30
+      ],
+      "expectedSeverity": "info",
+      "expectedMetadata": {
+        "activeArm": "right",
+        "claimPresence": "not-inferred",
+        "transactionRejection": "not-inferred",
+        "applicationImpact": "not-inferred"
+      },
+      "optIn": true
+    },
+    {
+      "id": "counter-signature-key-identity-exclusion-review",
+      "detector": "signature-key-identity-exclusion-review",
+      "file": "drafts/signature46/counter/positive.compact",
+      "corrected": "drafts/signature46/counter/corrected.compact",
+      "lookalike": "drafts/signature46/counter/quiet-known-generators.compact",
+      "compiler": "0.34.0",
+      "zkirVersion": 3,
+      "test": "tests/known-bugs.test.ts",
+      "expectedLines": [
+        43,
+        44
+      ],
+      "expectedSeverity": "info",
+      "expectedMetadata": {
+        "identityExclusion": "not-modeled",
+        "applicationImpact": "not-inferred",
+        "evidence": "complete-original-history-without-modeled-exact-key-identity-exclusion"
+      },
+      "optIn": true
+    },
+    {
+      "id": "counter-zero-amount-complementary-send-review",
+      "detector": "zero-amount-complementary-send-review",
+      "file": "drafts/complementary47/counter/positive.compact",
+      "corrected": "drafts/complementary47/counter/corrected.compact",
+      "lookalike": "drafts/complementary47/counter/quiet.compact",
+      "compiler": "0.34.0",
+      "zkirVersion": 2,
+      "test": "tests/known-bugs.test.ts",
+      "expectedLines": [
+        35
+      ],
+      "expectedSeverity": "info",
+      "expectedMetadata": {
+        "pair": "P,T-P",
+        "partMinimum": "0",
+        "remainderMinimum": "0",
+        "endpointFeasibility": "not-proven",
+        "applicationImpact": "not-inferred"
+      },
+      "optIn": true
+    },
+    {
+      "id": "counter-secret-binding-divergence-review",
+      "detector": "secret-binding-divergence-review",
+      "file": "drafts/secret-binding49/counter/positive.compact",
+      "corrected": "drafts/secret-binding49/counter/corrected.compact",
+      "lookalike": "drafts/secret-binding49/counter/lookalike.compact",
+      "compiler": "0.34.0",
+      "zkirVersion": 2,
+      "test": "tests/secret-binding49-owned.test.ts",
+      "expectedLines": [
+        45
+      ],
+      "expectedSeverity": "info",
+      "expectedMetadata": {
+        "crossEntryValueEquality": "not-inferred",
+        "applicationImpact": "not-inferred",
+        "authenticationStrength": "not-compared"
+      },
+      "optIn": true
+    },
+    {
+      "id": "counter-zero-transfer-retained-list-review",
+      "detector": "zero-transfer-retained-list-review",
+      "file": "drafts/zero-list50/counter/positive.compact",
+      "corrected": "drafts/zero-list50/counter/corrected.compact",
+      "lookalike": "drafts/zero-list50/counter/lookalike.compact",
+      "compiler": "0.34.0",
+      "zkirVersion": 2,
+      "test": "tests/list-growth-owned.test.ts",
+      "expectedLines": [
+        37
+      ],
+      "expectedSeverity": "info",
+      "expectedMetadata": {
+        "contention": "not-inferred",
+        "applicationImpact": "not-inferred"
+      },
+      "optIn": true
+    },
+    {
+      "id": "counter-source-claim-shielded-issuance-review",
+      "detector": "source-claim-shielded-issuance-review",
+      "file": "drafts/source-claims52/counter/positive.compact",
+      "corrected": "drafts/source-claims52/counter/corrected.compact",
+      "lookalike": "drafts/source-claims52/counter/lookalike.compact",
+      "compiler": "0.34.0",
+      "zkirVersion": 2,
+      "test": "tests/source-claims-owned.test.ts",
+      "expectedLines": [
+        29
+      ],
+      "expectedSeverity": "info",
+      "expectedMetadata": {
+        "claimMeaning": "explicit-policy",
+        "spendability": "not-established",
+        "applicationImpact": "not-inferred"
+      },
+      "optIn": true,
+      "policies": {
+        "sourceClaims": [
+          {
+            "kind": "non-transferable-shielded-issuance",
+            "circuit": "issue",
+            "quote": "// Contract claim: recipients cannot transfer issued coins to other parties."
+          }
+        ]
+      }
+    },
+    {
+      "id": "counter-membership-identity-binding-review",
+      "detector": "membership-identity-binding-review",
+      "file": "drafts/memo-identity44-counter/positive.compact",
+      "corrected": "drafts/memo-identity44-counter/corrected.compact",
+      "lookalike": "drafts/memo-identity44-counter/lookalike.compact",
+      "compiler": "0.34.0",
+      "zkirVersion": 3,
+      "test": "tests/membership-identity-owned.test.ts",
+      "expectedLines": [
+        46
+      ],
+      "expectedSeverity": "info",
+      "expectedMetadata": {
+        "authenticationIntent": "unknown",
+        "applicationImpact": "not-inferred"
+      },
+      "optIn": true
+    },
+    {
+      "id": "counter-closed-membership-capacity-review",
+      "detector": "closed-membership-capacity-review",
+      "file": "drafts/closed-capacity55/closed-one-vs-two.compact",
+      "corrected": "drafts/closed-capacity55/corrected-two-vs-two.compact",
+      "lookalike": "drafts/closed-capacity55/intentional-one-gate.compact",
+      "compiler": "0.34.0",
+      "zkirVersion": 3,
+      "test": "tests/closed-capacity-owned.test.ts",
+      "expectedLines": [
+        33
+      ],
+      "expectedSeverity": "info",
+      "expectedMetadata": {
+        "stateBoundary": "source-closed-constructor-history",
+        "runtimeImmutability": "unproven",
+        "allConfigurations": "unproven"
+      },
+      "optIn": true
+    },
+    {
+      "id": "counter-source-claim-map-getter-review",
+      "detector": "source-claim-map-getter-review",
+      "file": "drafts/map-getter56/counter/positive.compact",
+      "corrected": "drafts/map-getter56/counter/corrected-map-read.compact",
+      "lookalike": "drafts/map-getter56/counter/lookalike-auxiliary.compact",
+      "compiler": "0.34.0",
+      "zkirVersion": 2,
+      "test": "tests/source-map-getters-owned.test.ts",
+      "expectedLines": [
+        33
+      ],
+      "expectedSeverity": "info",
+      "expectedMetadata": {
+        "policyMeaning": "explicit-same-key-configured-value",
+        "nondefaultConfigurationFeasibility": "not-established",
+        "applicationImpact": "not-inferred"
+      },
+      "optIn": true,
+      "policies": {
+        "sourceMapGetters": [
+          {
+            "setter": "setAdmin",
+            "getter": "getRoleAdmin",
+            "map": "roleAdmin",
+            "setterKey": "role",
+            "setterValue": "admin",
+            "getterKey": "role",
+            "quote": "// Documentation claims DEFAULT_ADMIN_ROLE is customizable by roleAdmin entry."
+          }
+        ]
+      }
+    },
+    {
+      "id": "counter-refund-endpoint57",
+      "detector": "unshielded-refund-endpoint-review",
+      "file": "drafts/arithmetic-endpoint57/positive.compact",
+      "corrected": "drafts/arithmetic-endpoint57/corrected.compact",
+      "lookalike": "drafts/arithmetic-endpoint57/lookalike.compact",
+      "compiler": "0.34.0",
+      "zkirVersion": 2,
+      "test": "tests/refund-endpoint-owned.test.ts",
+      "expectedLines": [
+        58
+      ],
+      "expectedSeverity": "info",
+      "optIn": true
+    },
+    {
+      "id": "counter-caller-deadline",
+      "detector": "caller-supplied-deadline",
+      "file": "drafts/caller-deadline/positive.compact",
+      "corrected": "drafts/caller-deadline/corrected.compact",
+      "lookalike": "drafts/caller-deadline/lookalike.compact",
+      "compiler": "0.31.1",
+      "expectedLines": [
+        27
+      ],
+      "test": "tests/caller-deadline.test.ts"
+    }
+  ]
+}

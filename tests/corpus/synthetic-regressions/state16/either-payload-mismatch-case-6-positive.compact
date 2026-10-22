@@ -1,0 +1,21 @@
+// Owned one-invocation composition for either-payload-mismatch-case-6. No runtime reproduction.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger owner: Either<ZswapCoinPublicKey, ContractAddress>;
+export ledger authorizedActions: Counter;
+
+export circuit setOwner(candidate: Either<ZswapCoinPublicKey, ContractAddress>): [] {
+  assert(!candidate.is_left, "contract-address owner");
+  assert(candidate.right != default<ContractAddress>, "owner address nonzero");
+  owner = disclose(candidate);
+}
+
+export circuit assertOnlyOwner(): [] {
+  assert(ownPublicKey() == owner.left, "only owner");
+}
+
+export circuit setAndAct(candidate: Either<ZswapCoinPublicKey, ContractAddress>): [] {
+  setOwner(candidate);
+  assertOnlyOwner();
+  authorizedActions.increment(1);
+}

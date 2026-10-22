@@ -1,0 +1,6 @@
+import CompactStandardLibrary;
+// Intentional possession check: this operation only proves access to a secret preimage.
+export ledger controller: Bytes<32>;
+export ledger document: Field;
+witness localSecretKey(): Bytes<32>;
+export circuit proveControllerPossession(): [] { assert(persistentHash<Bytes<32>>(localSecretKey()) == controller, "controller"); }

@@ -1,0 +1,11 @@
+pragma language_version >= 0.26.0;
+
+type Text = Opaque<'str\x69ng'>;
+circuit pass<T>(value: T): T { return value; }
+
+export circuit entry(secret: Text): Text {
+  const label = pad(6, 'a\
+b');
+  assert(label == pad(6, "ab"), 'continued\nlabel');
+  return pass<Opaque<"string">>(secret);
+}

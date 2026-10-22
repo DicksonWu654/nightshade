@@ -1,0 +1,8 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger enrolled: JubjubPoint;
+export circuit enroll(pk: JubjubPoint): [] { enrolled = disclose(pk); }
+export circuit verify(msg: Vector<1, Field>, sig: JubjubSchnorrSignature): [] {
+  assert(msg[0] != 0 as Field, "message policy");
+  assert(jubjubSchnorrVerify<1>(msg, sig, enrolled), "signature");
+}

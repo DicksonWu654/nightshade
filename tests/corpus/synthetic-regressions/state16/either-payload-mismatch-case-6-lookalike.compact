@@ -1,0 +1,23 @@
+// Owned one-invocation right-arm control using an explicit witness caller address.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger owner: Either<ZswapCoinPublicKey, ContractAddress>;
+export ledger authorizedActions: Counter;
+witness callerAddress(): ContractAddress;
+
+export circuit setOwner(candidate: Either<ZswapCoinPublicKey, ContractAddress>): [] {
+  assert(!candidate.is_left, "owner must be contract address");
+  assert(candidate.right != default<ContractAddress>, "owner address nonzero");
+  owner = disclose(candidate);
+}
+
+export circuit assertOnlyOwner(): [] {
+  assert(!owner.is_left, "owner is contract address");
+  assert(callerAddress() == owner.right, "only owner address claim");
+}
+
+export circuit setAndAct(candidate: Either<ZswapCoinPublicKey, ContractAddress>): [] {
+  setOwner(candidate);
+  assertOnlyOwner();
+  authorizedActions.increment(1);
+}

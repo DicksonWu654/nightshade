@@ -1,0 +1,3 @@
+import CompactStandardLibrary;
+export ledger payload: Field;
+export circuit initialize(value: Field): [] { payload = disclose(value); }

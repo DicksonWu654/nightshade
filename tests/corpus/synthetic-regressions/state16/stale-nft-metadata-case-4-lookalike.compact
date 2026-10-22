@@ -1,0 +1,6 @@
+// Synthetic source-pattern regression.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary; export ledger owner: Map<Uint<128>, Bytes<32>>; export ledger uri: Map<Uint<128>, Opaque<"string">>;
+export circuit mint(id: Uint<128>, who: Bytes<32>, value: Opaque<"string">): [] { owner.insert(disclose(id), disclose(who)); uri.insert(disclose(id), disclose(value)); }
+export circuit burn(id: Uint<128>): [] { owner.remove(disclose(id)); uri.remove(disclose(id)); }
+export circuit remint(id: Uint<128>, who: Bytes<32>, value: Opaque<"string">): Opaque<"string"> { owner.insert(disclose(id), disclose(who)); uri.insert(disclose(id), disclose(value)); return uri.lookup(disclose(id)); }

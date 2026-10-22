@@ -1,0 +1,6 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger roleAdmin: Map<Bytes<32>, Bytes<32>>;
+// Documentation claims DEFAULT_ADMIN_ROLE is customizable by roleAdmin entry.
+export circuit setAdmin(role: Bytes<32>, otherRole: Bytes<32>, admin: Bytes<32>): [] { roleAdmin.insert(disclose(otherRole), disclose(admin)); }
+export circuit getRoleAdmin(role: Bytes<32>): Bytes<32> { return default<Bytes<32>>; }

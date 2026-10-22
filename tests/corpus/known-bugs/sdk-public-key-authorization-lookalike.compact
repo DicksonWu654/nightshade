@@ -1,0 +1,20 @@
+// Owned static seed adaptation; provenance and exact mutation: ../known-bugs.json.
+import CompactStandardLibrary;
+
+export ledger counter: Counter;
+export ledger reward: QualifiedShieldedCoinInfo;
+
+witness dummy(): [];
+
+export ledger owner: Bytes<32>;
+witness ownerSecret(): Bytes<32>;
+constructor(ownerId: Bytes<32>) { owner = disclose(ownerId); }
+export circuit deposit(coin: ShieldedCoinInfo): [] {
+  assert(persistentHash<Bytes<32>>(ownerSecret()) == owner, "owner preimage");
+  receiveShielded(disclose(coin));
+  reward.writeCoin(disclose(coin), right<ZswapCoinPublicKey, ContractAddress>(kernel.self()));
+  counter.increment(1);
+  dummy();
+}
+
+export circuit previewCaller(): Boolean { return disclose(ownPublicKey().bytes == owner); }

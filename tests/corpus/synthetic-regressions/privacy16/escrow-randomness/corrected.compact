@@ -1,0 +1,12 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+struct Mask { ephemeral: JubjubPoint; shared: JubjubPoint; }
+export ledger escrowNonce: Uint<64>;
+export circuit escrowMemo(ownerPk: JubjubPoint, memoPoint: JubjubPoint): Mask {
+  // Per-escrow monotonic state contributes to the ephemeral seed.
+  const r = escrowNonce as JubjubScalar;
+  const ephemeral = ecMulGenerator(r);
+  const shared = ecMul(ownerPk, r);
+  escrowNonce = (escrowNonce + 1) as Uint<64>;
+  return Mask { ephemeral, shared: ecAdd(shared, memoPoint) };
+}

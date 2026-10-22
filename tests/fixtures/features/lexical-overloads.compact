@@ -1,0 +1,23 @@
+pragma language_version >= 0.26.0;
+import { persistentHash } from CompactStandardLibrary;
+
+circuit select(value: Field): Field { return value; }
+circuit accumulate(total: Uint<16>, item: Uint<8>): Uint<16> {
+  return (total + item) as Uint<16>;
+}
+
+module Inner {
+  circuit select(value: Boolean): Field { return 0 as Field; }
+  circuit persistentHash(value: Boolean): Bytes<32> { return default<Bytes<32>>; }
+  circuit accumulate(total: Uint<8>, item: Uint<8>): Boolean { return true; }
+
+  export circuit run(value: Field): [Bytes<32>, Uint<16>] {
+    const selected = map(select, [value]);
+    const digest = persistentHash<Field>(selected[0]);
+    const total = fold(accumulate, 0 as Uint<8>, [1 as Uint<8>, 2 as Uint<8>]);
+    return disclose([digest, total]);
+  }
+}
+
+import { run } from Inner;
+export circuit entry(value: Field): [Bytes<32>, Uint<16>] { return run(value); }

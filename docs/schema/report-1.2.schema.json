@@ -1,0 +1,748 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "urn:nightshade:report:1.2.0",
+  "title": "Nightshade experimental Counter-predicate report 1.2.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "semanticProfile",
+    "toolVersion",
+    "grammarRevision",
+    "grammarBuild",
+    "status",
+    "scope",
+    "compilerValidated",
+    "entrypoints",
+    "scanned",
+    "findings",
+    "diagnostics",
+    "coverage",
+    "metrics",
+    "analysis"
+  ],
+  "properties": {
+    "customDetectors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "apiVersion",
+          "factsVersion",
+          "id",
+          "description",
+          "requires"
+        ],
+        "properties": {
+          "apiVersion": {
+            "const": 1
+          },
+          "factsVersion": {
+            "const": 1
+          },
+          "id": {
+            "type": "string",
+            "pattern": "^custom-[a-z][a-z0-9-]{0,63}$"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1
+          },
+          "requires": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "enum": [
+                "predicates",
+                "calls",
+                "merkle",
+                "collections",
+                "initialization"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "schemaVersion": {
+      "const": "1.2.0"
+    },
+    "semanticProfile": {
+      "enum": [
+        "compact-0.30.0-zkir2",
+        "compact-0.31.1-zkir2", "compact-0.33.0-rc.2-zkir2", "compact-0.35.0-rc.1-zkir2", "compact-0.35.0-zkir2",
+        "compact-0.34.0-zkir2",
+        "compact-0.34.0-zkir3",
+        "mixed"
+      ]
+    },
+    "toolVersion": {
+      "type": "string"
+    },
+    "grammarRevision": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{40}$"
+    },
+    "grammarBuild": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "status": {
+      "enum": [
+        "complete",
+        "incomplete"
+      ]
+    },
+    "scope": {
+      "const": "selected-detector-predicates"
+    },
+    "compilerValidated": {
+      "type": "boolean"
+    },
+    "compiler": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "valid",
+        "version",
+        "languageVersion"
+      ],
+      "properties": {
+        "valid": {
+          "type": "boolean"
+        },
+        "version": {
+          "type": "string"
+        },
+        "languageVersion": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "entrypoints": {
+      "$ref": "#/definitions/strings"
+    },
+    "scanned": {
+      "$ref": "#/definitions/strings"
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/finding"
+      }
+    },
+    "diagnostics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "code",
+          "message",
+          "location"
+        ],
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "location": {
+            "$ref": "#/definitions/span"
+          },
+          "scope": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "kind",
+              "detectorId",
+              "entry"
+            ],
+            "properties": {
+              "kind": {
+                "const": "rule"
+              },
+              "detectorId": {
+                "type": "string"
+              },
+              "entry": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "attempted",
+        "parsed",
+        "resolved",
+        "completedEntries",
+        "detectors"
+      ],
+      "properties": {
+        "attempted": {
+          "$ref": "#/definitions/strings"
+        },
+        "parsed": {
+          "$ref": "#/definitions/strings"
+        },
+        "resolved": {
+          "$ref": "#/definitions/strings"
+        },
+        "completedEntries": {
+          "$ref": "#/definitions/strings"
+        },
+        "detectors": {
+          "$ref": "#/definitions/strings"
+        },
+        "baselineStatus": {
+          "enum": [
+            "complete",
+            "incomplete"
+          ]
+        },
+        "rules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "root",
+              "detectorId",
+              "entry",
+              "status",
+              "evidence",
+              "diagnosticCodes"
+            ],
+            "properties": {
+              "root": {
+                "type": "string"
+              },
+              "detectorId": {
+                "type": "string"
+              },
+              "entry": {
+                "type": "string"
+              },
+              "status": {
+                "enum": [
+                  "complete",
+                  "incomplete",
+                  "not-applicable"
+                ]
+              },
+              "evidence": {
+                "enum": [
+                  "baseline",
+                  "exact-observation",
+                  "structural-absence",
+                  "unavailable"
+                ]
+              },
+              "diagnosticCodes": {
+                "$ref": "#/definitions/strings"
+              }
+            }
+          }
+        }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "number",
+        "minimum": 0
+      },
+      "required": [
+        "frontendMs",
+        "analysisMs",
+        "detectorMs",
+        "totalMs",
+        "cfgNodes",
+        "calls",
+        "steps",
+        "sources",
+        "paths",
+        "abstractValues"
+      ]
+    },
+    "analysis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "scope",
+        "contract",
+        "coverage",
+        "workPolicies",
+        "queryWork"
+      ],
+      "properties": {
+        "mode": {
+          "const": "experimental-counter-queries"
+        },
+        "scope": {
+          "const": "selected-detector-predicates"
+        },
+        "contract": {
+          "const": "experimental-counter-scan-1"
+        },
+        "coverage": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "root",
+              "entry",
+              "detector",
+              "status",
+              "method"
+            ],
+            "properties": {
+              "root": {
+                "type": "string",
+                "minLength": 1
+              },
+              "entry": {
+                "type": "string",
+                "minLength": 1
+              },
+              "detector": {
+                "type": "string",
+                "minLength": 1
+              },
+              "status": {
+                "enum": [
+                  "covered",
+                  "incomplete"
+                ]
+              },
+              "method": {
+                "enum": [
+                  "exact",
+                  "counter-query",
+                  "structural-absence",
+                  "source-work",
+                  "unavailable"
+                ]
+              },
+              "contract": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        "workPolicies": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "root",
+              "circuit",
+              "status"
+            ],
+            "properties": {
+              "root": {
+                "type": "string",
+                "minLength": 1
+              },
+              "circuit": {
+                "type": "string",
+                "minLength": 1
+              },
+              "status": {
+                "enum": [
+                  "covered",
+                  "incomplete"
+                ]
+              }
+            }
+          }
+        },
+        "queryWork": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "preparation",
+            "query",
+            "witnesses",
+            "transferSteps",
+            "transferValues",
+            "findingChecks",
+            "expenditureKnown"
+          ],
+          "properties": {
+            "preparation": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "query": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "witnesses": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "transferSteps": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "transferValues": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "findingChecks": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "expenditureKnown": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    },
+    "selection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "findingsBeforeFilter"
+      ],
+      "properties": {
+        "minimumSeverity": {
+          "enum": [
+            "info",
+            "low",
+            "medium",
+            "high"
+          ]
+        },
+        "findingsBeforeFilter": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "excludedRoots": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "discovery": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "omittedLibraries",
+            "inferredSearchPaths"
+          ],
+          "properties": {
+            "omittedLibraries": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "inferredSearchPaths": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "ruleObservationWork": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "detectorId",
+          "limits",
+          "metrics"
+        ],
+        "properties": {
+          "detectorId": {
+            "type": "string"
+          },
+          "limits": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "maxSteps",
+              "maxPaths",
+              "maxValues"
+            ],
+            "properties": {
+              "maxSteps": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "maxPaths": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "maxValues": {
+                "type": "integer",
+                "minimum": 1
+              }
+            }
+          },
+          "metrics": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "steps",
+              "sources",
+              "paths",
+              "abstractValues",
+              "summaryHits",
+              "summaryEntries",
+              "statefulSummaryHits",
+              "readSummaryHits",
+              "summaryEffects",
+              "guardSubsumptions"
+            ],
+            "properties": {
+              "steps": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "sources": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "paths": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "abstractValues": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "summaryHits": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "summaryEntries": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "statefulSummaryHits": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "readSummaryHits": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "summaryEffects": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "guardSubsumptions": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "strings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "span": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "file",
+        "start",
+        "end",
+        "line",
+        "column",
+        "endLine",
+        "endColumn"
+      ],
+      "properties": {
+        "file": {
+          "type": "string"
+        },
+        "start": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "end": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "line": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "column": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "endLine": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "endColumn": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "detectorId",
+        "severity",
+        "confidence",
+        "title",
+        "message",
+        "location",
+        "trace",
+        "callPath",
+        "remediation",
+        "fingerprint",
+        "metadata"
+      ],
+      "properties": {
+        "detectorId": {
+          "type": "string"
+        },
+        "severity": {
+          "enum": [
+            "info",
+            "low",
+            "medium",
+            "high"
+          ]
+        },
+        "confidence": {
+          "enum": [
+            "low",
+            "medium",
+            "high"
+          ]
+        },
+        "title": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "location": {
+          "$ref": "#/definitions/span"
+        },
+        "source": {
+          "$ref": "#/definitions/span"
+        },
+        "constraint": {
+          "$ref": "#/definitions/span"
+        },
+        "trace": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "kind",
+              "label",
+              "location"
+            ],
+            "properties": {
+              "kind": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              },
+              "location": {
+                "$ref": "#/definitions/span"
+              }
+            }
+          }
+        },
+        "callPath": {
+          "$ref": "#/definitions/strings"
+        },
+        "remediation": {
+          "type": "string"
+        },
+        "fingerprint": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "metadata": {
+          "type": "object"
+        },
+        "suppression": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "reason"
+          ],
+          "properties": {
+            "reason": {
+              "type": "string",
+              "minLength": 8
+            },
+            "kind": {
+              "enum": [
+                "inSource",
+                "external"
+              ]
+            }
+          }
+        },
+        "baselineState": {
+          "enum": [
+            "new",
+            "unchanged"
+          ]
+        },
+        "evidenceChain": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^[^\\r\\n]+$"
+        },
+        "whyItMatters": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^[^\\r\\n]+$"
+        }
+      }
+    }
+  }
+}

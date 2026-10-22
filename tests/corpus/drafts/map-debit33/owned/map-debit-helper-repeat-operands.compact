@@ -1,0 +1,14 @@
+// Owned static source-shape fixture; review expectation only.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger balances: Map<Bytes<32>, Uint<64>>;
+circuit applyDebit(key: Bytes<32>, amount: Uint<64>): [] {
+  if (disclose(amount) == 0 as Uint<64>) {
+    const prior = balances.lookup(disclose(key));
+    balances.insert(disclose(key), disclose((prior - amount) as Uint<64>));
+  }
+}
+export circuit batch(first: Bytes<32>, second: Bytes<32>, firstAmount: Uint<64>, secondAmount: Uint<64>): [] {
+  applyDebit(disclose(first), disclose(firstAmount));
+  applyDebit(disclose(second), disclose(secondAmount));
+}

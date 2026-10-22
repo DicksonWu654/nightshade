@@ -1,0 +1,26 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger accountIdentity: Map<Bytes<32>, Bytes<32>>;
+export ledger encryptionIdentity: Map<Bytes<32>, Bytes<32>>;
+export ledger balances: Map<Bytes<32>, Uint<64>>;
+witness accountSecret(): Bytes<32>;
+witness encryptionSecret(): Bytes<32>;
+circuit accountDigest(secret: Bytes<32>): Bytes<32> {
+  return persistentHash<Vector<2, Bytes<32>>>([pad(32, "binding account identity v1"), secret]) as Bytes<32>;
+}
+circuit encryptionDigest(secret: Bytes<32>): Bytes<32> {
+  return persistentHash<Vector<2, Bytes<32>>>([pad(32, "binding encryption identity v1"), secret]) as Bytes<32>;
+}
+// Intentional weaker maintenance choice: still report the source relationship for review.
+export circuit resetBalanceForMaintenance(account: Bytes<32>): [] {
+  const exactKey = disclose(account);
+  assert(accountDigest(accountSecret()) == accountIdentity.lookup(exactKey), "account identity");
+  balances.insert(exactKey, 0 as Uint<64>);
+}
+export circuit transferValue(source: Bytes<32>, recipient: Bytes<32>, amount: Uint<64>): [] {
+  const exactKey = disclose(source);
+  assert(accountDigest(accountSecret()) == accountIdentity.lookup(exactKey), "account identity");
+  assert(encryptionDigest(encryptionSecret()) == encryptionIdentity.lookup(exactKey), "encryption identity");
+  balances.insert(exactKey, balances.lookup(exactKey) - disclose(amount));
+  balances.insert(disclose(recipient), (balances.lookup(disclose(recipient)) + disclose(amount)) as Uint<64>);
+}

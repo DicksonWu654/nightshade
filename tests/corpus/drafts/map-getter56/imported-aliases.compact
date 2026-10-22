@@ -1,0 +1,6 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+import { configure as setAdmin, adminFor as getRoleAdmin } from "RoleAdminAliases";
+// Documentation claims DEFAULT_ADMIN_ROLE is customizable by roleAdmin entry.
+export circuit configureRole(role: Bytes<32>, admin: Bytes<32>): [] { setAdmin(disclose(role), disclose(admin)); }
+export circuit queryRole(role: Bytes<32>): Bytes<32> { return getRoleAdmin(disclose(role)); }

@@ -1,0 +1,104 @@
+pragma language_version >= 0.20;
+
+import CompactStandardLibrary;
+
+// Owned examples for the five named module contexts. Public native-key data is
+// routing metadata; each administrative gate remains private-credential based.
+export ledger owner: Either<Bytes<32>, ContractAddress>;
+export ledger roleMembers: Set<Bytes<32>>;
+export ledger tokenPermissions: Map<Bytes<32>, Bytes<32>>;
+export ledger fungiblePermissions: Map<Bytes<32>, Bytes<32>>;
+export ledger multiTokenPermissions: Map<Bytes<32>, Bytes<32>>;
+export ledger nonFungibleOwners: Map<Bytes<32>, Bytes<32>>;
+export ledger ownerActions: Counter;
+export ledger roleActions: Counter;
+export ledger tokenActions: Counter;
+export ledger fungibleActions: Counter;
+export ledger multiTokenActions: Counter;
+export ledger nonFungibleActions: Counter;
+export ledger routedPublicKey: Bytes<32>;
+
+witness ownableModuleSecretKey(): Bytes<32>;
+witness accessControlModuleSecretKey(): Bytes<32>;
+witness fungibleTokenModuleSecretKey(): Bytes<32>;
+witness multiTokenModuleSecretKey(): Bytes<32>;
+witness nonFungibleTokenModuleSecretKey(): Bytes<32>;
+
+circuit ownableIdentity(): Bytes<32> {
+  return persistentHash<Vector<2, Bytes<32>>>([pad(32, "auth16:ownable:"), ownableModuleSecretKey()]);
+}
+
+circuit accessControlIdentity(): Bytes<32> {
+  return persistentHash<Vector<2, Bytes<32>>>([pad(32, "auth16:access-control:"), accessControlModuleSecretKey()]);
+}
+
+circuit fungibleTokenModuleIdentity(): Bytes<32> {
+  return persistentHash<Vector<2, Bytes<32>>>([pad(32, "auth16:fungible-token:"), fungibleTokenModuleSecretKey()]);
+}
+
+circuit multiTokenModuleIdentity(): Bytes<32> {
+  return persistentHash<Vector<2, Bytes<32>>>([pad(32, "auth16:multi-token:"), multiTokenModuleSecretKey()]);
+}
+
+circuit nonFungibleTokenModuleIdentity(): Bytes<32> {
+  return persistentHash<Vector<2, Bytes<32>>>([pad(32, "auth16:non-fungible-token:"), nonFungibleTokenModuleSecretKey()]);
+}
+
+constructor(
+  configuredOwner: Either<Bytes<32>, ContractAddress>,
+  configuredRoleMember: Bytes<32>,
+  tokenId: Bytes<32>,
+  configuredTokenMember: Bytes<32>,
+  fungibleId: Bytes<32>,
+  multiTokenId: Bytes<32>,
+  nonFungibleId: Bytes<32>
+) {
+  owner = disclose(configuredOwner);
+  roleMembers.insert(disclose(configuredRoleMember));
+  tokenPermissions.insert(disclose(tokenId), disclose(configuredTokenMember));
+  fungiblePermissions.insert(disclose(fungibleId), disclose(configuredTokenMember));
+  multiTokenPermissions.insert(disclose(multiTokenId), disclose(configuredTokenMember));
+  nonFungibleOwners.insert(disclose(nonFungibleId), disclose(configuredTokenMember));
+  routedPublicKey = default<Bytes<32>>;
+}
+
+export circuit ownerAction(): [] {
+  assert(owner.is_left, "contract-owner invocation semantics not represented");
+  assert(ownableIdentity() == owner.left, "owner credential");
+  routedPublicKey = disclose(ownPublicKey().bytes);
+  ownerActions.increment(1);
+}
+
+export circuit roleAction(): [] {
+  assert(roleMembers.member(disclose(accessControlIdentity())), "role credential");
+  routedPublicKey = disclose(ownPublicKey().bytes);
+  roleActions.increment(1);
+}
+
+export circuit tokenPermissionAction(tokenId: Bytes<32>): [] {
+  assert(tokenPermissions.member(disclose(tokenId)), "token permission exists");
+  assert(tokenPermissions.lookup(disclose(tokenId)) == fungibleTokenModuleIdentity(), "token credential");
+  routedPublicKey = disclose(ownPublicKey().bytes);
+  tokenActions.increment(1);
+}
+
+export circuit fungibleTokenAction(assetId: Bytes<32>): [] {
+  assert(fungiblePermissions.member(disclose(assetId)), "fungible permission exists");
+  assert(fungiblePermissions.lookup(disclose(assetId)) == fungibleTokenModuleIdentity(), "fungible credential");
+  routedPublicKey = disclose(ownPublicKey().bytes);
+  fungibleActions.increment(1);
+}
+
+export circuit multiTokenAction(tokenClass: Bytes<32>): [] {
+  assert(multiTokenPermissions.member(disclose(tokenClass)), "multi-token permission exists");
+  assert(multiTokenPermissions.lookup(disclose(tokenClass)) == multiTokenModuleIdentity(), "multi-token credential");
+  routedPublicKey = disclose(ownPublicKey().bytes);
+  multiTokenActions.increment(1);
+}
+
+export circuit nonFungibleTokenAction(tokenId: Bytes<32>): [] {
+  assert(nonFungibleOwners.member(disclose(tokenId)), "NFT owner exists");
+  assert(nonFungibleOwners.lookup(disclose(tokenId)) == nonFungibleTokenModuleIdentity(), "NFT credential");
+  routedPublicKey = disclose(ownPublicKey().bytes);
+  nonFungibleActions.increment(1);
+}

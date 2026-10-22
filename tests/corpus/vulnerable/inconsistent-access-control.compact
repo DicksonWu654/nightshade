@@ -1,0 +1,8 @@
+import CompactStandardLibrary;
+export ledger owner: Bytes<32>;
+export ledger stored: Field;
+witness secret(): Bytes<32>;
+circuit caller(): [] { assert(persistentHash<Bytes<32>>(secret()) == owner, "owner"); }
+export circuit first(next: Field): [] { caller(); stored = disclose(next); }
+export circuit second(next: Field): [] { caller(); stored = disclose(next); }
+export circuit missing(next: Field): [] { stored = disclose(next); }

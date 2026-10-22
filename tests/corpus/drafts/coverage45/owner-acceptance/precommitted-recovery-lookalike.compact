@@ -1,0 +1,14 @@
+import CompactStandardLibrary;
+
+// Intentional policy control: constructor-provisioned recovery authority is active
+// immediately, with no recipient acceptance transition.
+export ledger activeOwner: Bytes<32>;
+
+constructor(precommittedRecoveryKey: Bytes<32>) {
+  activeOwner = disclose(precommittedRecoveryKey);
+}
+
+witness recoverySecret(): Bytes<32>;
+export circuit recoveryAction(): [] {
+  assert(persistentHash<Bytes<32>>(recoverySecret()) == activeOwner, "precommitted recovery key");
+}

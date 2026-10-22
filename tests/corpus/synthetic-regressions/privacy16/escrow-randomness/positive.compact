@@ -1,0 +1,11 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+struct Mask { ephemeral: JubjubPoint; shared: JubjubPoint; }
+witness spenderSeed(): JubjubScalar;
+export circuit escrowMemo(ownerPk: JubjubPoint, memoPoint: JubjubPoint): Mask {
+  // ECDH-shaped mask construction: caller seed selects the only ephemeral scalar.
+  const r = spenderSeed();
+  const ephemeral = ecMulGenerator(r);
+  const shared = ecMul(ownerPk, r);
+  return disclose(Mask { ephemeral, shared: ecAdd(shared, memoPoint) });
+}

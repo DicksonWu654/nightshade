@@ -1,0 +1,8 @@
+pragma language_version >= 0.26.0;
+circuit identity<T>(value: T): T { return value; }
+circuit add(total: Field, value: Field): Field { return total + value; }
+export circuit entry(secret: Field): Field {
+  const values = map(identity<Field>, [secret, 0 as Field]);
+  const selected = map((value) => secret, values);
+  return fold(add, 0 as Field, selected);
+}

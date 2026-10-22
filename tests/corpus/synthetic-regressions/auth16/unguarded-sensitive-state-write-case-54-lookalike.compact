@@ -1,0 +1,4 @@
+// Intentionally public timestamp/heartbeat state: schema documents public write policy.
+// Policy: anyone may advance this public liveness marker.
+export ledger heartbeat: Field;
+export circuit tick(next: Field): [] { heartbeat = disclose(next); }

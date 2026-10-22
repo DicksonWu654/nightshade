@@ -1,0 +1,114 @@
+{
+  "name": "nightshade-compact",
+  "version": "0.1.0",
+  "license": "Apache-2.0",
+  "description": "Offline static security analysis for Compact smart contracts, with text, JSON and SARIF reports",
+  "keywords": ["compact", "midnight", "static-analysis", "security", "sarif"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DicksonWu654/nightshade.git"
+  },
+  "type": "module",
+  "bin": {
+    "nightshade": "dist/src/cli.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "import": "./dist/src/index.js"
+    },
+    "./detector-api": {
+      "types": "./dist/src/detector-api.d.ts",
+      "import": "./dist/src/detector-api.js"
+    },
+    "./reporting": {
+      "types": "./dist/src/reporting/index.d.ts",
+      "import": "./dist/src/reporting/index.js"
+    },
+    "./config": {
+      "types": "./dist/src/config.d.ts",
+      "import": "./dist/src/config.js"
+    }
+  },
+  "files": [
+    "dist/src",
+    "dist/parser",
+    "prebuilds",
+    "examples",
+    "src/parser/native",
+    "binding.gyp",
+    "scripts/build-parser.mjs",
+    "scripts/compiler-sources.json",
+    "scripts/demo.mjs",
+    "docs/adr",
+    "docs/detectors",
+    "docs/schema",
+    "docs/architecture.md",
+    "docs/api.md",
+    "docs/compact-semantics-notes.md",
+    "docs/compiler-onboarding.md",
+    "docs/configuration.md",
+    "docs/coverage.md",
+    "docs/runtime-qualification.md",
+    "docs/detectors.md",
+    "docs/evaluation.md",
+    "docs/explore.md",
+    "docs/generated-testing.md",
+    "docs/limitations.md",
+    "docs/review.md",
+    "docs/user-guide.md",
+    "README.md",
+    "CONTRIBUTING.md",
+    "AGENTS.md",
+    "action.yml",
+    ".github/workflows/ci.yml",
+    "NOTICE",
+    "THIRD_PARTY.md",
+    "CHANGELOG.md",
+    "SECURITY.md"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "install": "node scripts/build-parser.mjs --install",
+    "build:parser": "node scripts/build-parser.mjs",
+    "build": "npm run build:parser && tsc && node scripts/copy-stdlib.mjs",
+    "test": "npm run build && node scripts/test.mjs correctness",
+    "test:timing": "npm run build && node scripts/test.mjs timing",
+    "test:generated": "npm run build && node dist/tests/generative/campaign.js",
+    "scan": "node dist/src/cli.js",
+    "explore": "node dist/src/cli.js explore",
+    "demo": "node scripts/demo.mjs",
+    "benchmark": "npm run build && node dist/benchmarks/run.js",
+    "bench:compat": "node scripts/bench-compat.mjs",
+    "compiler:onboard": "node scripts/onboard-compiler.mjs",
+    "compiler:watch": "node scripts/onboard-compiler.mjs --watch",
+    "benchmark:performance": "npm run build && node dist/benchmarks/performance.js",
+    "benchmark:effects": "npm run build && node dist/benchmarks/effects.js",
+    "benchmark:summaries": "npm run build && node dist/benchmarks/summaries.js",
+    "benchmark:read-summaries": "npm run build && node dist/benchmarks/read-summaries.js",
+    "benchmark:guards": "npm run build && node dist/benchmarks/guards.js",
+    "test:package": "npm run build && node scripts/package-smoke.mjs",
+    "prepack": "npm run build && node scripts/prebuild-parser.mjs",
+    "build:incremental": "npm run build:parser && tsc && node scripts/copy-stdlib.mjs",
+    "check:affected": "node scripts/test-affected.mjs",
+    "test:dual": "npm run build:incremental && node scripts/test-dual.mjs"
+  },
+  "dependencies": {
+    "node-gyp-build": "4.8.4",
+    "tree-sitter-runtime": "npm:tree-sitter@0.25.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "ajv": "8.20.0",
+    "ajv-draft-04": "1.0.0",
+    "tree-sitter-cli": "0.25.10",
+    "tree-sitter-compact": "https://codeload.github.com/midnightntwrk/compact-tree-sitter/tar.gz/22de6ee9dbf4b92fe4e2fe3602e53f1e352b79fd",
+    "typescript": "~5.9.3"
+  },
+  "homepage": "https://github.com/DicksonWu654/nightshade#readme",
+  "bugs": {
+    "url": "https://github.com/DicksonWu654/nightshade/issues"
+  }
+}

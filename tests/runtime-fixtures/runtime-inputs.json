@@ -1,0 +1,110 @@
+{
+  "schemaVersion": "nightshade-runtime-inputs-1",
+  "purpose": "Optional test-only dependencies for owned synthetic compiled-evaluation qualification; not nightshade product dependencies.",
+  "qualificationLayer": "compiled-evaluation-only",
+  "toolchain": {
+    "compilerVersion": "0.34.0",
+    "languageVersion": "0.26.0",
+    "profile": "ZKIR2",
+    "compactRuntimeVersion": "0.19.0",
+    "onchainRuntimeVersion": "4.0.0-rc.3",
+    "qualifiedNodeVersions": [
+      "24.15.0",
+      "22.23.3"
+    ]
+  },
+  "sourcePins": {
+    "compactRelease": {
+      "repository": "https://github.com/LFDT-Minokawa/compact",
+      "tag": "compactc-v0.34.0",
+      "commit": "1f671fc27818df2b2676b3a97f85b2b821756243",
+      "dependencyLockPath": "runtime/package-lock.json"
+    },
+    "ledger": {
+      "repository": "https://github.com/midnightntwrk/midnight-ledger",
+      "tag": "ledger-9.1.0.0-rc.3",
+      "commit": "4823b5351b17cc49e30f19760dbd30a73cf95e22",
+      "pinSource": "Compact release flake.lock: onchain-runtime-v4"
+    },
+    "researchReference": {
+      "commit": "b3a90d9524e784a0fe8eb711072b1ab1bfb7cbad",
+      "note": "Newer research source (runtime 0.19.104), not the runtime API source for this qualification."
+    }
+  },
+  "restoration": {
+    "packageJson": "qualification-inputs/package.json",
+    "packageJsonSha256": "2f4aab8d0d9315ba3c336163bbceffc34549d9c837714587665d52f696c2c028",
+    "packageLock": "qualification-inputs/package-lock.json",
+    "packageLockSha256": "2fb51a5192161882aecfe1f72bed96339fcba2d76eed52db00dadc0dc44ea901",
+    "installCommand": "npm ci --ignore-scripts --omit=dev --no-audit --no-fund",
+    "location": "Copy the package and lockfile into an external directory; point COMPACT_RUNTIME_TEST to that directory."
+  },
+  "provenance": {
+    "verifiedAtUtc": "2026-09-26T04:33:09.286934+00:00",
+    "archiveVerification": "Downloaded the six registry archives; computed SHA-512 and checked each against its lockfile integrity, then recorded SHA-256 and byte length. Installed package versions also matched.",
+    "dependencySelection": "Five production dependency entries preserved from the Compact release runtime/package-lock.json; compact-runtime 0.19.0 registry metadata supplies the root package archive and integrity.",
+    "restoredCompilerArchive": {
+      "filename": "compactc_v0.34.0_x86_64-unknown-linux-musl.zip",
+      "sha256": "775ccddf5a71399835329bbf7471ba5a8c54fcc825d372c75e19ba7042069584",
+      "note": "Linux x86-64 compiler archive qualified on this server; this is not a cross-platform artifact pin."
+    },
+    "boundaries": [
+      "Registry integrity and source revision records are not reproducible-build attestations.",
+      "No proof verification, ledger transaction application, independent review or release approval is asserted."
+    ]
+  },
+  "packages": [
+    {
+      "package": "@midnight-ntwrk/compact-runtime",
+      "version": "0.19.0",
+      "url": "https://registry.npmjs.org/@midnight-ntwrk/compact-runtime/-/compact-runtime-0.19.0.tgz",
+      "integrity": "sha512-0q1ZOlyPdCCEasAxlHxagO6Sb+Db5GM6qYPQ+c+cp71NRxQgiY0Wd0/LIoshQTs+OBISb4XTjiNQ1lxcKR79qQ==",
+      "sha256": "f41769a2b449fef10c974bb6b2723c430d8df02aa03ad377a69b55ada22aa61e",
+      "bytes": 48971
+    },
+    {
+      "package": "@midnightntwrk/onchain-runtime-v4",
+      "version": "4.0.0-rc.3",
+      "url": "https://registry.npmjs.org/@midnightntwrk/onchain-runtime-v4/-/onchain-runtime-v4-4.0.0-rc.3.tgz",
+      "integrity": "sha512-LAf4g3vgwtPqActbi5RAoZcfYduqnFqtsHN+i1s/Mcb5vi2yMbPmpSOJ0YCCIGb2S/qY7G5tQARHVD0PJyHSNA==",
+      "sha256": "0a6f99cf3484f7a07c9677650d9f61e624b7a6850f44cbb899a681401ff438b0",
+      "bytes": 442080
+    },
+    {
+      "package": "@noble/curves",
+      "version": "2.3.0",
+      "url": "https://registry.npmjs.org/@noble/curves/-/curves-2.3.0.tgz",
+      "integrity": "sha512-v7cY+4oWYPQszRj6ZFGzTVL7uP2TaLo1xMhWHzYC5wj0ZhOXQ5x+sBre8rF3hi8cAoi0bh1qXoovoOkdFtvqEg==",
+      "sha256": "c1de520e0b8c4d6154aecd5bc119a1b1f31eadd028af04f34e897f2c389da9c0",
+      "bytes": 411586
+    },
+    {
+      "package": "@noble/hashes",
+      "version": "2.3.0",
+      "url": "https://registry.npmjs.org/@noble/hashes/-/hashes-2.3.0.tgz",
+      "integrity": "sha512-oN+QwyX7VSHotibwubG3kpzbwKrfnyR6OOO+3Nk/53ADL7FmgHHz4TgrbaYKvvOw09u6QTx0oiH1cNCIOuN0CQ==",
+      "sha256": "892281f5dd25ddea8e215c740945bacdfc78aa4fca81f2c25a06876366c8beac",
+      "bytes": 163816
+    },
+    {
+      "package": "@types/object-inspect",
+      "version": "1.13.0",
+      "url": "https://registry.npmjs.org/@types/object-inspect/-/object-inspect-1.13.0.tgz",
+      "integrity": "sha512-lwGTVESDDV+XsQ1pH4UifpJ1f7OtXzQ6QBOX2Afq2bM/T3oOt8hF6exJMjjIjtEWeAN2YAo25J7HxWh97CCz9w==",
+      "sha256": "0be4b787ead148684077ddae8b12979248727f6f18fae63ccdf666e97f0504aa",
+      "bytes": 2154
+    },
+    {
+      "package": "object-inspect",
+      "version": "1.13.4",
+      "url": "https://registry.npmjs.org/object-inspect/-/object-inspect-1.13.4.tgz",
+      "integrity": "sha512-W67iLl4J2EXEGTbfeHCffrjDfitvLANg0UlX3wFUUSTx92KXRFegMHUVgSqE+wvhAbi4WqjGg9czysTV2Epbew==",
+      "sha256": "8324967a3afd8a45b0401e3554aebc1843f493bec46a89a7ce8cf072e62e90bf",
+      "bytes": 28026
+    }
+  ],
+  "legalNotes": [
+    "Compact runtime declares Apache-2.0.",
+    "onchain-runtime-v4 4.0.0-rc.3 npm package has no license field or LICENSE file; pinned ledger source has Apache-2.0 LICENSE and workspace metadata. This records source evidence, not legal approval."
+  ]
+}

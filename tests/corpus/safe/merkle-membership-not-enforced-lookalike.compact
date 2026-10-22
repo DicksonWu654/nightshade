@@ -1,0 +1,9 @@
+import { MerkleTreePath, MerkleTreeDigest } from CompactStandardLibrary;
+export ledger accepted: Field;
+witness suppliedPath(): MerkleTreePath<2,Field>;
+circuit merkleTreePathRoot(proof: MerkleTreePath<2,Field>): MerkleTreeDigest { return default<MerkleTreeDigest>; }
+export circuit accept(): [] {
+  const proof = suppliedPath();
+  const digest = merkleTreePathRoot(proof);
+  accepted = disclose(proof.leaf);
+}

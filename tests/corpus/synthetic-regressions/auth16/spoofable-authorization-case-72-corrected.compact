@@ -1,0 +1,18 @@
+import CompactStandardLibrary;
+// Representative fix: derive authority from a secret and use safe exported wrappers.
+export ledger ownerCommitment: Bytes<32>;
+export ledger adminCommitments: Set<Bytes<32>>;
+export ledger value: Field;
+witness getUserSecret(): Bytes<32>;
+circuit callerId(): Bytes<32> { return persistentHash<Vector<2, Bytes<32>>>([pad(32, "auth:"), getUserSecret()]); }
+// Authorities are fixed by owned constructor configuration, not first-call data.
+constructor(configuredOwner: Bytes<32>, configuredAdmin: Bytes<32>) {
+  ownerCommitment = disclose(configuredOwner);
+  adminCommitments.insert(disclose(configuredAdmin));
+}
+circuit requireOwner(caller: Bytes<32>): [] { assert(caller == ownerCommitment, "owner"); }
+circuit requireAdmin(caller: Bytes<32>): [] { assert(adminCommitments.member(disclose(caller)), "admin"); }
+circuit ownerWrite(next: Field, caller: Bytes<32>): [] { requireOwner(caller); value = disclose(next); }
+circuit adminWrite(next: Field, caller: Bytes<32>): [] { requireAdmin(caller); value = disclose(next); }
+export circuit safeOwnerWrite(next: Field): [] { ownerWrite(next, callerId()); }
+export circuit safeAdminWrite(next: Field): [] { adminWrite(next, callerId()); }

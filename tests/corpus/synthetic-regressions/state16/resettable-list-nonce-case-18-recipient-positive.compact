@@ -1,0 +1,20 @@
+// Owned memo lifecycle mapped source shape; memo bytes remain opaque; no runtime or cryptographic claim.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger recipientMemos: Map<Bytes<32>, List<Bytes<32>>>;
+export circuit initRecipient(recipientKey: Bytes<32>): [] {
+ assert(!recipientMemos.member(disclose(recipientKey)), "recipient List absent");
+ recipientMemos.insertDefault(disclose(recipientKey));
+}
+export circuit credit(recipientKey: Bytes<32>, recipient: Either<ZswapCoinPublicKey, ContractAddress>, amount: Uint<64>): [] {
+ assert(recipient.is_left, "shielded recipient");
+ assert(recipient.left.bytes == disclose(recipientKey), "memo owner matches mint recipient");
+ const memoIndex = recipientMemos.lookup(disclose(recipientKey)).length() as Uint<64>;
+ const nonce = evolveNonce(memoIndex, pad(32, "source-domain-a8b6df"));
+ const ephemeral = evolveNonce(memoIndex, pad(32, "source-domain-333f4b"));
+ mintShieldedToken(pad(32, "source-domain-2c2c0c"), disclose(amount), nonce, disclose(recipient));
+ recipientMemos.lookup(disclose(recipientKey)).pushFront(ephemeral);
+}
+export circuit prune(recipientKey: Bytes<32>): [] {
+ recipientMemos.lookup(disclose(recipientKey)).resetToDefault();
+}

@@ -1,0 +1,31 @@
+// Adapted from midnightntwrk/example-counter; owned deadline regression.
+// SPDX-License-Identifier: Apache-2.0
+pragma language_version >= 0.23;
+import CompactStandardLibrary;
+
+export ledger round: Counter;
+export ledger announcedAt: Uint<64>;
+sealed ledger noticeSeconds: Uint<64>;
+export ledger released: Boolean;
+
+constructor() {
+  announcedAt = 0;
+  noticeSeconds = 3600;
+  released = false;
+}
+
+export circuit increment(): [] {
+  round.increment(1);
+}
+
+export circuit announce(currentTimestamp: Uint<64>): [] {
+  assert(blockTimeGte(disclose(currentTimestamp)), "Announcement cannot be future-dated");
+  announcedAt = disclose(currentTimestamp);
+}
+
+export circuit release(currentTimestamp: Uint<64>): [] {
+  assert(blockTimeGte(disclose(currentTimestamp)), "Execution cannot be future-dated");
+  const deadline = (announcedAt + noticeSeconds) as Uint<64>;
+  assert(disclose(currentTimestamp >= deadline), "Notice has not elapsed");
+  released = true;
+}

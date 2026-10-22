@@ -1,0 +1,8 @@
+import CompactStandardLibrary;
+// The same reusable preimage predicate authorizes unrelated state changes.
+export ledger controller: Bytes<32>;
+export ledger document: Field;
+witness localSecretKey(): Bytes<32>;
+circuit authorize(): [] { assert(persistentHash<Bytes<32>>(localSecretKey()) == controller, "controller"); }
+export circuit updateDocument(next: Field): [] { authorize(); document = disclose(next); }
+export circuit revokeDocument(): [] { authorize(); document = document - document; }

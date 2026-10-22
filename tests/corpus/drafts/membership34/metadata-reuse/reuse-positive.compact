@@ -1,0 +1,16 @@
+// Owned source-shape composition candidate; no runtime or protocol claim.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger owner: Map<Uint<128>, Bytes<32>>;
+export ledger uri: Map<Uint<128>, Opaque<"string">>;
+// One invocation removes the active owner, reissues the same id, then reads retained metadata.
+export circuit mint(id: Uint<128>, who: Bytes<32>, value: Opaque<"string">): [] { owner.insert(disclose(id), disclose(who)); uri.insert(disclose(id), disclose(value)); }
+export circuit burn(id: Uint<128>): [] { owner.remove(disclose(id)); }
+export circuit remint(id: Uint<128>, who: Bytes<32>): Opaque<"string"> { owner.insert(disclose(id), disclose(who)); return uri.lookup(disclose(id)); }
+export circuit reuse(id: Uint<128>, original: Bytes<32>, who: Bytes<32>, value: Opaque<"string">): Opaque<"string"> {
+  owner.insert(disclose(id), disclose(original));
+  uri.insert(disclose(id), disclose(value));
+  owner.remove(disclose(id));
+  owner.insert(disclose(id), disclose(who));
+  return uri.lookup(disclose(id));
+}

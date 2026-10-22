@@ -1,0 +1,11 @@
+// Synthetic source-pattern regression.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export circuit _mint(amount: Uint<64>, nonce: Bytes<32>): [] {
+ const coin = mintShieldedToken(pad(32, "coin-domain"), disclose(amount), disclose(nonce), right<ZswapCoinPublicKey, ContractAddress>(kernel.self()));
+ receiveShielded(disclose(coin));
+}
+export circuit _burn(coin: QualifiedShieldedCoinInfo, amount: Uint<128>): [] {
+ const result = sendShielded(disclose(coin), right<ZswapCoinPublicKey, ContractAddress>(kernel.self()), disclose(amount));
+ receiveShielded(disclose(result.sent));
+}

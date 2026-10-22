@@ -1,0 +1,8 @@
+import CompactStandardLibrary;
+import "access/AccessControl" prefix A_;
+export circuit entry(): [] {
+  A__grantRole(pad(32, "role"), right<Bytes<32>, ContractAddress>(default<ContractAddress>));
+}
+export circuit useful(): [] {
+  A__grantRole(pad(32, "role"), left<Bytes<32>, ContractAddress>(pad(32, "account")));
+}

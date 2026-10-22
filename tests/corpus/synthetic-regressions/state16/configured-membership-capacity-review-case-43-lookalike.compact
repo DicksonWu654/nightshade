@@ -1,0 +1,11 @@
+// Intentional one-signer policy control. Witness is a signer identity only; signature verification and cryptographic validity are outside this fixture.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger registered: Set<Bytes<32>>;
+export ledger threshold: Uint<8>;
+constructor(signer: Bytes<32>) { registered.insert(disclose(signer)); threshold = 1 as Uint<8>; }
+witness signer(): Bytes<32>;
+export circuit gatedOperation(): [] {
+ assert(disclose(threshold) == 1 as Uint<8>, "one-signer mode");
+ assert(registered.member(disclose(signer())), "registered signer identity");
+}

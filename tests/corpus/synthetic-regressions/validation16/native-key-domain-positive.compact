@@ -1,0 +1,5 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export circuit isIdentity(pk: JubjubPoint): Boolean {
+  return pk == ecMulGenerator(0 as JubjubScalar);
+}

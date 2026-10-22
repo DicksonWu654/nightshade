@@ -1,0 +1,6 @@
+import CompactStandardLibrary;
+// Record-shaped ownPublicKey authorization or stored-key association.
+export ledger owner: Bytes<32>;
+export ledger value: Field;
+constructor() { owner = disclose(ownPublicKey().bytes); }
+export circuit issue(): [] { const caller = ownPublicKey().bytes; assert(caller == owner, "issuer"); value = value + 1; }

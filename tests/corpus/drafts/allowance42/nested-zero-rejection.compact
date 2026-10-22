@@ -1,0 +1,22 @@
+// Owned intentional control: this spender API deliberately rejects zero-value
+// spends before consulting allowance membership. The getter still reports a
+// missing approval as zero for callers that inspect allowance state.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger allowances: Map<Bytes<32>, Map<Bytes<32>, Uint<64>>>;
+export ledger balances: Map<Bytes<32>, Map<Bytes<32>, Uint<64>>>;
+export circuit allowance(owner: Bytes<32>, spender: Bytes<32>, token: Bytes<32>): Uint<64> {
+ if (allowances.member(disclose(owner)) && allowances.lookup(disclose(owner)).member(disclose(spender))) return allowances.lookup(disclose(owner)).lookup(disclose(spender));
+ return 0 as Uint<64>;
+}
+export circuit spend(owner: Bytes<32>, spender: Bytes<32>, source: Bytes<32>, to: Bytes<32>, token: Bytes<32>, amount: Uint<64>): [] {
+ assert(disclose(amount) > 0, "zero-value spends are unsupported");
+ assert(allowances.member(disclose(owner)), "outer owner exists");
+ assert(allowances.lookup(disclose(owner)).member(disclose(spender)), "inner spender exists");
+ const approved = allowances.lookup(disclose(owner)).lookup(disclose(spender));
+ allowances.lookup(disclose(owner)).insert(disclose(spender), disclose((approved - disclose(amount)) as Uint<64>));
+ const prior = balances.lookup(disclose(source)).lookup(disclose(token));
+ balances.lookup(disclose(source)).insert(disclose(token), disclose((prior - disclose(amount)) as Uint<64>));
+ const received = balances.lookup(disclose(to)).lookup(disclose(token));
+ balances.lookup(disclose(to)).insert(disclose(token), disclose((received + disclose(amount)) as Uint<64>));
+}

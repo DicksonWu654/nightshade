@@ -1,0 +1,16 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+struct Ciphertext { ephemeral: JubjubPoint; masked: JubjubPoint; }
+export ledger registeredKey: JubjubPoint;
+export ledger lastCiphertext: Ciphertext;
+pure circuit encrypt(pk: JubjubPoint, plaintext: JubjubPoint, r: JubjubScalar): Ciphertext {
+  return Ciphertext { ephemeral: ecMulGenerator(r), masked: ecAdd(ecMul(pk, r), plaintext) };
+}
+export circuit register(key: JubjubPoint): [] { registeredKey = disclose(key); }
+export circuit update(suppliedKey: JubjubPoint, encryptionKey: JubjubPoint, plaintext: JubjubPoint, r: JubjubScalar): [] {
+  // A ciphertext is produced under encryptionKey while the helper is supplied another key.
+  const ciphertext = encrypt(encryptionKey, plaintext, r);
+  const helperKey = suppliedKey;
+  lastCiphertext = disclose(ciphertext);
+  helperKey;
+}

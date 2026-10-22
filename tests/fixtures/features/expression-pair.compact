@@ -1,0 +1,4 @@
+pragma language_version >= 0.26.0;
+export circuit entry(): Field {
+  return (0 as Field, 1 as Field);
+}

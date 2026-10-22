@@ -1,0 +1,7 @@
+import CompactStandardLibrary;
+export ledger owner: Bytes<32>;
+witness secret(): Bytes<32>;
+export circuit withdraw(recipient: Either<ContractAddress, UserAddress>): [] {
+  assert(persistentHash<Bytes<32>>(secret()) == owner, "owner");
+  sendUnshielded(default<Bytes<32>>, 1, disclose(recipient));
+}

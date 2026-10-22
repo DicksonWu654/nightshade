@@ -1,0 +1,28 @@
+// Owned namesakes: distinct local declarations have separate Boolean state.
+pragma language_version >= 0.20;
+module First {
+  module Initializable {
+    ledger initialized: Boolean;
+    export circuit initialize(): [] {
+      assert(!initialized, "First already initialized");
+      initialized = true;
+    }
+  }
+  import Initializable prefix I_;
+  export circuit initialize(): [] { I_initialize(); }
+}
+module Second {
+  module Initializable {
+    ledger initialized: Boolean;
+    export circuit initialize(): [] {
+      assert(!initialized, "Second already initialized");
+      initialized = true;
+    }
+  }
+  import Initializable prefix I_;
+  export circuit initialize(): [] { I_initialize(); }
+}
+import First prefix F_;
+import Second prefix S_;
+export circuit initializeFirst(): [] { F_initialize(); }
+export circuit initializeSecond(): [] { S_initialize(); }

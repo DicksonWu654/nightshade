@@ -1,0 +1,11 @@
+pragma language_version >= 0.26.0;
+module Helpers<T, #N> {
+  export circuit pass(value: T): T {
+    for (const index of 0..N) { assert(true, "ok"); }
+    return value;
+  }
+}
+import Helpers<Field, 2>;
+export circuit entry(value: Field): Field {
+  return pass(value);
+}

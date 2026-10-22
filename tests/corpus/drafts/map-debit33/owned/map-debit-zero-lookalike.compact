@@ -1,0 +1,10 @@
+// Owned static source-shape fixture for review; no execution or security claim.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger balances: Map<Bytes<32>, Uint<64>>;
+export circuit debit(key: Bytes<32>, amount: Uint<64>): [] {
+  if (disclose(amount) != 0 as Uint<64>) {
+    const prior = balances.lookup(disclose(key));
+    balances.insert(disclose(key), disclose((prior - amount) as Uint<64>));
+  }
+}

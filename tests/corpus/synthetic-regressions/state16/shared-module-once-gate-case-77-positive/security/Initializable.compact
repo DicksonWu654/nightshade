@@ -1,0 +1,7 @@
+module Initializable {
+  export ledger _isInitialized: Boolean;
+  export circuit initialize(): [] {
+    assert(!_isInitialized, "already initialized");
+    _isInitialized = true;
+  }
+}

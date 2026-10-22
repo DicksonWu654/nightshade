@@ -1,0 +1,46 @@
+// SPDX-License-Identifier: MIT
+// Owned source-first adaptation of OpenZeppelin Compact Contracts
+// ShieldedAccessControl, revision ec1331cd8195694c747d291e8fc8ab6d2914a976.
+// Canonical module: access/ShieldedAccessControl.compact
+// Synthetic source-pattern regression.
+// The imported module below is the pinned owned dependency, not a local namesake.
+// This intentional policy lookalike has an independently authorized delayed route.
+// No runtime, proof, protocol-authentication, or impact reproduction is claimed.
+
+pragma language_version >= 0.26.0;
+
+import CompactStandardLibrary;
+import "access/ShieldedAccessControl" prefix ShieldedAccessControl_;
+
+sealed ledger bootstrapCommitment: Bytes<32>;
+witness bootstrapPreimage(): Bytes<32>;
+
+constructor(instanceSalt: Bytes<32>, commitment: Bytes<32>) {
+  ShieldedAccessControl_initialize(instanceSalt);
+  bootstrapCommitment = disclose(commitment);
+}
+
+// Delayed setup deliberately uses the canonical internal seeding circuit, but
+// requires a private preimage for a constructor-pinned commitment.
+export circuit bootstrapDefaultAdmin(
+  accountId: ShieldedAccessControl_AccountIdentifier
+): [] {
+  assert(
+    persistentHash<Bytes<32>>(bootstrapPreimage()) == bootstrapCommitment,
+    "bootstrap commitment"
+  );
+  ShieldedAccessControl__grantRole(
+    ShieldedAccessControl_DEFAULT_ADMIN_ROLE(), accountId
+  );
+}
+
+export pure circuit DEFAULT_ADMIN_ROLE(): ShieldedAccessControl_RoleIdentifier {
+  return ShieldedAccessControl_DEFAULT_ADMIN_ROLE();
+}
+
+export circuit grantRole(
+  role: ShieldedAccessControl_RoleIdentifier,
+  accountId: ShieldedAccessControl_AccountIdentifier
+): [] {
+  ShieldedAccessControl_grantRole(role, accountId);
+}

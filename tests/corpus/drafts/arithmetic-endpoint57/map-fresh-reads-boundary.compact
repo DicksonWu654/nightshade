@@ -1,0 +1,10 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger values: Map<Bytes<32>, Uint<128>>;
+export circuit readTwice(key: Bytes<32>): [] {
+  const first = values.lookup(disclose(key));
+  values.insert(disclose(key), disclose(first));
+  const second = values.lookup(disclose(key));
+  const delta = (first - second) as Uint<128>;
+  sendUnshielded(pad(32, ""), disclose(delta), disclose(right<ContractAddress, UserAddress>(UserAddress { bytes: pad(32, "") })));
+}

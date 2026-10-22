@@ -1,0 +1,59 @@
+// Supplemental source boundary for acknowledged-prefix; shares the owned bounded transfer.
+// Bounded acknowledged-prefix repair: at most three newer and three acknowledged memos.
+// A per-wallet scratch List is required empty on entry and restored empty on success.
+// The unread older tail is retained; this does not model arbitrary prefix lengths.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger memos: Map<Bytes<32>, List<Bytes<32>>>;
+export ledger newerScratch: Map<Bytes<32>, List<Bytes<32>>>;
+export circuit initialize(wallet: Bytes<32>): [] {
+ assert(!memos.member(disclose(wallet)), "wallet initialized once");
+ assert(!newerScratch.member(disclose(wallet)), "scratch absent before initialization");
+ memos.insertDefault(disclose(wallet));
+ newerScratch.insertDefault(disclose(wallet));
+}
+export circuit credit(recipient: Bytes<32>, memoCiphertext: Bytes<32>): [] {
+ memos.lookup(disclose(recipient)).pushFront(disclose(memoCiphertext));
+}
+export circuit clearAcknowledged(wallet: Bytes<32>, readBoundary: Uint<64>, acknowledgedCount: Uint<64>): [] {
+ const currentLength = memos.lookup(disclose(wallet)).length();
+ assert(newerScratch.lookup(disclose(wallet)).isEmpty(), "scratch starts empty");
+ assert(currentLength >= disclose(readBoundary), "read boundary still represented");
+ assert(disclose(acknowledgedCount) <= disclose(readBoundary), "acknowledged prefix within read view");
+ const newerCount = currentLength - disclose(readBoundary);
+ assert(newerCount <= 3 as Uint<64>, "at most three newer memos");
+ assert(disclose(acknowledgedCount) <= 3 as Uint<64>, "at most three acknowledged memos");
+ for (const index of 0..3) {
+  if (index < newerCount) {
+   assert(!memos.lookup(disclose(wallet)).isEmpty(), "newer memo head available");
+   const newer = memos.lookup(disclose(wallet)).head().value;
+   newerScratch.lookup(disclose(wallet)).pushFront(newer);
+   assert(!memos.lookup(disclose(wallet)).isEmpty(), "newer memo pop available");
+   memos.lookup(disclose(wallet)).popFront();
+  }
+ }
+ for (const index of 0..3) {
+  if (index < disclose(acknowledgedCount)) {
+   assert(!memos.lookup(disclose(wallet)).isEmpty(), "acknowledged memo pop available");
+   memos.lookup(disclose(wallet)).popFront();
+  }
+ }
+ for (const index of 0..3) {
+  if (index < newerCount) {
+   assert(!newerScratch.lookup(disclose(wallet)).isEmpty(), "scratch head available");
+   const newer = newerScratch.lookup(disclose(wallet)).head().value;
+   assert(!newerScratch.lookup(disclose(wallet)).isEmpty(), "scratch pop available");
+   newerScratch.lookup(disclose(wallet)).popFront();
+   memos.lookup(disclose(wallet)).pushFront(newer);
+  }
+ }
+ assert(newerScratch.lookup(disclose(wallet)).isEmpty(), "scratch ends empty");
+}
+
+// Control state: current list equals the read view; acknowledge zero entries.
+export circuit exercise(wallet: Bytes<32>, oldNewest: Bytes<32>, oldOlder: Bytes<32>): [] {
+ initialize(wallet);
+ credit(wallet, oldOlder);
+ credit(wallet, oldNewest);
+ clearAcknowledged(wallet, 2 as Uint<64>, 0 as Uint<64>);
+}

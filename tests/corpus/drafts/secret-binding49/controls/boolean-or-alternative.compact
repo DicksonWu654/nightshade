@@ -1,0 +1,20 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger accountIdentity: Map<Bytes<32>, Bytes<32>>;
+export ledger encryptionIdentity: Map<Bytes<32>, Bytes<32>>;
+export ledger balances: Map<Bytes<32>, Uint<64>>;
+witness accountSecret(): Bytes<32>;
+witness encryptionSecret(): Bytes<32>;
+circuit accountDigest(secret: Bytes<32>): Bytes<32> { return persistentHash<Vector<2, Bytes<32>>>([pad(32, "binding account identity v1"), secret]) as Bytes<32>; }
+circuit encryptionDigest(secret: Bytes<32>): Bytes<32> { return persistentHash<Vector<2, Bytes<32>>>([pad(32, "binding encryption identity v1"), secret]) as Bytes<32>; }
+export circuit weakWriter(account: Bytes<32>): [] {
+  assert(accountDigest(accountSecret()) == accountIdentity.lookup(disclose(account)), "account identity");
+  balances.insert(disclose(account), 0 as Uint<64>);
+}
+// OR permits success using the first binding alone; it is not an additional required preimage.
+export circuit alternativeWriter(account: Bytes<32>): [] {
+  const accountOk = accountDigest(accountSecret()) == accountIdentity.lookup(disclose(account));
+  const encryptionOk = encryptionDigest(encryptionSecret()) == encryptionIdentity.lookup(disclose(account));
+  assert(accountOk || encryptionOk, "alternative authorization");
+  balances.insert(disclose(account), 0 as Uint<64>);
+}

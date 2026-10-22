@@ -1,0 +1,5 @@
+pragma language_version >= 0.26.0;
+export circuit verify(flag: Boolean): [] {
+  assert(flag, "flag required");
+  assert(flag, "flag still required");
+}

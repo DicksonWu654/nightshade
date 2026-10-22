@@ -1,0 +1,18 @@
+pragma language_version 0.26.0;
+import CompactStandardLibrary;
+
+// The test supplies a deterministic, immutable witness implementation.
+export ledger count: Counter;
+witness next(): Uint<8>;
+
+export circuit accept(): Uint<8> {
+  const value = next();
+  count.increment(1);
+  return disclose(value);
+}
+
+export circuit reject(): [] {
+  const value = next();
+  count.increment(1);
+  assert(value == 255, "owned fixture rejection");
+}

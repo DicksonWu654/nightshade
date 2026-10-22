@@ -1,0 +1,8 @@
+// Intentional zero-value control: accepts zero without touching a recipient List.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger recipientMemos: Map<Bytes<32>, List<Bytes<32>>>;
+export circuit initRecipient(recipient: Bytes<32>): [] { recipientMemos.insertDefault(disclose(recipient)); }
+export circuit credit(recipient: Bytes<32>, memoCiphertext: Bytes<32>, amount: Uint<64>): [] {
+ assert(disclose(amount) == 0, "zero-value control");
+}

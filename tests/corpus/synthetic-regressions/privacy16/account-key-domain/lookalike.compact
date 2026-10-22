@@ -1,0 +1,21 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger accountId: Bytes<32>;
+export ledger encryptionPublicKey: JubjubPoint;
+witness accountKeyMaterial(): Bytes<32>;
+witness encryptionKeyMaterial(): Bytes<32>;
+pure circuit computeAccountId(secret: Bytes<32>): Bytes<32> {
+  return persistentHash<Vector<1, Bytes<32>>>([secret]);
+}
+pure circuit secretToScalar(secret: Bytes<32>): JubjubScalar {
+  return degradeToTransient(persistentHash<Vector<1, Bytes<32>>>([secret])) as JubjubScalar;
+}
+pure circuit derivePk(secret: Bytes<32>): JubjubPoint {
+  return ecMulGenerator(secretToScalar(secret));
+}
+export circuit register(): [] {
+  const accountSecret = accountKeyMaterial();
+  const encryptionSecret = encryptionKeyMaterial();
+  accountId = disclose(computeAccountId(accountSecret));
+  encryptionPublicKey = disclose(derivePk(encryptionSecret));
+}

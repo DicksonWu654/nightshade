@@ -1,0 +1,14 @@
+pragma language_version >= 0.26.0;
+import { persistentHash } from CompactStandardLibrary;
+export ledger credentialHash: Bytes<32>;
+witness credential(): Uint<64>;
+
+circuit widen(value: Uint<64>): Field {
+  return value as Field;
+}
+
+export circuit reveal(): Field {
+  const secret = credential();
+  assert(persistentHash<Uint<64>>(secret) == credentialHash, "credential");
+  return disclose(widen(secret));
+}

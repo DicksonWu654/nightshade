@@ -1,0 +1,11 @@
+{
+  "version": "policy-corpus-1",
+  "cases": [
+    { "name": "declared-secret", "detector": "declared-secret-publication", "line": 6, "policies": { "secrets": [{ "witness": "secret" }] } },
+    { "name": "required-guard", "detector": "unguarded-sensitive-state-write", "line": 5, "policies": { "authorization": [{ "state": "published", "guard": "authorize" }] } },
+    { "name": "forbidden-transition", "detector": "forbidden-state-transition", "line": 5, "policies": { "transitions": [{ "state": "phase", "from": "CLOSED", "to": "OPEN" }] } },
+    { "name": "predictable-randomness", "detector": "predictable-commitment-randomness", "line": 6, "policies": {} },
+    { "name": "contradictory-assertion", "detector": "impossible-assertion", "line": 4, "policies": {} },
+    { "name": "work-budget", "detector": "circuit-work-budget", "line": 4, "policies": { "workBudgets": [{ "circuit": "update", "maxUnits": 5 }] } }
+  ]
+}

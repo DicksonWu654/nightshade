@@ -1,0 +1,26 @@
+pragma language_version >= 0.26.0;
+module Aliases {
+import { Map as NativeMap, List as NativeList, Set as NativeSet, persistentHash as digest } from CompactStandardLibrary;
+export new type MemoList = NativeList<Bytes<32>>;
+export new type MemoMap = NativeMap<Bytes<32>, MemoList>;
+export new type AdminSet = NativeSet<Bytes<32>>;
+export ledger memoState: MemoMap;
+export ledger permitted: AdminSet;
+witness secret(): Bytes<32>;
+witness admin(): Bytes<32>;
+export circuit checkAndPop(wallet: Bytes<32>): [] {
+  assert(digest<Bytes<32>>(secret()) == disclose(wallet), "checked key");
+  assert(permitted.member(disclose(admin())), "admin membership");
+  assert(!memoState.lookup(disclose(wallet)).isEmpty(), "head exists");
+  memoState.lookup(disclose(wallet)).popFront();
+}
+export circuit checkedAndBoundPop(wallet: Bytes<32>): [] {
+  const checkedId = digest<Bytes<32>>(secret());
+  const adminId = admin();
+  assert(checkedId == disclose(wallet), "checked key");
+  assert(permitted.member(disclose(adminId)), "admin membership");
+  assert(!memoState.lookup(disclose(wallet)).isEmpty(), "head exists");
+  memoState.lookup(disclose(wallet)).popFront();
+  assert(adminId == checkedId, "late binding through aliases");
+}
+}

@@ -1,0 +1,8 @@
+import CompactStandardLibrary;
+ledger done: Boolean;
+export ledger payload: Field;
+export circuit initialize(value: Field): [] {
+  assert(!done, "already initialized");
+  done = true;
+  payload = disclose(value);
+}

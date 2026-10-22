@@ -1,0 +1,8 @@
+import CompactStandardLibrary;
+export ledger owner: Bytes<32>;
+export ledger stored9: Field;
+witness privateKey9(): Bytes<32>;
+export circuit change9(next: Field): [] {
+  assert(persistentHash<Bytes<32>>(privateKey9()) == owner, "secret preimage");
+  stored9 = disclose(next);
+}

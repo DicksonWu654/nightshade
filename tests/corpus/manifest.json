@@ -1,0 +1,2948 @@
+{
+  "version": "preimage-corpus-3",
+  "detector": "ledger-bound-preimage-publication",
+  "cases": [
+    {
+      "file": "vulnerable/direct.compact",
+      "lines": [
+        12
+      ],
+      "pairedWith": "safe/hash-only.compact"
+    },
+    {
+      "file": "vulnerable/interprocedural.compact",
+      "lines": [
+        16
+      ],
+      "pairedWith": "safe/interprocedural.compact"
+    },
+    {
+      "file": "vulnerable/exported-return.compact",
+      "lines": [
+        9
+      ],
+      "pairedWith": "safe/constant-return.compact"
+    },
+    {
+      "file": "vulnerable/early-disclose.compact",
+      "lines": [
+        15
+      ],
+      "pairedWith": "safe/early-disclose.compact"
+    },
+    {
+      "file": "vulnerable/numeric-cast.compact",
+      "lines": [
+        13
+      ],
+      "pairedWith": "safe/numeric-cast.compact"
+    },
+    {
+      "file": "safe/numeric-cast.compact",
+      "lines": []
+    },
+    {
+      "file": "vulnerable/full-slice.compact",
+      "lines": [
+        13
+      ],
+      "pairedWith": "safe/full-slice.compact"
+    },
+    {
+      "file": "safe/full-slice.compact",
+      "lines": []
+    },
+    {
+      "file": "safe/interprocedural.compact",
+      "lines": []
+    },
+    {
+      "file": "safe/early-disclose.compact",
+      "lines": []
+    },
+    {
+      "file": "safe/hash-only.compact",
+      "lines": []
+    },
+    {
+      "file": "safe/discarded-disclose.compact",
+      "lines": []
+    },
+    {
+      "file": "safe/constant-return.compact",
+      "lines": []
+    },
+    {
+      "file": "safe/ordinary-disclosure.compact",
+      "lines": []
+    },
+    {
+      "file": "safe/distinct-witness-calls.compact",
+      "lines": []
+    },
+    {
+      "file": "safe/separate-branches.compact",
+      "lines": []
+    },
+    {
+      "file": "safe/commitment.compact",
+      "lines": []
+    }
+  ],
+  "membershipIdentity34": {
+    "detector": "public-key-membership-authorization",
+    "cases": [
+      {
+        "file": "drafts/membership34/owned/membership-raw-helper-chain.compact",
+        "lines": [
+          13
+        ]
+      },
+      {
+        "file": "drafts/membership34/owned/membership-raw-direct.compact",
+        "lines": [
+          8
+        ]
+      },
+      {
+        "file": "drafts/membership34/owned/membership-secret-correction.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/membership34/owned/membership-literal-role-dispatch.compact",
+        "lines": [
+          13
+        ]
+      },
+      {
+        "file": "drafts/membership34/owned/membership-native-alias.compact",
+        "lines": [
+          11
+        ]
+      },
+      {
+        "file": "drafts/membership34/owned/membership-late-guard.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/membership34/owned/membership-unknown-or-guard.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/membership34/owned/membership-arbitrary-account-control.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/membership34/owned/membership-routing-public-status-lookalike.compact",
+        "lines": []
+      }
+    ]
+  },
+  "authorization": {
+    "detector": "spoofable-authorization",
+    "cases": [
+      {
+        "file": "vulnerable/spoofable-authorization.compact",
+        "lines": [
+          6
+        ],
+        "pairedWith": "safe/spoofable-authorization.compact"
+      },
+      {
+        "file": "safe/spoofable-authorization.compact",
+        "lines": []
+      },
+      {
+        "file": "safe/spoofable-authorization-lookalike.compact",
+        "lines": []
+      }
+    ]
+  },
+  "accessConvention": {
+    "detector": "inconsistent-access-control",
+    "cases": [
+      {
+        "file": "vulnerable/inconsistent-access-control.compact",
+        "lines": [
+          8
+        ],
+        "pairedWith": "safe/inconsistent-access-control.compact"
+      },
+      {
+        "file": "safe/inconsistent-access-control.compact",
+        "lines": []
+      },
+      {
+        "file": "safe/inconsistent-access-control-lookalike.compact",
+        "lines": []
+      }
+    ]
+  },
+  "valueTransfer": {
+    "detector": "unprotected-value-transfer",
+    "optIn": true,
+    "cases": [
+      {
+        "file": "vulnerable/unprotected-value-transfer.compact",
+        "lines": [
+          3
+        ],
+        "pairedWith": "safe/unprotected-value-transfer.compact"
+      },
+      {
+        "file": "safe/unprotected-value-transfer.compact",
+        "lines": []
+      },
+      {
+        "file": "safe/unprotected-value-transfer-lookalike.compact",
+        "lines": []
+      }
+    ]
+  },
+  "merkleMembership": {
+    "detector": "merkle-membership-not-enforced",
+    "cases": [
+      {
+        "file": "vulnerable/merkle-membership-not-enforced.compact",
+        "lines": [
+          7
+        ]
+      },
+      {
+        "file": "safe/merkle-membership-not-enforced.compact",
+        "lines": []
+      },
+      {
+        "file": "safe/merkle-membership-not-enforced-lookalike.compact",
+        "lines": []
+      }
+    ]
+  },
+  "builtins": {
+    "revision": "ec1331cd8195694c747d291e8fc8ab6d2914a976",
+    "detector": "openzeppelin-preconditions",
+    "cases": [
+      {
+        "name": "ownable",
+        "policy": "openzeppelin-ownable",
+        "line": 5
+      },
+      {
+        "name": "access-control",
+        "policy": "openzeppelin-access-control",
+        "line": 4
+      },
+      {
+        "name": "pausable",
+        "policy": "openzeppelin-pausable",
+        "line": 4
+      },
+      {
+        "name": "initializable",
+        "policy": "openzeppelin-initializable",
+        "line": 4
+      }
+    ]
+  },
+  "nullifierConsumption": {
+    "cases": [
+      {
+        "file": "vulnerable/nullifier-check-without-insert.compact",
+        "lines": [
+          7
+        ]
+      },
+      {
+        "file": "safe/nullifier-check-without-insert.compact",
+        "lines": []
+      },
+      {
+        "file": "safe/nullifier-check-without-insert-lookalike.compact",
+        "lines": []
+      }
+    ]
+  },
+  "initialization": {
+    "detector": "re-initialization",
+    "optIn": true,
+    "cases": [
+      {
+        "file": "vulnerable/re-initialization.compact",
+        "lines": [
+          3
+        ]
+      },
+      {
+        "file": "safe/re-initialization.compact",
+        "lines": []
+      },
+      {
+        "file": "safe/re-initialization-lookalike.compact",
+        "lines": []
+      }
+    ]
+  },
+  "receivedCoin": {
+    "detector": "received-coin-not-validated",
+    "optIn": true,
+    "cases": [
+      {
+        "file": "vulnerable/received-coin-not-validated.compact",
+        "lines": [
+          12
+        ]
+      },
+      {
+        "file": "safe/received-coin-not-validated.compact",
+        "lines": []
+      },
+      {
+        "file": "safe/received-coin-not-validated-lookalike.compact",
+        "lines": []
+      }
+    ]
+  },
+  "metadataCorePattern34": {
+    "detector": "stale-nft-metadata",
+    "optIn": true,
+    "policies": {
+      "currentNftMetadata": [
+        {
+          "owners": "_owners",
+          "metadata": "cachedURI",
+          "consumer": "replaceToken"
+        }
+      ]
+    },
+    "cases": [
+      {
+        "file": "drafts/membership34/metadata-canonical/metadata-canonical-positive.compact",
+        "lines": [
+          30
+        ]
+      },
+      {
+        "file": "drafts/membership34/metadata-canonical/metadata-canonical-corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/membership34/metadata-canonical/metadata-canonical-lookalike.compact",
+        "lines": []
+      }
+    ]
+  },
+  "nftAuxiliaryMetadata": {
+    "detector": "stale-nft-metadata",
+    "optIn": true,
+    "requiresOZ": true,
+    "policies": {
+      "currentNftMetadata": [
+        {
+          "owners": "_owners",
+          "metadata": "cachedURI",
+          "consumer": "replaceToken"
+        }
+      ]
+    },
+    "cases": [
+      {
+        "file": "known-bugs/library-nft-cache-lifecycle-positive.compact",
+        "lines": [
+          26
+        ],
+        "pairedWith": "known-bugs/library-nft-cache-lifecycle-corrected.compact"
+      },
+      {
+        "file": "known-bugs/library-nft-cache-lifecycle-corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "known-bugs/library-nft-cache-lifecycle-lookalike.compact",
+        "lines": []
+      }
+    ]
+  },
+  "contractOwner": {
+    "detector": "unsupported-contract-owner",
+    "optIn": true,
+    "requiresOZ": true,
+    "policies": {
+      "callableOwnable": [
+        {
+          "owner": "_owner"
+        }
+      ]
+    },
+    "cases": [
+      {
+        "file": "known-bugs/library-contract-owner-positive.compact",
+        "lines": [
+          42
+        ],
+        "pairedWith": "known-bugs/library-contract-owner-corrected.compact"
+      },
+      {
+        "file": "known-bugs/library-contract-owner-corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "known-bugs/library-contract-owner-lookalike.compact",
+        "lines": []
+      }
+    ]
+  },
+  "listReset": {
+    "detector": "destructive-list-reset",
+    "optIn": true,
+    "cases": [
+      {
+        "file": "known-bugs/counter-list-reset-positive.compact",
+        "lines": [
+          31
+        ],
+        "pairedWith": "known-bugs/counter-list-reset-corrected.compact"
+      },
+      {
+        "file": "known-bugs/counter-list-reset-corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "known-bugs/counter-list-reset-lookalike.compact",
+        "lines": []
+      }
+    ]
+  },
+  "guardTag": {
+    "detector": "publicly-derived-guard-tag",
+    "optIn": true,
+    "cases": [
+      {
+        "file": "known-bugs/counter-guard-tag-positive.compact",
+        "lines": [
+          32
+        ],
+        "pairedWith": "known-bugs/counter-guard-tag-corrected.compact"
+      },
+      {
+        "file": "known-bugs/counter-guard-tag-corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "known-bugs/counter-guard-tag-lookalike.compact",
+        "lines": []
+      }
+    ]
+  },
+  "runtimeWidth": {
+    "detector": "shielded-coin-runtime-width",
+    "optIn": true,
+    "compiler": "0.34.0",
+    "zkirVersion": 2,
+    "referenceRuntime": "0.19.0",
+    "runtimeApplicability": "expressly-assumed-reference-runtime",
+    "cases": [
+      {
+        "file": "known-bugs/counter-runtime-width-positive.compact",
+        "lines": [
+          34
+        ],
+        "pairedWith": "known-bugs/counter-runtime-width-corrected.compact"
+      },
+      {
+        "file": "known-bugs/counter-runtime-width-corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "known-bugs/counter-runtime-width-lookalike.compact",
+        "lines": []
+      }
+    ]
+  },
+  "genericWitnessAbi": {
+    "detector": "generic-witness-maybe-abi",
+    "optIn": true,
+    "compiler": "0.34.0",
+    "zkirVersion": 2,
+    "scope": "entry-reachable-source-schema",
+    "cases": [
+      {
+        "file": "known-bugs/counter-generic-witness-positive.compact",
+        "lines": [
+          29
+        ],
+        "pairedWith": "known-bugs/counter-generic-witness-corrected.compact"
+      },
+      {
+        "file": "known-bugs/counter-generic-witness-corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "known-bugs/counter-generic-witness-lookalike.compact",
+        "lines": []
+      }
+    ]
+  },
+  "conditionalHashRange": {
+    "detector": "conditional-hash-range",
+    "optIn": true,
+    "compiler": "0.34.0",
+    "zkirVersion": 2,
+    "scope": "source-scalar-range-review",
+    "cases": [
+      {
+        "file": "known-bugs/counter-conditional-hash-positive.compact",
+        "lines": [
+          32
+        ],
+        "pairedWith": "known-bugs/counter-conditional-hash-corrected.compact"
+      },
+      {
+        "file": "known-bugs/counter-conditional-hash-corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "known-bugs/counter-conditional-hash-lookalike.compact",
+        "lines": []
+      }
+    ]
+  },
+  "currentRootMembership": {
+    "detector": "current-root-policy-mismatch",
+    "optIn": true,
+    "compiler": "0.34.0",
+    "scope": "explicit-guard-time-freshness-policy",
+    "policies": {
+      "currentRootMembership": [
+        {
+          "circuit": "record",
+          "ledger": "permitted"
+        }
+      ]
+    },
+    "cases": [
+      {
+        "file": "known-bugs/counter-current-root-positive.compact",
+        "lines": [
+          32
+        ]
+      },
+      {
+        "file": "known-bugs/counter-current-root-corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "known-bugs/counter-current-root-lookalike.compact",
+        "lines": []
+      }
+    ]
+  },
+  "writeOnlyLedger": {
+    "detector": "write-only-ledger",
+    "scope": "compilation-unit-ordinary-cell-source-usage",
+    "cases": [
+      {
+        "file": "known-bugs/counter-write-only-ledger-positive.compact",
+        "lines": [
+          29
+        ],
+        "pairedWith": "known-bugs/counter-write-only-ledger-corrected.compact"
+      },
+      {
+        "file": "known-bugs/counter-write-only-ledger-corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "known-bugs/counter-write-only-ledger-lookalike.compact",
+        "lines": []
+      }
+    ]
+  },
+  "checkpointAtomicUpdates": {
+    "detector": "checkpoint-splits-atomic-update",
+    "optIn": true,
+    "compiler": "0.34.0",
+    "scope": "explicit-ordinary-cell-atomic-write-group-policy",
+    "policies": {
+      "atomicUpdates": [
+        {
+          "circuit": "increment",
+          "ledgers": [
+            "primary",
+            "mirror"
+          ]
+        }
+      ]
+    },
+    "cases": [
+      {
+        "file": "known-bugs/counter-checkpoint-atomic-positive.compact",
+        "lines": [
+          32
+        ],
+        "pairedWith": "known-bugs/counter-checkpoint-atomic-corrected.compact"
+      },
+      {
+        "file": "known-bugs/counter-checkpoint-atomic-corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "known-bugs/counter-checkpoint-atomic-lookalike.compact",
+        "lines": []
+      }
+    ]
+  },
+  "exactBalanceThreshold": {
+    "detector": "exact-balance-threshold",
+    "optIn": true,
+    "compiler": "0.34.0",
+    "scope": "canonical-exact-balance-read-used-in-a-relational-threshold",
+    "cases": [
+      {
+        "file": "known-bugs/counter-balance-threshold-positive.compact",
+        "lines": [
+          20
+        ],
+        "pairedWith": "known-bugs/counter-balance-threshold-corrected.compact"
+      },
+      {
+        "file": "known-bugs/counter-balance-threshold-corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "known-bugs/counter-balance-threshold-lookalike.compact",
+        "lines": []
+      }
+    ]
+  },
+  "checkedDigestNarrowing": {
+    "detector": "checked-digest-narrowing",
+    "optIn": true,
+    "compiler": "0.34.0",
+    "scope": "canonical-full-digest-checked-uint-source-route",
+    "cases": [
+      {
+        "file": "known-bugs/counter-digest-narrowing-positive.compact",
+        "lines": [
+          22
+        ],
+        "pairedWith": "known-bugs/counter-digest-narrowing-corrected.compact"
+      },
+      {
+        "file": "known-bugs/counter-digest-narrowing-corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "known-bugs/counter-digest-narrowing-lookalike.compact",
+        "lines": []
+      }
+    ]
+  },
+  "discardedComparison": {
+    "detector": "discarded-comparison",
+    "compiler": "0.34.0",
+    "requiresOZ": true,
+    "scope": "resolved-source-discarded-comparison-outcomes",
+    "cases": [
+      {
+        "file": "known-bugs/library-discarded-comparison-positive.compact",
+        "lines": [
+          68
+        ],
+        "pairedWith": "known-bugs/library-discarded-comparison-corrected.compact"
+      },
+      {
+        "file": "known-bugs/library-discarded-comparison-corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "known-bugs/library-discarded-comparison-lookalike.compact",
+        "lines": []
+      }
+    ]
+  },
+  "redundantBooleanBranch": {
+    "detector": "redundant-boolean-branch",
+    "compiler": "0.34.0",
+    "scope": "opposite-literal-only-boolean-return-arms",
+    "cases": [
+      {
+        "file": "known-bugs/counter-boolean-branch-positive.compact",
+        "lines": [
+          21
+        ],
+        "pairedWith": "known-bugs/counter-boolean-branch-corrected.compact"
+      },
+      {
+        "file": "known-bugs/counter-boolean-branch-corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "known-bugs/counter-boolean-branch-lookalike.compact",
+        "lines": []
+      }
+    ]
+  },
+  "toyFieldRecomposition": {
+    "detector": "field-recomposition-range-review",
+    "compiler": "0.34.0",
+    "scope": "Synthetic detector-specific source regression; no whole-contract or runtime claim.",
+    "cases": [
+      {
+        "file": "known-bugs/toy-field-recomposition-positive.compact",
+        "lines": [
+          2
+        ],
+        "pairedWith": "known-bugs/toy-field-recomposition-corrected.compact"
+      },
+      {
+        "file": "known-bugs/toy-field-recomposition-corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "known-bugs/toy-field-recomposition-lookalike.compact",
+        "lines": []
+      }
+    ]
+  },
+  "redundantSelfReceive": {
+    "detector": "redundant-self-shielded-receive",
+    "optIn": true,
+    "compiler": "0.34.0",
+    "scope": "exact-returned-coin-right-self-recipient-sequence",
+    "cases": [
+      {
+        "file": "known-bugs/counter-redundant-receive-positive.compact",
+        "lines": [
+          30
+        ],
+        "pairedWith": "known-bugs/counter-redundant-receive-corrected.compact"
+      },
+      {
+        "file": "known-bugs/counter-redundant-receive-corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "known-bugs/counter-redundant-receive-lookalike.compact",
+        "lines": []
+      }
+    ]
+  },
+  "shieldedCoinMetadata": {
+    "detector": "discarded-shielded-send-result",
+    "compiler": "0.34.0",
+    "cases": [
+      {
+        "file": "known-bugs/counter-parent-send-metadata-positive.compact",
+        "lines": [
+          8
+        ],
+        "pairedWith": "known-bugs/counter-parent-send-metadata-corrected.compact"
+      },
+      {
+        "file": "known-bugs/counter-parent-send-metadata-corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "known-bugs/counter-parent-send-metadata-lookalike.compact",
+        "lines": []
+      },
+      {
+        "file": "known-bugs/counter-mint-metadata-positive.compact",
+        "lines": [
+          12
+        ],
+        "pairedWith": "known-bugs/counter-mint-metadata-corrected.compact"
+      },
+      {
+        "file": "known-bugs/counter-mint-metadata-corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "known-bugs/counter-mint-metadata-lookalike.compact",
+        "lines": []
+      }
+    ]
+  },
+  "splitWitnessIdentity": {
+    "detector": "split-witness-identity",
+    "optIn": true,
+    "compiler": "0.34.0",
+    "scope": "ledger-bound-native-digest-guard-versus-independent-witness-derived-collection-key",
+    "cases": [
+      {
+        "file": "known-bugs/library-split-identity-positive.compact",
+        "lines": [
+          30
+        ],
+        "pairedWith": "known-bugs/library-split-identity-corrected.compact"
+      },
+      {
+        "file": "known-bugs/library-split-identity-corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "known-bugs/library-split-identity-lookalike.compact",
+        "lines": []
+      }
+    ]
+  },
+  "resettableListNonce": {
+    "detector": "resettable-list-nonce",
+    "optIn": true,
+    "compiler": "0.34.0",
+    "scope": "exact-list-length-canonical-nonce-cross-entry-reset-overlap",
+    "cases": [
+      {
+        "file": "known-bugs/library-credit-nonce-reset-positive.compact",
+        "lines": [
+          15
+        ],
+        "pairedWith": "known-bugs/library-credit-nonce-reset-corrected.compact"
+      },
+      {
+        "file": "known-bugs/library-credit-nonce-reset-corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "known-bugs/library-credit-nonce-reset-lookalike.compact",
+        "lines": []
+      }
+    ]
+  },
+  "nativeKeyAuthenticationReview": {
+    "detector": "native-key-authentication-review",
+    "optIn": true,
+    "compiler": "0.34.0",
+    "cases": [
+      {
+        "file": "known-bugs/counter-owner-nonce-key-positive.compact",
+        "lines": [
+          15
+        ]
+      },
+      {
+        "file": "known-bugs/counter-owner-nonce-key-corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "known-bugs/counter-owner-nonce-key-lookalike.compact",
+        "lines": []
+      },
+      {
+        "file": "known-bugs/counter-native-key-gate-positive.compact",
+        "lines": [
+          21
+        ]
+      },
+      {
+        "file": "known-bugs/counter-native-key-gate-corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "known-bugs/counter-native-key-gate-lookalike.compact",
+        "lines": []
+      }
+    ]
+  },
+  "shieldedBurnAmountWidth": {
+    "detector": "shielded-burn-amount-width",
+    "optIn": true,
+    "compiler": "0.34.0",
+    "cases": [
+      {
+        "file": "known-bugs/counter-shielded-burn-amount-width-positive.compact",
+        "lines": [
+          29
+        ]
+      },
+      {
+        "file": "known-bugs/counter-shielded-burn-amount-width-corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "known-bugs/counter-shielded-burn-amount-width-lookalike.compact",
+        "lines": []
+      }
+    ]
+  },
+  "quorumSignerUniqueness": {
+    "detector": "quorum-signer-uniqueness-review",
+    "optIn": true,
+    "compiler": "0.34.0",
+    "zkirVersion": 3,
+    "cases": [
+      {
+        "file": "synthetic-regressions/auth16/quorum-signer-uniqueness-review-case-76-positive.compact",
+        "lines": [
+          19
+        ],
+        "pairedWith": "synthetic-regressions/auth16/quorum-signer-uniqueness-review-case-76-corrected.compact"
+      },
+      {
+        "file": "synthetic-regressions/auth16/quorum-signer-uniqueness-review-case-76-corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "synthetic-regressions/auth16/quorum-signer-uniqueness-review-case-76-lookalike.compact",
+        "lines": []
+      },
+      {
+        "file": "quorum-review/positive.compact",
+        "lines": [
+          34
+        ],
+        "pairedWith": "quorum-review/corrected.compact"
+      },
+      {
+        "file": "quorum-review/corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "quorum-review/lookalike.compact",
+        "lines": []
+      }
+    ]
+  },
+  "enrolledSignatureKeyReview": {
+    "detector": "enrolled-signature-key-review",
+    "optIn": true,
+    "cases": [
+      {
+        "file": "signature-key-review/positive.compact",
+        "lines": [
+          29
+        ],
+        "pairedWith": "signature-key-review/corrected.compact"
+      },
+      {
+        "file": "signature-key-review/corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "signature-key-review/lookalike.compact",
+        "lines": []
+      }
+    ]
+  },
+  "publishedDigestGeneratorScalarReview": {
+    "detector": "published-digest-generator-scalar-review",
+    "optIn": true,
+    "compiler": "0.34.0",
+    "zkirVersion": 2,
+    "cases": [
+      {
+        "file": "synthetic-regressions/privacy16/account-key-domain/positive.compact",
+        "lines": [
+          17
+        ],
+        "pairedWith": "synthetic-regressions/privacy16/account-key-domain/corrected.compact"
+      },
+      {
+        "file": "synthetic-regressions/privacy16/account-key-domain/corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "synthetic-regressions/privacy16/account-key-domain/lookalike.compact",
+        "lines": []
+      },
+      {
+        "file": "synthetic-regressions/privacy16/public-scalar-seed21/positive.compact",
+        "lines": [
+          47
+        ],
+        "pairedWith": "synthetic-regressions/privacy16/public-scalar-seed21/corrected.compact"
+      },
+      {
+        "file": "synthetic-regressions/privacy16/public-scalar-seed21/corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "synthetic-regressions/privacy16/public-scalar-seed21/lookalike.compact",
+        "lines": []
+      }
+    ]
+  },
+  "publicScalarLegacy48": {
+    "detector": "published-digest-generator-scalar-review",
+    "optIn": true,
+    "compiler": "0.31.1",
+    "zkirVersion": 2,
+    "scope": "Synthetic detector-specific source regression; no whole-contract or runtime claim.",
+    "cases": [
+      {
+        "file": "drafts/publicscalar48/legacy-0311/positive.compact",
+        "lines": [
+          17
+        ],
+        "pairedWith": "drafts/publicscalar48/legacy-0311/corrected.compact"
+      },
+      {
+        "file": "drafts/publicscalar48/legacy-0311/corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/publicscalar48/legacy-0311/lookalike.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/publicscalar48/legacy-boundaries/public-nonprivate-scalar.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/publicscalar48/legacy-boundaries/unstored-result.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/publicscalar48/legacy-boundaries/late-overwrite.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/publicscalar48/legacy-boundaries/different-public-digest-private-witness.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/publicscalar48/legacy-boundaries/mismatched-generator-input.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/publicscalar48/legacy-boundaries/zero-iteration-callback.compact",
+        "lines": []
+      }
+    ]
+  },
+  "publicScalarZkir348": {
+    "detector": "published-digest-generator-scalar-review",
+    "optIn": true,
+    "compiler": "0.34.0",
+    "zkirVersion": 3,
+    "scope": "Synthetic detector-specific source regression; no whole-contract or runtime claim.",
+    "cases": [
+      {
+        "file": "synthetic-regressions/privacy16/account-key-domain/positive.compact",
+        "lines": [
+          17
+        ],
+        "pairedWith": "synthetic-regressions/privacy16/account-key-domain/corrected.compact"
+      },
+      {
+        "file": "synthetic-regressions/privacy16/account-key-domain/corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "synthetic-regressions/privacy16/account-key-domain/lookalike.compact",
+        "lines": []
+      }
+    ]
+  },
+  "inconsistentKeyedStateGuard": {
+    "detector": "inconsistent-keyed-state-guard",
+    "optIn": true,
+    "compiler": "0.34.0",
+    "scope": "same-key-consumer-co-membership-and-mixed-successful-final-insertion-guards",
+    "cases": [
+      {
+        "file": "known-bugs/counter-keyed-state-positive.compact",
+        "lines": [
+          37
+        ],
+        "pairedWith": "known-bugs/counter-keyed-state-corrected.compact"
+      },
+      {
+        "file": "known-bugs/counter-keyed-state-corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "known-bugs/counter-keyed-state-lookalike.compact",
+        "lines": []
+      },
+      {
+        "file": "synthetic-regressions/state16/inconsistent-keyed-state-guard-case-17-positive.compact",
+        "lines": [
+          14
+        ],
+        "pairedWith": "synthetic-regressions/state16/inconsistent-keyed-state-guard-case-17-corrected.compact"
+      },
+      {
+        "file": "synthetic-regressions/state16/inconsistent-keyed-state-guard-case-17-corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "synthetic-regressions/state16/inconsistent-keyed-state-guard-case-17-lookalike.compact",
+        "lines": []
+      }
+    ]
+  },
+  "exportedShieldedDescriptor": {
+    "detector": "exported-shielded-descriptor",
+    "optIn": true,
+    "compiler": "0.34.0",
+    "scope": "canonical-unchanged-descriptor-source-route-to-exported-application-output-without-secrecy-intent",
+    "cases": [
+      {
+        "file": "known-bugs/counter-exported-shielded-descriptor-positive.compact",
+        "lines": [
+          36
+        ],
+        "pairedWith": "known-bugs/counter-exported-shielded-descriptor-corrected.compact"
+      },
+      {
+        "file": "known-bugs/counter-exported-shielded-descriptor-corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "known-bugs/counter-exported-shielded-descriptor-lookalike.compact",
+        "lines": []
+      },
+      {
+        "file": "synthetic-regressions/privacy16/shielded-result-return/positive.compact",
+        "lines": [
+          3
+        ],
+        "pairedWith": "synthetic-regressions/privacy16/shielded-result-return/corrected.compact"
+      },
+      {
+        "file": "synthetic-regressions/privacy16/shielded-result-return/corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "synthetic-regressions/privacy16/shielded-result-return/lookalike.compact",
+        "lines": []
+      }
+    ]
+  },
+  "sharedModuleOnceGate": {
+    "detector": "shared-module-once-gate",
+    "optIn": true,
+    "scope": "Owned resolved canonical sharing review; intentional shared initialization is not a vulnerability claim.",
+    "cases": [
+      {
+        "file": "synthetic-regressions/state16/shared-module-once-gate-case-77-positive.compact",
+        "lines": [
+          4
+        ],
+        "pairedWith": "synthetic-regressions/state16/shared-module-once-gate-case-77-corrected.compact"
+      },
+      {
+        "file": "synthetic-regressions/state16/shared-module-once-gate-case-77-corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "synthetic-regressions/state16/shared-module-once-gate-case-77-lookalike.compact",
+        "lines": []
+      },
+      {
+        "file": "synthetic-regressions/state16/shared-module-once-gate-case-77-single-wrapper-alias.compact",
+        "lines": []
+      }
+    ]
+  },
+  "configuredMembershipCapacity": {
+    "detector": "configured-membership-capacity-review",
+    "optIn": true,
+    "scope": "Static configured Set capacity versus distinct required membership cardinality; no runtime exhaustion or deployment claim.",
+    "cases": [
+      {
+        "file": "known-bugs/toy-configured-membership-capacity-positive.compact",
+        "lines": [
+          9
+        ],
+        "pairedWith": "known-bugs/toy-configured-membership-capacity-corrected.compact"
+      },
+      {
+        "file": "known-bugs/toy-configured-membership-capacity-corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "known-bugs/toy-configured-membership-capacity-lookalike.compact",
+        "lines": []
+      },
+      {
+        "file": "known-bugs/counter-configured-membership-capacity-positive.compact",
+        "lines": [
+          33
+        ],
+        "pairedWith": "known-bugs/counter-configured-membership-capacity-corrected.compact"
+      },
+      {
+        "file": "known-bugs/counter-configured-membership-capacity-corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "known-bugs/counter-configured-membership-capacity-lookalike.compact",
+        "lines": []
+      }
+    ]
+  },
+  "resettableMemoNonceReview": {
+    "detector": "resettable-memo-nonce-review",
+    "optIn": true,
+    "compiler": "0.34.0",
+    "scope": "Paired canonical evolveNonce source fact: same exact selected Map<Bytes<32>,List<Bytes<32>>> List revision feeds the canonical coin nonce and a directly appended evolved payload; recipient bytes equal the selected key; cross-entry reset overlaps. Payload protocol role and cryptographic/runtime impact are not inferred.",
+    "cases": [
+      {
+        "file": "synthetic-regressions/state16/resettable-list-nonce-case-18-recipient-positive.compact",
+        "lines": [
+          16
+        ]
+      },
+      {
+        "file": "synthetic-regressions/state16/resettable-list-nonce-case-18-recipient-corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "synthetic-regressions/state16/resettable-list-nonce-case-18-recipient-lookalike.compact",
+        "lines": []
+      },
+      {
+        "file": "synthetic-regressions/state16/resettable-list-nonce-case-18-recipient-mixed-seed-lookalike.compact",
+        "lines": []
+      },
+      {
+        "file": "synthetic-regressions/state16/resettable-list-nonce-case-18-recipient-mismatched-owner-lookalike.compact",
+        "lines": []
+      },
+      {
+        "file": "synthetic-regressions/state16/resettable-list-nonce-case-18-recipient-other-reset-lookalike.compact",
+        "lines": []
+      },
+      {
+        "file": "synthetic-regressions/state16/resettable-list-nonce-case-18-recipient-unrelated-marker-lookalike.compact",
+        "lines": []
+      },
+      {
+        "file": "synthetic-regressions/state16/resettable-list-nonce-case-18-recipient-user-evolve-lookalike.compact",
+        "lines": []
+      },
+      {
+        "file": "known-bugs/counter-mapped-memo-nonce-reset-positive.compact",
+        "lines": [
+          37
+        ]
+      },
+      {
+        "file": "known-bugs/counter-mapped-memo-nonce-reset-corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "known-bugs/counter-mapped-memo-nonce-reset-lookalike.compact",
+        "lines": []
+      }
+    ]
+  },
+  "callerKeyZeroEntryReview": {
+    "detector": "caller-key-zero-entry-review",
+    "optIn": true,
+    "cases": [
+      {
+        "file": "known-bugs/counter-caller-key-zero-entry-positive.compact",
+        "lines": [
+          31
+        ]
+      },
+      {
+        "file": "known-bugs/counter-caller-key-zero-entry-corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "known-bugs/counter-caller-key-zero-entry-lookalike.compact",
+        "lines": []
+      }
+    ]
+  },
+  "zeroAmountUnguardedMapDebitReview": {
+    "detector": "zero-amount-unguarded-map-debit-review",
+    "optIn": true,
+    "cases": [
+      {
+        "file": "known-bugs/counter-zero-map-debit-positive.compact",
+        "lines": [
+          31
+        ]
+      },
+      {
+        "file": "known-bugs/counter-zero-map-debit-corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "known-bugs/counter-zero-map-debit-lookalike.compact",
+        "lines": []
+      }
+    ]
+  },
+  "recompositionEnvelope35": {
+    "detector": "field-recomposition-range-review",
+    "compiler": "0.34.0",
+    "scope": "owned-integer-envelope-supplement-only-frozen-controls-preserved",
+    "cases": [
+      {
+        "file": "drafts/recomposition35/owned/field-envelope-envelope-positive.compact",
+        "lines": [
+          7
+        ],
+        "pairedWith": "drafts/recomposition35/owned/field-envelope-envelope-corrected.compact"
+      },
+      {
+        "file": "drafts/recomposition35/owned/field-envelope-envelope-corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/recomposition35/owned/field-envelope-envelope-lookalike.compact",
+        "lines": []
+      }
+    ]
+  },
+  "htlcAuthorizationLifecycle36": {
+    "detector": "spoofable-authorization",
+    "compiler": "0.34.0",
+    "zkirVersion": 3,
+    "scope": "owned-complete-static-lifecycle-original-partial-preserved",
+    "cases": [
+      {
+        "file": "drafts/htlc36/owned/htlc-positive.compact",
+        "lines": [
+          36,
+          48
+        ]
+      },
+      {
+        "file": "drafts/htlc36/owned/htlc-corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/htlc36/owned/htlc-lookalike.compact",
+        "lines": []
+      }
+    ]
+  },
+  "membershipLifecycle37": {
+    "detector": "merkle-membership-not-enforced",
+    "scope": "Synthetic detector-specific source regression; no whole-contract or runtime claim.",
+    "limits": "Synthetic detector-specific source regression; no whole-contract or runtime claim.",
+    "cases": [
+      {
+        "file": "drafts/state37/membership-lifecycle/owned/merkle-membership-not-enforced-case-36-positive.compact",
+        "lines": [
+          38
+        ]
+      },
+      {
+        "file": "drafts/state37/membership-lifecycle/owned/merkle-membership-not-enforced-case-36-corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/state37/membership-lifecycle/owned/merkle-membership-not-enforced-case-36-lookalike.compact",
+        "lines": []
+      }
+    ]
+  },
+  "zeroAmountSetConsumptionReview40": {
+    "detector": "zero-amount-set-consumption-review",
+    "optIn": true,
+    "compiler": "0.34.0",
+    "scope": "Synthetic detector-specific source regression; no whole-contract or runtime claim.",
+    "cases": [
+      {
+        "file": "drafts/consumption40/positive.compact",
+        "lines": [
+          13
+        ],
+        "pairedWith": "drafts/consumption40/corrected.compact"
+      },
+      {
+        "file": "drafts/consumption40/corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/consumption40/standalone-zero-lookalike.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/consumption40/unrelated-set-lookalike.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/consumption40/unrelated-key-lookalike.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/consumption40/later-removal-control.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/consumption40/query-after-insert-control.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/consumption40/positive-bound-control.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/consumption40/branch-separation-control.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/consumption40/insertion-after-send-control.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/consumption40/assertion-after-insert-control.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/consumption40/wrong-key-before-send-control.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/consumption40/remove-reinsert-after-send-control.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/consumption40/intentional-zero-consumption.compact",
+        "lines": [
+          15
+        ]
+      }
+    ]
+  },
+  "zeroDefaultGetterMembershipReview42": {
+    "detector": "zero-default-getter-membership-review",
+    "optIn": true,
+    "cases": [
+      {
+        "file": "drafts/allowance42/direct-positive.compact",
+        "lines": [
+          11
+        ],
+        "pairedWith": "drafts/allowance42/direct-corrected.compact"
+      },
+      {
+        "file": "drafts/allowance42/nested-positive.compact",
+        "lines": [
+          12
+        ],
+        "pairedWith": "drafts/allowance42/nested-corrected.compact"
+      },
+      {
+        "file": "drafts/allowance42/key-depth-mismatch.compact",
+        "lines": [
+          12
+        ]
+      },
+      {
+        "file": "drafts/allowance42/metadata-cases/same-root-unrelated-required-positive.compact",
+        "lines": [
+          14
+        ]
+      },
+      {
+        "file": "drafts/allowance42/metadata-cases/same-root-unrelated-required-quiet.compact",
+        "lines": [
+          15
+        ]
+      },
+      {
+        "file": "drafts/allowance42/direct-corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/allowance42/nested-corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/allowance42/direct-zero-rejection.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/allowance42/nested-zero-rejection.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/allowance42/all-zero-bypass.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/allowance42/same-name-unrelated-roots.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/allowance42/unrelated-root.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/allowance42/helper-composition.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/allowance42/getter-rejects-absence.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/allowance42/nonzero-fallback.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/allowance42/nested-nonzero-inner-fallback.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/allowance42/wrong-member-key.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/allowance42/wrong-fallback-key.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/allowance42/wrong-inner-member-key.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/allowance42/inner-constant-key.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/allowance42/metadata-cases/same-root-unrelated-required-zero-bypass.compact",
+        "lines": []
+      }
+    ]
+  },
+  "publicTwoComponentDomainReview43": {
+    "detector": "public-two-component-domain-review",
+    "optIn": true,
+    "scope": "two-distinct-scalar-entry-bytes32-components",
+    "fullRecordRecallCredit": false,
+    "cases": [
+      {
+        "file": "drafts/owner-domain43/positive.compact",
+        "lines": [
+          13
+        ]
+      },
+      {
+        "file": "drafts/owner-domain43/corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/owner-domain43/lookalike.compact",
+        "lines": [
+          15
+        ]
+      },
+      {
+        "file": "drafts/owner-domain43/no-authorization-consumer.compact",
+        "lines": [
+          12
+        ]
+      },
+      {
+        "file": "drafts/owner-domain43/global-id-lookalike.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/owner-domain43/salt-only-correction.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/owner-domain43/self-only-correction.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/owner-domain43/helper-self-binding.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/owner-domain43/unrelated-nonzero-guard.compact",
+        "lines": [
+          10
+        ]
+      },
+      {
+        "file": "drafts/owner-domain43/opaque-salt-guard.compact",
+        "lines": [],
+        "status": "incomplete"
+      },
+      {
+        "file": "drafts/owner-domain43/late-salt-guard.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/owner-domain43/single-parameter-struct.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/owner-domain43/constant-identifier.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/owner-domain43/public-global-id.compact",
+        "lines": [
+          7
+        ]
+      }
+    ]
+  },
+  "operationIntentPolicy44": {
+    "detector": "operation-intent-policy",
+    "optIn": true,
+    "policyRequired": true,
+    "compiler": "0.34.0",
+    "zkirVersion": 3,
+    "scope": "explicit-operation-intent-policy-on-original-scalar-cell-effects",
+    "fullRecordRecallCredit": false,
+    "policies": {
+      "operationIntent": [
+        {
+          "circuit": "updateDocument",
+          "ledgers": [
+            "document"
+          ],
+          "controllerCommitment": "controllerCommitment",
+          "nonce": "authorizationNonce",
+          "operation": "1",
+          "version": "1",
+          "statement": {
+            "self": "selfAddress",
+            "operation": "operation",
+            "version": "version",
+            "nonce": "nonce"
+          },
+          "inputs": [
+            {
+              "field": "input",
+              "parameter": "next",
+              "writeValue": "document"
+            }
+          ]
+        },
+        {
+          "circuit": "revokeDocument",
+          "ledgers": [
+            "document"
+          ],
+          "controllerCommitment": "controllerCommitment",
+          "nonce": "authorizationNonce",
+          "operation": "2",
+          "version": "1",
+          "statement": {
+            "self": "selfAddress",
+            "operation": "operation",
+            "version": "version",
+            "nonce": "nonce"
+          },
+          "inputs": [
+            {
+              "field": "input",
+              "ledger": "document"
+            }
+          ]
+        }
+      ]
+    },
+    "cases": [
+      {
+        "file": "drafts/operation-intent44/positive.compact",
+        "lines": [
+          12,
+          16
+        ]
+      },
+      {
+        "file": "drafts/operation-intent44/corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/operation-intent44/lookalike.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/operation-intent44/counter-cases/positive.compact",
+        "lines": [
+          38,
+          42
+        ]
+      },
+      {
+        "file": "drafts/operation-intent44/counter-cases/corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/operation-intent44/counter-cases/lookalike.compact",
+        "lines": []
+      }
+    ]
+  },
+  "storedSchnorrEnrollment44": {
+    "detector": "stored-schnorr-key-enrollment-review",
+    "optIn": true,
+    "compiler": "0.34.0",
+    "zkirVersion": 3,
+    "scope": "surviving-raw-point-enrollment-and-enforced-canonical-schnorr-use-on-same-whole-cell",
+    "fullRecordRecallCredit": false,
+    "cases": [
+      {
+        "file": "drafts/enrollment44/positive.compact",
+        "lines": [
+          10
+        ]
+      },
+      {
+        "file": "drafts/enrollment44/corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/enrollment44/lookalike.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/enrollment44/counter/positive.compact",
+        "lines": [
+          37
+        ]
+      },
+      {
+        "file": "drafts/enrollment44/counter/corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/enrollment44/counter/lookalike.compact",
+        "lines": []
+      }
+    ]
+  },
+  "anchorGuardPolicy45": {
+    "detector": "unguarded-sensitive-state-write",
+    "optIn": true,
+    "policyRequired": true,
+    "compiler": "0.34.0",
+    "zkirVersion": 3,
+    "scope": "explicit-authorization-policy-for-owned-anchor-cell",
+    "fullRecordRecallCredit": false,
+    "policies": {
+      "authorization": [
+        {
+          "state": "anchor",
+          "guard": "requireOwner"
+        }
+      ]
+    },
+    "cases": [
+      {
+        "file": "drafts/coverage45/anchor-guard-policy/positive.compact",
+        "lines": [
+          21
+        ]
+      },
+      {
+        "file": "drafts/coverage45/anchor-guard-policy/corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/coverage45/anchor-guard-policy/lookalike.compact",
+        "lines": []
+      }
+    ]
+  },
+  "shieldedContractRecipient45": {
+    "detector": "shielded-contract-recipient-review",
+    "optIn": true,
+    "severity": "info",
+    "compiler": "0.34.0",
+    "zkirVersion": 2,
+    "scope": "modeled-non-self-contract-recipient-at-canonical-shielded-send",
+    "fullRecordRecallCredit": false,
+    "cases": [
+      {
+        "file": "drafts/contract-recipient45/positive.compact",
+        "lines": [
+          4
+        ]
+      },
+      {
+        "file": "drafts/contract-recipient45/corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/contract-recipient45/lookalike.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/contract-recipient45/self-recipient.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/contract-recipient45/counter/positive.compact",
+        "lines": [
+          30
+        ]
+      },
+      {
+        "file": "drafts/contract-recipient45/counter/corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/contract-recipient45/counter/lookalike.compact",
+        "lines": []
+      }
+    ]
+  },
+  "signatureIdentityExclusion46": {
+    "detector": "signature-key-identity-exclusion-review",
+    "optIn": true,
+    "severity": "info",
+    "compiler": "0.34.0",
+    "zkirVersion": 3,
+    "scope": "unknown-exact-key-at-canonical-dual-curve-verifier-without-modeled-identity-exclusion",
+    "fullRecordRecallCredit": false,
+    "cases": [
+      {
+        "file": "drafts/signature46/caller-key/positive.compact",
+        "lines": [
+          4,
+          7
+        ]
+      },
+      {
+        "file": "drafts/signature46/caller-key/corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/signature46/caller-key/lookalike.compact",
+        "lines": [
+          5,
+          9
+        ]
+      },
+      {
+        "file": "drafts/signature46/persistent-key/positive.compact",
+        "lines": [
+          11,
+          15
+        ]
+      },
+      {
+        "file": "drafts/signature46/persistent-key/corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/signature46/persistent-key/lookalike.compact",
+        "lines": [
+          12,
+          17
+        ]
+      },
+      {
+        "file": "drafts/signature46/counter/positive.compact",
+        "lines": [
+          43,
+          44
+        ]
+      },
+      {
+        "file": "drafts/signature46/counter/corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/signature46/counter/lookalike.compact",
+        "lines": [
+          44,
+          45
+        ]
+      },
+      {
+        "file": "drafts/signature46/controls/canonical-generators-dual.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/signature46/counter/quiet-known-generators.compact",
+        "lines": []
+      }
+    ]
+  },
+  "complementarySendReview47": {
+    "detector": "zero-amount-complementary-send-review",
+    "optIn": true,
+    "severity": "info",
+    "compiler": "0.34.0",
+    "zkirVersion": 2,
+    "supportedProfiles": [
+      "0.31.1/ZKIR2",
+      "0.34.0/ZKIR2",
+      "0.34.0/ZKIR3"
+    ],
+    "scope": "Synthetic detector-specific source regression; no whole-contract or runtime claim.",
+    "fullRecordRecallCredit": false,
+    "limits": "Synthetic detector-specific source regression; no whole-contract or runtime claim.",
+    "cases": [
+      {
+        "file": "drafts/complementary47/boundaries/color-mutated-between-calls.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/complementary47/boundaries/differing-colors.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/complementary47/boundaries/exclusive-arms.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/complementary47/boundaries/helper-cast-alias-positive.compact",
+        "lines": [
+          4
+        ]
+      },
+      {
+        "file": "drafts/complementary47/boundaries/intentional-same-executable-as-positive.compact",
+        "lines": [
+          9
+        ]
+      },
+      {
+        "file": "drafts/complementary47/boundaries/intentional-zero-endpoint.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/complementary47/boundaries/opaque-lost-provenance-refusal.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/complementary47/boundaries/part-positive-guard.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/complementary47/boundaries/persistent-map-lost-lineage-refusal.compact",
+        "lines": [],
+        "status": "incomplete",
+        "evidence": "lost-may-alias-operand-lineage"
+      },
+      {
+        "file": "drafts/complementary47/boundaries/remainder-positive-guard.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/complementary47/boundaries/reversed-send-order.compact",
+        "lines": [
+          7
+        ]
+      },
+      {
+        "file": "drafts/complementary47/boundaries/total-zero-admitting.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/complementary47/corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/complementary47/counter/corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/complementary47/counter/positive.compact",
+        "lines": [
+          35
+        ],
+        "pairedWith": "drafts/complementary47/counter/corrected.compact"
+      },
+      {
+        "file": "drafts/complementary47/counter/quiet.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/complementary47/positive.compact",
+        "lines": [
+          7
+        ],
+        "pairedWith": "drafts/complementary47/corrected.compact"
+      },
+      {
+        "file": "drafts/complementary47/quiet-independent-amounts.compact",
+        "lines": []
+      }
+    ]
+  },
+  "secretBindingDivergence49": {
+    "detector": "secret-binding-divergence-review",
+    "optIn": true,
+    "compiler": "0.34.0",
+    "zkirVersion": 2,
+    "scope": "Synthetic detector-specific source regression; no whole-contract or runtime claim.",
+    "cases": [
+      {
+        "file": "drafts/auth39/secret-binding-positive.compact",
+        "lines": [
+          35
+        ],
+        "pairedWith": "drafts/auth39/secret-binding-corrected.compact"
+      },
+      {
+        "file": "drafts/auth39/secret-binding-corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/auth39/secret-binding-lookalike.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/secret-binding49/controls/boolean-and-both.compact",
+        "lines": [
+          12
+        ]
+      },
+      {
+        "file": "drafts/secret-binding49/controls/boolean-or-alternative.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/secret-binding49/controls/different-exact-key.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/secret-binding49/controls/different-witness-same-domain.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/secret-binding49/controls/helper-alias-preserves-binding.compact",
+        "lines": [
+          21
+        ]
+      },
+      {
+        "file": "drafts/secret-binding49/controls/intentional-weaker-same-key.compact",
+        "lines": [
+          18
+        ]
+      },
+      {
+        "file": "drafts/secret-binding49/controls/late-second-binding.compact",
+        "lines": [
+          12
+        ]
+      },
+      {
+        "file": "drafts/secret-binding49/controls/record-revision.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/secret-binding49/controls/same-witness-different-domain.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/secret-binding49/guarded-key-controls/direct.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/secret-binding49/guarded-key-controls/transitive.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/secret-binding49/guarded-key-controls/late.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/secret-binding49/guarded-key-controls/alias.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/secret-binding49/guarded-key-controls/unequal.compact",
+        "lines": [
+          14
+        ]
+      },
+      {
+        "file": "drafts/secret-binding49/guarded-key-controls/optional.compact",
+        "lines": [
+          14
+        ]
+      },
+      {
+        "file": "drafts/secret-binding49/counter/positive.compact",
+        "lines": [
+          45
+        ]
+      },
+      {
+        "file": "drafts/secret-binding49/counter/corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/secret-binding49/counter/lookalike.compact",
+        "lines": []
+      }
+    ]
+  },
+  "zeroListGrowth50": {
+    "detector": "zero-transfer-retained-list-review",
+    "optIn": true,
+    "compiler": "0.34.0",
+    "zkirVersion": 2,
+    "scope": "Synthetic detector-specific source regression; no whole-contract or runtime claim.",
+    "cases": [
+      {
+        "file": "drafts/zero-list50/positive.compact",
+        "lines": [
+          11
+        ]
+      },
+      {
+        "file": "drafts/zero-list50/corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/zero-list50/lookalike.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/zero-list50/counter/positive.compact",
+        "lines": [
+          37
+        ]
+      },
+      {
+        "file": "drafts/zero-list50/counter/corrected.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/zero-list50/counter/lookalike.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/zero-list50/controls/helper.compact",
+        "lines": [
+          7
+        ]
+      },
+      {
+        "file": "drafts/zero-list50/controls/intentional-zero-linked-growth.compact",
+        "lines": [
+          12
+        ]
+      },
+      {
+        "file": "drafts/zero-list50/controls/independent-amount.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/zero-list50/controls/late-positive-guard.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/zero-list50/controls/append-then-reset.compact",
+        "lines": [],
+        "incomplete": true
+      },
+      {
+        "file": "drafts/zero-list50/controls/append-then-pop.compact",
+        "lines": [],
+        "incomplete": true
+      },
+      {
+        "file": "drafts/zero-list50/controls/disjoint-branches.compact",
+        "lines": []
+      },
+      {
+        "file": "drafts/zero-list50/controls/same-name-native-lookalike.compact",
+        "lines": []
+      }
+    ]
+  },
+  "sourceClaims52": {
+    "detector": "source-claim-shielded-issuance-review",
+    "optIn": true,
+    "compiler": "0.34.0",
+    "zkirVersion": 2,
+    "policies": {
+      "sourceClaims": [
+        {
+          "kind": "non-transferable-shielded-issuance",
+          "circuit": "issue",
+          "quote": "// Contract claim: recipients cannot transfer issued coins to other parties."
+        }
+      ]
+    },
+    "scope": "explicit-quote-conditioned-owned-policy-review-no-natural-default-or-runtime-credit",
+    "cases": [
+      {
+        "file": "synthetic-regressions/state16/source-claim-shielded-issuance-review-case-42-positive.compact",
+        "sha256": "425658f8edf5add56c990ccad2c0af09dad3d98fc784d38529605edae9e5eae7",
+        "lines": [
+          6
+        ]
+      },
+      {
+        "file": "synthetic-regressions/state16/source-claim-shielded-issuance-review-case-42-corrected.compact",
+        "sha256": "b47b378351695866ba39d1b362cc808cd1009f3dc10ea7f15b9c6556fd35309b",
+        "lines": []
+      },
+      {
+        "file": "synthetic-regressions/state16/source-claim-shielded-issuance-review-case-42-lookalike.compact",
+        "sha256": "505670ad74622460e852b51ffcec7d35d0ce989a8990b2c3f7019a876d507942",
+        "lines": []
+      },
+      {
+        "file": "drafts/source-claims52/positive-helper-user-mint.compact",
+        "sha256": "b267722c9b13152c03f031818e07a6a846272b0c9b453a3251fe15396e2bd204",
+        "lines": [
+          4
+        ]
+      },
+      {
+        "file": "drafts/source-claims52/quiet-claim-contract-recipient.compact",
+        "sha256": "cad7c9f391ddb8e99442d41d9098fe04cfff02d86edbfcfeda627c58141e9629",
+        "lines": []
+      },
+      {
+        "file": "drafts/source-claims52/quiet-unquoted-user-mint.compact",
+        "sha256": "d6978bbbc2a1fcf4c50913fc0f68cd93417d4a6e3b25ee839a540a7310abe63f",
+        "lines": []
+      },
+      {
+        "file": "drafts/source-claims52/quiet-wrong-entry-claim.compact",
+        "sha256": "05497b5164c4d51e147148a662e32b65427c80423e02c7c71a3e02916c6b5399",
+        "lines": []
+      },
+      {
+        "file": "drafts/source-claims52/quiet-helper-comment.compact",
+        "sha256": "22df503a4b5f9c4b1ac164a06d8b295f27fa12c5943359eacc6fdcd798cb0502",
+        "lines": []
+      },
+      {
+        "file": "drafts/source-claims52/quiet-nonadjacent-claim.compact",
+        "sha256": "9ad5883a5dfb9495711902268ba982266aaefd8d7ac56c2fa771abf357151109",
+        "lines": []
+      },
+      {
+        "file": "drafts/source-claims52/quiet-body-comment.compact",
+        "sha256": "429de9c23c8c2cdaf377db73eb796b3456df5044ea98a3cf9306928aa4cee227",
+        "lines": []
+      },
+      {
+        "file": "drafts/source-claims52/quiet-string-mention.compact",
+        "sha256": "e43125c4bc96c5741a62f3ef13e60002a6c119c90bd4c71f41e0c932a7d37688",
+        "lines": []
+      },
+      {
+        "file": "drafts/source-claims52/quiet-substring-comment.compact",
+        "sha256": "348658f528e08e7babe3077f9375e0828451880c9fa208e3b115f82a520d2dc4",
+        "lines": []
+      },
+      {
+        "file": "drafts/source-claims52/positive-tag-left.compact",
+        "sha256": "30414dbdb3fa90131fdd14b575de0efdcc111fe05555de83b900c336267c6fa6",
+        "lines": [
+          6
+        ]
+      },
+      {
+        "file": "drafts/source-claims52/quiet-tag-right-late.compact",
+        "sha256": "59c156bcd3c6ddfd598d1196fe164735babeb45dde3bab7bbfa369ba909b9df9",
+        "lines": []
+      },
+      {
+        "file": "drafts/source-claims52/quiet-tag-right-branch.compact",
+        "sha256": "b8897556c68697a2cb81ba3fae946877817698dac6eabb8a6e72ee484089d45c",
+        "lines": []
+      },
+      {
+        "file": "drafts/source-claims52/incomplete-unknown-tag.compact",
+        "sha256": "3522500bbb6ee905955169ee3e795d6c32d0177d4e2e761fdb45af2f94b8f829",
+        "lines": [],
+        "incomplete": true
+      },
+      {
+        "file": "drafts/source-claims52/quiet-no-success-before-mint.compact",
+        "sha256": "8fab5eaa288275d337da9acb16ecc89f595b2f9f8afbd28de485a367497dc4b3",
+        "lines": []
+      },
+      {
+        "file": "drafts/source-claims52/quiet-zero-iteration-callback.compact",
+        "sha256": "e8e513e890d2d117d78ec2c145ef4c5d1e14b9cb175be50c289ac91ed61b4f56",
+        "lines": [],
+        "policies": {
+          "sourceClaims": [
+            {
+              "kind": "non-transferable-shielded-issuance",
+              "circuit": "issueBatch",
+              "quote": "// Contract claim: recipients cannot transfer issued coins to other parties."
+            }
+          ]
+        }
+      },
+      {
+        "file": "drafts/source-claims52/positive-nonzero-callback.compact",
+        "sha256": "30170e1d6cfe075a5c8f85b6e60dde37157d7694831b1a0d62adb5d96460fa4a",
+        "lines": [
+          5
+        ],
+        "policies": {
+          "sourceClaims": [
+            {
+              "kind": "non-transferable-shielded-issuance",
+              "circuit": "issueBatch",
+              "quote": "// Contract claim: recipients cannot transfer issued coins to other parties."
+            }
+          ]
+        }
+      },
+      {
+        "file": "drafts/source-claims52/quiet-imported-claim-from-foreign-file.compact",
+        "sha256": "5defbff48f7fbfba8637d9f7f60748896c23bddc0245260e7a27634f4675f117",
+        "lines": []
+      },
+      {
+        "file": "drafts/source-claims52/positive-unicode-crlf.compact",
+        "sha256": "4643fb3e5f50eea46c1e4db92f0d81e60be7b16495f63da867f6bbdc5f514e6c",
+        "lines": [
+          6
+        ]
+      },
+      {
+        "file": "drafts/source-claims52/must-match-intentional-claim.compact",
+        "sha256": "ca9aa7ef9af6b1eda51c0ab272168fee37dcf039d940dd7636f1c93422d52e32",
+        "lines": [
+          6
+        ]
+      },
+      {
+        "file": "drafts/source-claims52/counter/positive.compact",
+        "sha256": "f5081c5898c08ba4d127be2b592baaa273f8f25d95f8268ed091abc3cf2a85d4",
+        "lines": [
+          29
+        ]
+      },
+      {
+        "file": "drafts/source-claims52/counter/corrected.compact",
+        "sha256": "1454cdfcf140d1ebad5bf4811a8b6d61310fde5fdef75db29cac175683fc2deb",
+        "lines": []
+      },
+      {
+        "file": "drafts/source-claims52/counter/lookalike.compact",
+        "sha256": "404de9426ac01f961e27c4268e5a3c7d0c3c434aa6889d30b2219b5b80f46d6b",
+        "lines": []
+      }
+    ]
+  },
+  "independentMembershipIdentity54": {
+    "detector": "membership-identity-binding-review",
+    "optIn": true,
+    "compiler": "0.34.0",
+    "zkirVersion": 3,
+    "scope": "Synthetic detector-specific source regression; no whole-contract or runtime claim.",
+    "cases": [
+      {
+        "file": "drafts/memo-identity44/positive.compact",
+        "lines": [
+          58
+        ],
+        "expectedLedgers": [
+          "memos",
+          "newerScratch"
+        ],
+        "sha256": "0806d57e88f85720857546167de5bbaff8712e09b46299126d171faa530facd7"
+      },
+      {
+        "file": "drafts/memo-identity44/corrected.compact",
+        "lines": [],
+        "expectedLedgers": [],
+        "sha256": "83b00a67eee486872e86962761c15db1b527802d9c440da11bbf1da14fecc0da"
+      },
+      {
+        "file": "drafts/memo-identity44/lookalike.compact",
+        "lines": [],
+        "expectedLedgers": [],
+        "sha256": "a93ececdb79006825c55fb5b87cae7669e73cb54f0d32a90a21bd7313c002c43"
+      },
+      {
+        "file": "drafts/memo-identity44-boundaries/intentional-admin.compact",
+        "lines": [
+          20
+        ],
+        "expectedLedgers": [
+          "memos"
+        ],
+        "sourceClassification": "intentional independent administrator; matching review boundary",
+        "sha256": "dc1753bd509381746734f5aa76eb0abd54febab1b5ce257521126419fe79d03a"
+      },
+      {
+        "file": "drafts/memo-identity44-boundaries/equality-bound.compact",
+        "lines": [],
+        "expectedLedgers": [],
+        "sourceClassification": "source-snapshot boundary",
+        "sha256": "d60636438f08289091f92e37b5f3837e87143a099fb8c3083c318b6417713eec"
+      },
+      {
+        "file": "drafts/memo-identity44-boundaries/distinct-key.compact",
+        "lines": [],
+        "expectedLedgers": [],
+        "sourceClassification": "source-snapshot boundary",
+        "sha256": "adb51f4059b29f396a9545578641c28f195aadd905273daea0397fc0fbeeeaf5"
+      },
+      {
+        "file": "drafts/memo-identity44-boundaries/optional-membership.compact",
+        "lines": [],
+        "expectedLedgers": [],
+        "sourceClassification": "source-snapshot boundary",
+        "sha256": "8a85e06befdea003781027ee889807fbecb01c585975ee8249b0048f3f7eca92"
+      },
+      {
+        "file": "drafts/memo-identity44-boundaries/repeated-witness.compact",
+        "lines": [
+          21
+        ],
+        "expectedLedgers": [
+          "memos"
+        ],
+        "sourceClassification": "source-snapshot boundary",
+        "sha256": "705fb69ab155bc4ffc5c1bea63a5ea382d240df0993708845e72935426fa2091"
+      },
+      {
+        "file": "drafts/memo-identity44-counter/positive.compact",
+        "lines": [
+          46
+        ],
+        "expectedLedgers": [
+          "memoState"
+        ],
+        "sha256": "96cbb3047d74888084b9f8dcd1878825c46b89bf356a617c65dbcfd009aa7486"
+      },
+      {
+        "file": "drafts/memo-identity44-counter/corrected.compact",
+        "lines": [],
+        "expectedLedgers": [],
+        "sha256": "bedf5451a56694fa64528ac7f9a4825ce11256faa8a25c0ed4df02b5d2616f12"
+      },
+      {
+        "file": "drafts/memo-identity44-counter/lookalike.compact",
+        "lines": [],
+        "expectedLedgers": [],
+        "sha256": "ec65e2befd3f6055ad2a11be1ed6f3f98ca727cf02cbc8fdcf2eac57a5c1c4e3"
+      },
+      {
+        "file": "drafts/memo-identity54-alias/imported-positive.compact",
+        "sha256": "862e96b9fd95f0114bf5ae87e369c4dc6873bc6535ff2e8753167429a02ac14b",
+        "lines": [
+          13
+        ],
+        "expectedLedgers": [
+          "memoState"
+        ],
+        "findingFile": "drafts/memo-identity54-alias/Aliases.compact"
+      },
+      {
+        "file": "drafts/memo-identity54-alias/imported-corrected.compact",
+        "sha256": "e69230a12bfb7126271ed1d1ee27a816b198223801ad31abf0563b07e505d753",
+        "lines": [],
+        "expectedLedgers": []
+      },
+      {
+        "file": "drafts/memo-identity54-alias/transitive.compact",
+        "sha256": "04e3e8508cb8fecc6aad22ed246fb0f3b2a5b548b3886a9be634536248648508",
+        "lines": [],
+        "expectedLedgers": []
+      },
+      {
+        "file": "drafts/memo-identity54-alias/late.compact",
+        "sha256": "bc4d7e3f5b456c92cae0870aa457e1671314754171ec17a8db3729196db103b9",
+        "lines": [],
+        "expectedLedgers": []
+      }
+    ]
+  },
+  "closedMembershipCapacity55": {
+    "detector": "closed-membership-capacity-review",
+    "compilerVersion": "0.34.0",
+    "zkirVersion": 3,
+    "selection": "opt-in informational; natural gates remain separate",
+    "cases": [
+      {
+        "file": "drafts/closed-capacity55/branch-capacity-conflict.compact",
+        "lines": [
+          36
+        ],
+        "sha256": "bb9404f7a48aa2a42e9e0cf6954593258688a03b71802b6571a933967067c6fe"
+      },
+      {
+        "file": "drafts/closed-capacity55/callback-later-enrollment.compact",
+        "lines": [],
+        "sha256": "c23cb0848807bf9772d56fcfd2a0534064c311468b62be803a50d6d4e9d53585"
+      },
+      {
+        "file": "drafts/closed-capacity55/closed-one-vs-two.compact",
+        "lines": [
+          33
+        ],
+        "sha256": "52a9f68e04dc668556220eba970610af87c19f950f775b918c6d059530128288"
+      },
+      {
+        "file": "drafts/closed-capacity55/corrected-two-vs-two.compact",
+        "lines": [],
+        "sha256": "26583eb7b561dce2a049def3c592c3dcd57825b7fa6681e736b025dc8d87a7aa"
+      },
+      {
+        "file": "drafts/closed-capacity55/direct-later-enrollment.compact",
+        "lines": [],
+        "sha256": "67ba5d6233724c5b38b3dafe2eaa2e462ffb019d9d98f5d318123b6368423436"
+      },
+      {
+        "file": "drafts/closed-capacity55/helper-exported-later-enrollment.compact",
+        "lines": [],
+        "sha256": "a5752fd19876a05dbc3134156be5afb01834e844c71ea8aa9ea057bd272fac6b"
+      },
+      {
+        "file": "drafts/closed-capacity55/imported-helper-writer.compact",
+        "lines": [],
+        "sha256": "5644dd2486b1510c912572e6ea0bf4cfe0f78bf322d325464a7d068bfe841d07"
+      },
+      {
+        "file": "drafts/closed-capacity55/imported-native-set-alias-corrected.compact",
+        "lines": [],
+        "sha256": "b1329ac107c7e5d30b84f907cf755f5b2a37ef9abd9199a1d9ecdc48309bd23a"
+      },
+      {
+        "file": "drafts/closed-capacity55/imported-native-set-alias-positive.compact",
+        "lines": [
+          35
+        ],
+        "sha256": "210d82ef7174e83356cffa055451e7de5f9cf987ad9707ae282c458ac0d56e6f"
+      },
+      {
+        "file": "drafts/closed-capacity55/imported-set-writer.compact",
+        "lines": [],
+        "sha256": "164b56d54959b2625e469912e89e6d2fbe9c65338a7381e65e06e7a3dbf33de7"
+      },
+      {
+        "file": "drafts/closed-capacity55/intentional-one-gate.compact",
+        "lines": [],
+        "sha256": "473e3221d71f6c99eba5c213bb16575c9568bf379cace66b78e149dcdee799e1"
+      },
+      {
+        "file": "drafts/closed-capacity55/permanently-disabled-still-match.compact",
+        "lines": [
+          33
+        ],
+        "sha256": "97c230b8d80a487ce1950c314918981854b752e67e6dc86afe88f44d6b7f0ffe"
+      },
+      {
+        "file": "drafts/closed-capacity55/remove-reset-key.compact",
+        "lines": [],
+        "sha256": "192a2f15fd5b9f8949fb99e8ac9ca86568539a994e4b72f3194e973879d45864"
+      },
+      {
+        "file": "drafts/closed-capacity55/remove-writer.compact",
+        "lines": [],
+        "sha256": "565b55f8b885803d6ecb22cf0d35052e311d1898cbab4bbd3efb44ef4d6b2701"
+      },
+      {
+        "file": "drafts/closed-capacity55/unrelated-ledger-writer.compact",
+        "lines": [
+          35
+        ],
+        "sha256": "00e7a38d452489c8d6884f2e3d21dd91c58bfe269e671db1536fd2adedc028f1"
+      },
+      {
+        "file": "drafts/closed-capacity55/unrelated-only-quiet.compact",
+        "lines": [],
+        "sha256": "a23548c3bb2025f79eb88acbf9ecbee5f816f324460abb117f8bfc1073e02998"
+      },
+      {
+        "file": "drafts/closed-capacity55/unused-exported-enrollment.compact",
+        "lines": [],
+        "sha256": "bed6ed5c7d32d78f863f319596087dc1944a5d579af16e58f61946d36eb3935f"
+      },
+      {
+        "file": "drafts/closed-capacity55/zero-iteration-callback-writer.compact",
+        "lines": [],
+        "sha256": "4f06dcf7f7c7f94d0910ebaa6485265702ed871c3f185db42d477563da03d0ef"
+      },
+      {
+        "file": "synthetic-regressions/state16/configured-membership-capacity-review-case-43-native-positive.compact",
+        "lines": [
+          82
+        ],
+        "sha256": "50a3b9c0f93d9ba34f6d347c66aa1fad6511940c4d0f22010050637f9f6f2ad5"
+      },
+      {
+        "file": "synthetic-regressions/state16/configured-membership-capacity-review-case-43-native-corrected.compact",
+        "lines": [],
+        "sha256": "a386122cf47c109601262746d177da53a7f4f9d7337b5882b7e54bad6d846b54"
+      },
+      {
+        "file": "synthetic-regressions/state16/configured-membership-capacity-review-case-43-native-lookalike.compact",
+        "lines": [],
+        "sha256": "36d549f19ca5b29472e5c94062fae32993502a47e4125b4ef0c3c5c82d48c68c"
+      }
+    ]
+  },
+  "sourceMapGetters56": {
+    "detector": "source-claim-map-getter-review",
+    "policies": {
+      "sourceMapGetters": [
+        {
+          "setter": "setAdmin",
+          "getter": "getRoleAdmin",
+          "map": "roleAdmin",
+          "setterKey": "role",
+          "setterValue": "admin",
+          "getterKey": "role",
+          "quote": "// Documentation claims DEFAULT_ADMIN_ROLE is customizable by roleAdmin entry."
+        }
+      ]
+    },
+    "scope": "Explicit same-key configured Map getter review. Original Map getter source bytes and obligation remain exact; added controls are owned synthetic cases. No default, feasibility or impact credit.",
+    "cases": [
+      {
+        "file": "drafts/map-getter56/counter/corrected-map-read.compact",
+        "sha256": "2a5b11037500da686870c2e0d8a9652bc28635b3718e035e4f40fc74c180cb09",
+        "lines": []
+      },
+      {
+        "file": "drafts/map-getter56/counter/lookalike-auxiliary.compact",
+        "sha256": "864bb95f9e87475eb27600bb5369b1eda2fe9fb78dac8fb8595c9b8729344cca",
+        "lines": []
+      },
+      {
+        "file": "drafts/map-getter56/counter/positive.compact",
+        "sha256": "1835f3e08a7813f206b985bd1216f7334334f2be20df0ad3fc7509f884edb41c",
+        "lines": [
+          33
+        ]
+      },
+      {
+        "file": "drafts/map-getter56/distinct-map-getter.compact",
+        "sha256": "ca2134f4ae70f6cc08e311bc6119b6aa7da6794e2f5cbc8d1f23b926c4021e7a",
+        "lines": []
+      },
+      {
+        "file": "drafts/map-getter56/fixed-documentation.compact",
+        "sha256": "7b03d7d89df1e88749eb7751a60e9df25b6d986fe7994ae1e8e9fb53c85ecc38",
+        "lines": []
+      },
+      {
+        "file": "drafts/map-getter56/helper-constant-getter.compact",
+        "sha256": "04d1dd4f1cc0e296f1bd156fa4ecadb3e16689b8dcbfd6915c08f2bc5c9824b8",
+        "lines": [
+          7
+        ]
+      },
+      {
+        "file": "drafts/map-getter56/helper-map-getter.compact",
+        "sha256": "12da3522dba4ae4346b3290d1a3e1cac1b0271db40fe80ec7c26e4aeb24b7f3e",
+        "lines": []
+      },
+      {
+        "file": "drafts/map-getter56/imported-aliases.compact",
+        "sha256": "65d13739afc77cc5dab0fa57d8c5e8c1dfdff3645a0541569537ba982757a63e",
+        "lines": [],
+        "policies": {
+          "sourceMapGetters": [
+            {
+              "setter": "configureRole",
+              "getter": "queryRole",
+              "map": "roleAdmin",
+              "setterKey": "role",
+              "setterValue": "admin",
+              "getterKey": "role",
+              "quote": "// Documentation claims DEFAULT_ADMIN_ROLE is customizable by roleAdmin entry."
+            }
+          ]
+        }
+      },
+      {
+        "file": "drafts/map-getter56/quote-changed.compact",
+        "sha256": "59bc3a2711505e7d68d01def75b238f969655425716fa4861e7866ed8a3bcbdc",
+        "lines": []
+      },
+      {
+        "file": "drafts/map-getter56/quote-nonadjacent.compact",
+        "sha256": "015a17e859bb28b3033d65e49f863f8fe84397968ec7314c3291b8bac89e3470",
+        "lines": []
+      },
+      {
+        "file": "drafts/map-getter56/same-key-local-alias.compact",
+        "sha256": "50529ee4859038333b15e9dded6964d0c20d3e6a54fad04ecbccaf48525418aa",
+        "lines": []
+      },
+      {
+        "file": "drafts/map-getter56/unrelated-writer.compact",
+        "sha256": "e86f309019a474c260a522a7c1ffe9a391bde2462f33eebe7d8cccbe269361c8",
+        "lines": [
+          7
+        ]
+      },
+      {
+        "file": "drafts/map-getter56/wrong-key.compact",
+        "sha256": "dd25751ca4212d9f72ca60194a4bd379e932f17e17f89b0f67d7301b9a643117",
+        "lines": []
+      },
+      {
+        "file": "drafts/map-getter56/wrong-root.compact",
+        "sha256": "5381d6b85ce8307b8e68c32a102f10837ff0dc15a8392b774f06529423820bea",
+        "lines": []
+      },
+      {
+        "file": "drafts/map-getter56/zero-callback-read.compact",
+        "sha256": "737374fea4e761eaeb9092e7f6e172049f63c3c9b784bc30b1c0c41e6c9bdc8e",
+        "lines": []
+      },
+      {
+        "file": "synthetic-regressions/state16/source-claim-map-getter-review-case-5-positive.compact",
+        "sha256": "ec0966889ea0c0dd4ba3576901402c44c45b4dea16eee5720fdaf3f5ccddc08d",
+        "lines": [
+          6
+        ]
+      },
+      {
+        "file": "synthetic-regressions/state16/source-claim-map-getter-review-case-5-corrected.compact",
+        "sha256": "5c1c37857ae9b3dd107d6510d7e8ed813906f8e37457ff7445bde798dd6d814a",
+        "lines": []
+      },
+      {
+        "file": "synthetic-regressions/state16/source-claim-map-getter-review-case-5-lookalike.compact",
+        "sha256": "16ba113b671a56d7b5da9bf1e813c227cc6519581bd24cd9ef3fc0d4253f12c0",
+        "lines": []
+      }
+    ],
+    "supportFiles": [
+      {
+        "file": "drafts/map-getter56/RoleAdminAliases.compact",
+        "sha256": "327634c2433038a5a677d65f0ae04cb22f729586009dc4e16763955204d273ab"
+      }
+    ]
+  },
+  "refundEndpoint57": {
+    "detector": "unshielded-refund-endpoint-review",
+    "scope": "Selected formal all-one witness and exact source relationship only; intentional matches retained. Quiet fixed/literal controls do not establish other endpoint exclusion; repeated relevant pure assertions remain explicit incomplete.",
+    "cases": [
+      {
+        "file": "drafts/arithmetic-endpoint57/alias-exact.compact",
+        "sha256": "4f6a5b01b1d2a9b89ae0438fbdb09740169677cfe4b6d36c371b78d4488993f3",
+        "lines": [
+          60
+        ]
+      },
+      {
+        "file": "drafts/arithmetic-endpoint57/branch-partial-guard.compact",
+        "sha256": "057acfa138a2d7903098ff2a5af46986f700a3811b3f31aa4648b44c70902344",
+        "lines": [
+          60
+        ]
+      },
+      {
+        "file": "drafts/arithmetic-endpoint57/conditional-late-zero-guard.compact",
+        "sha256": "f3e34726a89c1514f126f639b61a2929dd08d70b17d97baaeaf60ece41e04e42",
+        "lines": []
+      },
+      {
+        "file": "drafts/arithmetic-endpoint57/corrected.compact",
+        "sha256": "624c5002e525e7d88e3a3d952a7d70c6b5bb9d0cf11e24927abf6f467afe5536",
+        "lines": []
+      },
+      {
+        "file": "drafts/arithmetic-endpoint57/dynamic-map-snapshots.compact",
+        "sha256": "2743a3cb4a056b013f4bc20e229894bd610de41f3a78f54906e774c73ffe458b",
+        "lines": [],
+        "incomplete": true
+      },
+      {
+        "file": "drafts/arithmetic-endpoint57/formal-pa-guard-rejects-one.compact",
+        "sha256": "4ce7c562e3356129ee55d4d05f8d99f6ace80bbc1a3e00286a983b23139cf3c3",
+        "lines": []
+      },
+      {
+        "file": "drafts/arithmetic-endpoint57/intentional-endpoint.compact",
+        "sha256": "71b51dfa29ae9b618b63e1e8e699e123fa7e0a9f4d2f6562c64bb7fe994632c5",
+        "lines": [
+          58
+        ]
+      },
+      {
+        "file": "drafts/arithmetic-endpoint57/intentional.compact",
+        "sha256": "71b51dfa29ae9b618b63e1e8e699e123fa7e0a9f4d2f6562c64bb7fe994632c5",
+        "lines": [
+          58
+        ]
+      },
+      {
+        "file": "drafts/arithmetic-endpoint57/lookalike.compact",
+        "sha256": "c939c5142a8f7cc3c835285c235544f118f3fad4caef9ac48fb8a173dd44bc24",
+        "lines": []
+      },
+      {
+        "file": "drafts/arithmetic-endpoint57/loop-only-validator-after-loop.compact",
+        "sha256": "ce9af1e42ae61a648f332fd308e21a0f42252706f06a09511da0316bc1ddd334",
+        "lines": []
+      },
+      {
+        "file": "drafts/arithmetic-endpoint57/map-fresh-reads-boundary.compact",
+        "sha256": "bf2c64f1a8c874d4273aa92019e26192addaa1d5d109a7605ed3e0809e5d4c68",
+        "lines": []
+      },
+      {
+        "file": "drafts/arithmetic-endpoint57/map-snapshot-boundary.compact",
+        "sha256": "21855f7d5c35a8302058cd52e4f0497f475491941ce56c70974b29a978275e32",
+        "lines": []
+      },
+      {
+        "file": "drafts/arithmetic-endpoint57/p-less-than-a-zero-bond-boundary.compact",
+        "sha256": "2c01ed35600d5ac3425ed1b151606a6f0d33157852e708092a5c69738f23ad27",
+        "lines": []
+      },
+      {
+        "file": "drafts/arithmetic-endpoint57/positive.compact",
+        "sha256": "babe436908e320ee0639196add986f6ab52b7ae3fccdea2ac2f7bb8b1181dd0e",
+        "lines": [
+          58
+        ]
+      },
+      {
+        "file": "drafts/arithmetic-endpoint57/scalar-ledger-snapshots.compact",
+        "sha256": "ddd1175231c567b7f81e13700547960583fc71e231c4e76fd776d8cde8d60f29",
+        "lines": [],
+        "incomplete": true
+      },
+      {
+        "file": "drafts/arithmetic-endpoint57/separate-pure-checker-rejects-one.compact",
+        "sha256": "da04072163947ec397c4a78af60e2813d99f1aaf1163da253cdce25d9cdf988f",
+        "lines": []
+      },
+      {
+        "file": "drafts/arithmetic-endpoint57/unsafe-width-boundary.compact",
+        "sha256": "a5a01ba41c77d3efc19461199b242d552f617e6e66585a3623916e554eb42dad",
+        "lines": [
+          57
+        ]
+      },
+      {
+        "file": "drafts/arithmetic-endpoint57/zero-bond-boundary.compact",
+        "sha256": "d0d06340134a54d910ded4216d60e5e192be14e93a45e7b5c02391395a265861",
+        "lines": [
+          58
+        ]
+      }
+    ]
+  },
+  "callerSuppliedDeadline": {
+    "detector": "caller-supplied-deadline",
+    "scope": "Caller-supplied Uint64 time passes a ledger-derived delay with no asserted canonical chain-time upper bound in the exported circuit. Source-pattern review, not a feasibility proof.",
+    "cases": [
+      {
+        "file": "drafts/caller-deadline/positive.compact",
+        "sha256": "13ba5c9f927fe93f278620bae0bf1f3a232fde7fd70cda43515485af748406dd",
+        "lines": [
+          27
+        ]
+      },
+      {
+        "file": "drafts/caller-deadline/corrected.compact",
+        "sha256": "a73a8619d98ec28bd2fd545add08d27ac52da562975710016edab977402133fc",
+        "lines": []
+      },
+      {
+        "file": "drafts/caller-deadline/lookalike.compact",
+        "sha256": "b02985a4514d21f3bf68a758f1460ca3201259a05c1e66fb429c239039461763",
+        "lines": []
+      }
+    ]
+  },
+  "ruleGaps20261016": {
+    "detectors": [
+      "freshness-bound-caller-time",
+      "permissionless-mint-egress",
+      "mutually-exclusive-terminal-payout"
+    ],
+    "scope": "Synthetic detector-specific source regression; no whole-contract or runtime claim.",
+    "cases": [
+      {
+        "file": "drafts/rule-gaps-20261016/freshness-positive.compact",
+        "sha256": "f577b9b862c32f869c58a89b71c0a864f19da2188b9067913a15e48b6a8051de",
+        "detector": "freshness-bound-caller-time",
+        "lines": [
+          14
+        ]
+      },
+      {
+        "file": "drafts/rule-gaps-20261016/freshness-corrected.compact",
+        "sha256": "5bbb0e2f5a39f514aa6518ee22c71d03f0b45677bbae1ac661aa6635a0a8ab3e",
+        "detector": "freshness-bound-caller-time",
+        "lines": []
+      },
+      {
+        "file": "drafts/rule-gaps-20261016/freshness-lookalike.compact",
+        "sha256": "23106547e3e034b4652ae13e09f591942ef7448875e7d67ffe8a4e7c73363159",
+        "detector": "freshness-bound-caller-time",
+        "lines": []
+      },
+      {
+        "file": "drafts/rule-gaps-20261016/freshness-late-reveal-positive.compact",
+        "sha256": "732152c606a9b527970988bcd6d90cd48467e1376e7e9b0ecad3995da7b3f2a6",
+        "detector": "freshness-bound-caller-time",
+        "lines": [
+          9
+        ]
+      },
+      {
+        "file": "drafts/rule-gaps-20261016/freshness-late-reveal-corrected.compact",
+        "sha256": "f14c6d766d91782fa24235569625e76c3f1be81eb80f3f601fd50b973462461a",
+        "detector": "freshness-bound-caller-time",
+        "lines": []
+      },
+      {
+        "file": "drafts/rule-gaps-20261016/freshness-late-reveal-lookalike.compact",
+        "sha256": "03924ea2b720063b940b81d501197e9d9ee38ecfde265628141e4a6d45d3f2ed",
+        "detector": "freshness-bound-caller-time",
+        "lines": []
+      },
+      {
+        "file": "drafts/rule-gaps-20261016/mint-egress-positive.compact",
+        "sha256": "20aa6b0cfa1e2427d284526ca8979ad617d9370dfd5235cfde22570f3d440477",
+        "detector": "permissionless-mint-egress",
+        "lines": [
+          10
+        ]
+      },
+      {
+        "file": "drafts/rule-gaps-20261016/mint-egress-corrected.compact",
+        "sha256": "dc0e919f580a6237372a8fb4cedee3c29d43b422e3dba777dd674e37d8c495c1",
+        "detector": "permissionless-mint-egress",
+        "lines": []
+      },
+      {
+        "file": "drafts/rule-gaps-20261016/mint-egress-lookalike.compact",
+        "sha256": "d06fdde822a2fd58c5cbd8fa9c788a912b632a1cad29b6f9e1740e94d02132b0",
+        "detector": "permissionless-mint-egress",
+        "lines": []
+      },
+      {
+        "file": "drafts/rule-gaps-20261016/payout-positive.compact",
+        "sha256": "b3c82ae39f27286b4eda09373f929b03dc95386f82a81f3eadef12b477846d20",
+        "detector": "mutually-exclusive-terminal-payout",
+        "lines": [
+          21
+        ]
+      },
+      {
+        "file": "drafts/rule-gaps-20261016/payout-corrected.compact",
+        "sha256": "defc0d3843311a544b175d16eed3f4b0a8ede831822c8b98391028edb69f1e57",
+        "detector": "mutually-exclusive-terminal-payout",
+        "lines": []
+      },
+      {
+        "file": "drafts/rule-gaps-20261016/payout-lookalike.compact",
+        "sha256": "43b053bc8eb6e5000fa2798049b19ed01a0e7a1b25268992adcf320dee51e5f7",
+        "detector": "mutually-exclusive-terminal-payout",
+        "lines": []
+      }
+    ]
+  },
+  "developmentRules20261017": {
+    "detectors": [
+      "caller-supplied-time-review",
+      "unasserted-security-result",
+      "witness-derived-value-review",
+      "context-binding-review",
+      "field-arithmetic-domain-review",
+      "terminal-state-exclusivity-review"
+    ],
+    "scope": "Synthetic detector-specific source regression; no whole-contract or runtime claim."
+  }
+}

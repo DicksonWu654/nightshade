@@ -1,0 +1,5 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export circuit pay(coin: ShieldedCoinInfo, recipient: Either<ZswapCoinPublicKey, ContractAddress>): ShieldedSendResult {
+  return sendImmediateShielded(disclose(coin), disclose(recipient), 1);
+}

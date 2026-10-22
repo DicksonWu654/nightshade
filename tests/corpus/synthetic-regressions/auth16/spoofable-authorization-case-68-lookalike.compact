@@ -1,0 +1,29 @@
+import CompactStandardLibrary;
+// ownPublicKey remains public read data; all five state-changing admin operations use secret identity.
+// Synthetic source-pattern regression.
+// Loan limit/rate/pause are a minimal state model, not recovered numeric-boundary economics.
+export ledger contractAdmin: Bytes<32>;
+export ledger loanLimit: Uint<64>;
+export ledger interestRateBps: Uint<64>;
+export ledger paused: Boolean;
+export ledger blacklistedUserIds: Set<Bytes<32>>;
+witness adminSecret(): Bytes<32>;
+witness nextAdminSecret(): Bytes<32>;
+witness targetUserSecret(): Bytes<32>;
+circuit adminId(): Bytes<32> { return persistentHash<Vector<2, Bytes<32>>>([pad(32, "numeric-boundary:admin"), adminSecret()]); }
+circuit targetUserId(): Bytes<32> { return persistentHash<Vector<2, Bytes<32>>>([pad(32, "numeric-boundary:user"), targetUserSecret()]); }
+constructor() { contractAdmin = disclose(adminId()); }
+export circuit rotateAdmin(): [] {
+  assert(adminId() == contractAdmin, "admin");
+  contractAdmin = disclose(persistentHash<Vector<2, Bytes<32>>>([pad(32, "numeric-boundary:admin"), nextAdminSecret()]));
+}
+// Illustrative invented operation label 1 of 4; the owner did not supply this name.
+export circuit setLoanLimitExample(limit: Uint<64>): [] { assert(adminId() == contractAdmin, "admin"); loanLimit = disclose(limit); }
+// Illustrative invented operation label 2 of 4; the owner did not supply this name.
+export circuit setInterestRateExample(rateBps: Uint<64>): [] { assert(adminId() == contractAdmin, "admin"); interestRateBps = disclose(rateBps); }
+// Illustrative invented operation label 3 of 4; the owner did not supply this name.
+export circuit setPausedExample(nextPaused: Boolean): [] { assert(adminId() == contractAdmin, "admin"); paused = disclose(nextPaused); }
+// Illustrative invented operation label 4 of 4; blacklist the domain-separated derived user identity.
+export circuit blacklistUserExample(): [] { assert(adminId() == contractAdmin, "admin"); blacklistedUserIds.insert(disclose(targetUserId())); }
+// Public routing/read value, deliberately separate from authorization identity.
+export circuit publicKeyPreview(): Bytes<32> { return ownPublicKey().bytes; }

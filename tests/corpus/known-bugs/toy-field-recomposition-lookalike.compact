@@ -1,0 +1,3 @@
+export circuit review(q: Uint<248>, r: Uint<8>, x: Field): Boolean {
+  return disclose(x == (q as Field) * (256 as Field) + (r as Field));
+}

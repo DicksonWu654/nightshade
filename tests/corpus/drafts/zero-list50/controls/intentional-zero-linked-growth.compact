@@ -1,0 +1,13 @@
+// Intentional source-policy control: explicitly accepts zero and retains the linked append.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger recipientMemos: Map<Bytes<32>, List<Bytes<32>>>;
+export circuit initRecipient(recipient: Bytes<32>): [] { recipientMemos.insertDefault(disclose(recipient)); }
+export circuit credit(recipient: Bytes<32>, memoCiphertext: Bytes<32>, amount: Uint<64>): [] {
+  const amountSnapshot = disclose(amount);
+  assert(amountSnapshot == 0 as Uint<64>, "intentional zero transfer");
+  const recipientSnapshot = disclose(recipient);
+  const previousLength = recipientMemos.lookup(recipientSnapshot).length();
+  sendUnshielded(default<Bytes<32>>, amountSnapshot, right<ContractAddress, UserAddress>(UserAddress { bytes: recipientSnapshot }));
+  recipientMemos.lookup(recipientSnapshot).pushFront(disclose(memoCiphertext));
+}

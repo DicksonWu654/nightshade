@@ -1,0 +1,11 @@
+// Owned source-shape candidate; no runtime or exploit claim.
+import CompactStandardLibrary;
+export ledger admins: Set<Bytes<32>>;
+export ledger lpRoles: Set<Bytes<32>>;
+export ledger traders: Set<Bytes<32>>;
+export ledger value: Field;
+circuit isAdministrator(): Boolean {
+  const caller = ownPublicKey().bytes;
+  return admins.member(disclose(caller));
+}
+export circuit grantRole(account: Bytes<32>): [] { assert(isAdministrator(), "admin"); admins.insert(disclose(account)); }

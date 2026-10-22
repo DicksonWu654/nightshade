@@ -1,0 +1,7 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export circuit issue(amount: Uint<64>, nonce: Bytes<32>, key: ZswapCoinPublicKey): [] {
+  const note: Opaque<"string"> = "Contract claim: recipients cannot transfer issued coins to other parties.";
+  note;
+  mintShieldedToken(pad(32, "claim52"), disclose(amount), disclose(nonce), left<ZswapCoinPublicKey, ContractAddress>(disclose(key)));
+}

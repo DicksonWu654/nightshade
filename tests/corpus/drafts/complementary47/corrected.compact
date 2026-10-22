@@ -1,0 +1,13 @@
+pragma language_version >= 0.23.0;
+import CompactStandardLibrary;
+export circuit sendPair(color: Bytes<32>, recipient: Either<ContractAddress, UserAddress>, total: Uint<128>, part: Uint<128>): [] {
+  assert(disclose(total) > 0 as Uint<128>, "positive total");
+  assert(disclose(part) <= disclose(total), "part within total");
+  const remainder = total - part;
+  if (disclose(part) > 0 as Uint<128>) {
+    sendUnshielded(disclose(color), disclose(part), disclose(recipient));
+  }
+  if (disclose(remainder) > 0 as Uint<128>) {
+    sendUnshielded(disclose(color), disclose(remainder), disclose(recipient));
+  }
+}

@@ -1,0 +1,29 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger accountIdentity: Map<Bytes<32>, Bytes<32>>;
+export ledger encryptionIdentity: Map<Bytes<32>, Bytes<32>>;
+export ledger balances: Map<Bytes<32>, Uint<64>>;
+witness accountSecret(): Bytes<32>;
+witness encryptionSecret(): Bytes<32>;
+circuit accountDigest(secret: Bytes<32>): Bytes<32> { return persistentHash<Vector<2, Bytes<32>>>([pad(32, "binding account identity v1"), secret]) as Bytes<32>; }
+circuit encryptionDigest(secret: Bytes<32>): Bytes<32> { return persistentHash<Vector<2, Bytes<32>>>([pad(32, "binding encryption identity v1"), secret]) as Bytes<32>; }
+export circuit weakWriter(account: Bytes<32>): [] {
+  assert(accountDigest(accountSecret()) == accountIdentity.lookup(disclose(account)), "account identity");
+  balances.insert(disclose(account), 0 as Uint<64>);
+}
+// Overwrite before reading: this is not proof of the pre-existing encryption record.
+export circuit rewrittenBeforeGuard(account: Bytes<32>): [] {
+  const exactKey = disclose(account);
+  assert(accountDigest(accountSecret()) == accountIdentity.lookup(exactKey), "account identity");
+  encryptionIdentity.insert(exactKey, pad(32, "replacement encryption record") as Bytes<32>);
+  assert(encryptionDigest(encryptionSecret()) == encryptionIdentity.lookup(exactKey), "rewritten record");
+  balances.insert(exactKey, 0 as Uint<64>);
+}
+// Overwrite after a valid check but before the target effect; the guarded revision is stale.
+export circuit rewrittenAfterGuard(account: Bytes<32>): [] {
+  const exactKey = disclose(account);
+  assert(accountDigest(accountSecret()) == accountIdentity.lookup(exactKey), "account identity");
+  assert(encryptionDigest(encryptionSecret()) == encryptionIdentity.lookup(exactKey), "encryption identity");
+  encryptionIdentity.insert(exactKey, pad(32, "replacement encryption record") as Bytes<32>);
+  balances.insert(exactKey, 0 as Uint<64>);
+}

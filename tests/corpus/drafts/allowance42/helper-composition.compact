@@ -1,0 +1,23 @@
+// Owned quiet control: helper paths compose getter and spend over distinct roots.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger allowances: Map<Bytes<32>, Uint<64>>;
+export ledger spendAllowances: Map<Bytes<32>, Uint<64>>;
+export ledger balances: Map<Bytes<32>, Map<Bytes<32>, Uint<64>>>;
+circuit readDefault(key: Bytes<32>): Uint<64> {
+ if (allowances.member(disclose(key))) return allowances.lookup(disclose(key));
+ return 0 as Uint<64>;
+}
+circuit consumeRecorded(key: Bytes<32>, amount: Uint<64>): [] {
+ assert(spendAllowances.member(disclose(key)), "spend allowance key exists");
+ const approved = spendAllowances.lookup(disclose(key));
+ spendAllowances.insert(disclose(key), disclose((approved - disclose(amount)) as Uint<64>));
+}
+export circuit allowance(key: Bytes<32>): Uint<64> { return readDefault(disclose(key)); }
+export circuit spend(key: Bytes<32>, source: Bytes<32>, to: Bytes<32>, token: Bytes<32>, amount: Uint<64>): [] {
+ consumeRecorded(disclose(key), disclose(amount));
+ const prior = balances.lookup(disclose(source)).lookup(disclose(token));
+ balances.lookup(disclose(source)).insert(disclose(token), disclose((prior - disclose(amount)) as Uint<64>));
+ const received = balances.lookup(disclose(to)).lookup(disclose(token));
+ balances.lookup(disclose(to)).insert(disclose(token), disclose((received + disclose(amount)) as Uint<64>));
+}

@@ -1,0 +1,12 @@
+// A nonzero guard on another input does not reject default salt.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+struct OwnerCommitment { salt: Bytes<32>; owner: Bytes<32>; }
+export ledger commitment: Bytes<32>;
+export ledger initialized: Boolean;
+export circuit initialize(salt: Bytes<32>, ownerSecret: Bytes<32>, requestId: Bytes<32>): [] {
+  assert(!initialized, "already initialized");
+  assert(requestId != pad(32, ""), "request id required");
+  commitment = disclose(persistentHash<OwnerCommitment>(OwnerCommitment { salt: salt, owner: ownerSecret }));
+  initialized = true;
+}

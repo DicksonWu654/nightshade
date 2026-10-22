@@ -1,0 +1,3 @@
+module Initializable { export circuit initialize(): [] {} }
+import Initializable prefix I_;
+export circuit entry(): [] { I_initialize(); I_initialize(); }

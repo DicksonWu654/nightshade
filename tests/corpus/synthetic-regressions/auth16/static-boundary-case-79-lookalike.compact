@@ -1,0 +1,4 @@
+import CompactStandardLibrary;
+// Explicitly low-level metadata validation; this helper has no authorization contract.
+export ledger authorizedKey: Bytes<32>;
+export circuit validateDescriptorMetadata(descriptor: Bytes<32>, signer: Bytes<32>): [] { assert(descriptor == authorizedKey, "descriptor"); assert(signer == descriptor, "signer match"); }

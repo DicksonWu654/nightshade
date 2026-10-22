@@ -1,0 +1,7 @@
+{
+  "upstreamRevision": "22de6ee9dbf4b92fe4e2fe3602e53f1e352b79fd",
+  "upstreamGrammarSha256": "3f997d43e6902319d3ee4961c1ba7f224dc817ddd409daf18e54fd46683ef0dd",
+  "overlay": "sequences-imports-strings-casts-patterns-calls-events-v7",
+  "generatorVersion": "0.25.10",
+  "abi": 15
+}

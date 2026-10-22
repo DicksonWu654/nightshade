@@ -1,0 +1,6 @@
+import CompactStandardLibrary;
+// ownPublicKey is retained for coin routing, separate from authorization gates.
+export ledger admins: Set<Bytes<32>>;
+export circuit hasRole(account: Bytes<32>): Boolean { return admins.member(disclose(account)); }
+export circuit routedCoinRecipient(): Bytes<32> { return ownPublicKey().bytes; }
+export circuit adminStatus(admin: Bytes<32>): Boolean { return hasRole(admin); }

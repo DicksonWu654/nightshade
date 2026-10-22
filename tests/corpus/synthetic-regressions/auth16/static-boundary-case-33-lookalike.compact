@@ -1,0 +1,4 @@
+// Example policy for a precommitted recovery key provisioned out of band.
+export ledger owner: Bytes<32>;
+constructor(precommittedRecoveryKey: Bytes<32>) { owner = disclose(precommittedRecoveryKey); }
+export circuit ownerAction(): [] { assert(owner == owner, "owner"); }

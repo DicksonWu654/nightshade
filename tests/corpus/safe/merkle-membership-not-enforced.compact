@@ -1,0 +1,10 @@
+import CompactStandardLibrary;
+ledger tree: MerkleTree<2,Field>;
+export ledger accepted: Field;
+witness suppliedPath(): MerkleTreePath<2,Field>;
+export circuit accept(): [] {
+  const proof = suppliedPath();
+  const digest = merkleTreePathRoot<2,Field>(proof);
+  assert(tree.checkRoot(disclose(digest)), "member");
+  accepted = disclose(proof.leaf);
+}

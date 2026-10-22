@@ -1,0 +1,8 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger published: Bytes<32>;
+witness secret(): Field;
+witness randomness(): Bytes<32>;
+export circuit publish(): [] {
+  published = persistentCommit<Field>(secret(), randomness());
+}

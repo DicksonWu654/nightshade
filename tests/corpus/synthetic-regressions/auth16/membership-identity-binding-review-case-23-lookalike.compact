@@ -1,0 +1,7 @@
+import CompactStandardLibrary;
+// Intentional low-level helper: caller policy is enforced by its exported wrapper.
+export ledger owner: Bytes<32>;
+witness accountSecret(): Bytes<32>;
+witness wrapperCaller(): Bytes<32>;
+circuit clearMemos(): [] { assert(persistentHash<Bytes<32>>(accountSecret()) == owner, "auth"); }
+export circuit privateMaintenance(): [] { clearMemos(); }

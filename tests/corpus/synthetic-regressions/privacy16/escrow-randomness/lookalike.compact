@@ -1,0 +1,10 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+struct Mask { ephemeral: JubjubPoint; shared: JubjubPoint; }
+witness ownerSeed(): JubjubScalar;
+export circuit escrowMemo(ownerPk: JubjubPoint, memoPoint: JubjubPoint): Mask {
+  const r = ownerSeed();
+  const ephemeral = ecMulGenerator(r);
+  const shared = ecMul(ownerPk, r);
+  return disclose(Mask { ephemeral, shared: ecAdd(shared, memoPoint) });
+}

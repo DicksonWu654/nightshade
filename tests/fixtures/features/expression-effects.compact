@@ -1,0 +1,11 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger changed: Boolean;
+circuit touch(value: Field): Boolean {
+  changed = true;
+  return value != (0 as Field);
+}
+export circuit entry(flag: Boolean, value: Field): Uint<8> {
+  const checked = disclose(flag) && touch(disclose(value));
+  return checked ? (assert(value != (0 as Field), "nonzero"), 0, value as Uint<8>) : 0 as Uint<8>;
+}

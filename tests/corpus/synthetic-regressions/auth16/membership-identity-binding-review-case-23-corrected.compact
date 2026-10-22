@@ -1,0 +1,8 @@
+import CompactStandardLibrary;
+// Return the authenticated identifier and have the wrapper check that value.
+export ledger owner: Bytes<32>;
+export ledger allowedIdentities: Set<Bytes<32>>;
+witness accountSecret(): Bytes<32>;
+witness wrapperCaller(): Bytes<32>;
+circuit clearMemos(): Bytes<32> { const id = persistentHash<Bytes<32>>(accountSecret()); assert(id == owner, "auth"); return id; }
+export circuit allowlistedClear(): [] { assert(allowedIdentities.member(disclose(clearMemos())), "allowlist"); }

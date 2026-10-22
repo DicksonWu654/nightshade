@@ -1,0 +1,15 @@
+// Distinct-key removal leaves the inserted caller-domain entry in place.
+pragma language_version >= 0.20;
+import CompactStandardLibrary;
+
+export ledger supply: Map<Bytes<32>, Uint<64>>;
+
+circuit removeSupply(domain: Bytes<32>): [] {
+  supply.remove(disclose(domain));
+}
+
+export circuit creditAndRemoveOther(domain: Bytes<32>, other: Bytes<32>, amount: Uint<64>): [] {
+  assert(domain != other, "remove key differs");
+  supply.insert(disclose(domain), disclose(amount));
+  removeSupply(other);
+}

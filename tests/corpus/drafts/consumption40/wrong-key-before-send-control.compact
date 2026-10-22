@@ -1,0 +1,17 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+
+export ledger used: Set<Bytes<32>>;
+witness nonce(): Bytes<32>;
+witness replacementNonce(): Bytes<32>;
+
+export circuit consumeExactKeyLate(
+  amount: Uint<64>, color: Bytes<32>, destination: Either<ContractAddress, UserAddress>
+): [] {
+  const checked = nonce();
+  const inserted = replacementNonce();
+  assert(!used.member(disclose(checked)), "checked nonce absent");
+  used.insert(disclose(inserted));
+  sendUnshielded(disclose(color), disclose(amount), disclose(destination));
+  used.insert(disclose(checked));
+}

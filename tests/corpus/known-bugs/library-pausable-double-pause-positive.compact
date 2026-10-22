@@ -1,0 +1,35 @@
+// Owned static seed adaptation; provenance and exact mutation: ../known-bugs.json.
+// SPDX-License-Identifier: MIT
+
+// WARNING: FOR TESTING PURPOSES ONLY.
+// This contract exposes internal circuits and bypasses safety checks that the
+// corresponding production contract relies on. DO NOT deploy or use this
+// contract in any production application.
+
+pragma language_version >= 0.26.0;
+
+import CompactStandardLibrary;
+import "security/Pausable" prefix Pausable_;
+
+export { Pausable__isPaused };
+
+export circuit isPaused(): Boolean {
+  return Pausable_isPaused();
+}
+
+export circuit assertNotPaused(): [] {
+  return Pausable_assertNotPaused();
+}
+
+export circuit assertPaused(): [] {
+  return Pausable_assertPaused();
+}
+
+export circuit pause(): [] {
+  Pausable__pause();
+  return Pausable__pause();
+}
+
+export circuit unpause(): [] {
+  return Pausable__unpause();
+}

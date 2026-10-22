@@ -1,0 +1,21 @@
+// Owned static seed adaptation; provenance and exact mutation: ../known-bugs.json.
+import CompactStandardLibrary;
+
+export ledger counter: Counter;
+export ledger reward: QualifiedShieldedCoinInfo;
+
+witness dummy(): [];
+
+export circuit deposit(coin: ShieldedCoinInfo): [] {
+  receiveShielded(disclose(coin));
+  reward.writeCoin(disclose(coin), right<ZswapCoinPublicKey, ContractAddress>(kernel.self()));
+  counter.increment(1);
+  dummy();
+}
+
+export ledger allocation: Uint<64>;
+witness rewardAmount(): Uint<64>;
+export circuit allocate(): [] {
+  const value=rewardAmount();
+  allocation=disclose(value);
+}

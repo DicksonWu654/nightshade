@@ -1,0 +1,9 @@
+import CompactStandardLibrary;
+export ledger owner: ZswapCoinPublicKey;
+export ledger stored5: Field;
+export ledger active5: Boolean;
+export circuit change5(next: Field): [] {
+  assert(ownPublicKey() == owner, "owner equality");
+  stored5 = disclose(next);
+  active5 = true;
+}

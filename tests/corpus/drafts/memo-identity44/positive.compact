@@ -1,0 +1,60 @@
+// Owned composition case: the memo helper authenticates one identity, while the wrapper allowlists another witness.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger memos: Map<Bytes<32>, List<Bytes<32>>>;
+export ledger newerScratch: Map<Bytes<32>, List<Bytes<32>>>;
+export ledger allowedIdentities: Set<Bytes<32>>;
+witness accountSecret(): Bytes<32>;
+witness wrapperCaller(): Bytes<32>;
+export circuit initialize(wallet: Bytes<32>): [] {
+ assert(!memos.member(disclose(wallet)), "wallet initialized once");
+ assert(!newerScratch.member(disclose(wallet)), "scratch absent before initialization");
+ memos.insertDefault(disclose(wallet));
+ newerScratch.insertDefault(disclose(wallet));
+}
+export circuit registerIdentity(identity: Bytes<32>): [] {
+ allowedIdentities.insert(disclose(identity));
+}
+export circuit credit(recipient: Bytes<32>, memoCiphertext: Bytes<32>): [] {
+ memos.lookup(disclose(recipient)).pushFront(disclose(memoCiphertext));
+}
+circuit clearMemos(wallet: Bytes<32>, readBoundary: Uint<64>, acknowledgedCount: Uint<64>): [] {
+ const authenticatedId = persistentHash<Bytes<32>>(accountSecret());
+ assert(authenticatedId == disclose(wallet), "authenticated wallet");
+ const currentLength = memos.lookup(disclose(wallet)).length();
+ assert(newerScratch.lookup(disclose(wallet)).isEmpty(), "scratch starts empty");
+ assert(currentLength >= disclose(readBoundary), "read boundary still represented");
+ assert(disclose(acknowledgedCount) <= disclose(readBoundary), "acknowledged prefix within read view");
+ const newerCount = currentLength - disclose(readBoundary);
+ assert(newerCount <= 3 as Uint<64>, "at most three newer memos");
+ assert(disclose(acknowledgedCount) <= 3 as Uint<64>, "at most three acknowledged memos");
+ for (const index of 0..3) {
+  if (index < newerCount) {
+   assert(!memos.lookup(disclose(wallet)).isEmpty(), "newer memo head available");
+   const newer = memos.lookup(disclose(wallet)).head().value;
+   newerScratch.lookup(disclose(wallet)).pushFront(newer);
+   assert(!memos.lookup(disclose(wallet)).isEmpty(), "newer memo pop available");
+   memos.lookup(disclose(wallet)).popFront();
+  }
+ }
+ for (const index of 0..3) {
+  if (index < disclose(acknowledgedCount)) {
+   assert(!memos.lookup(disclose(wallet)).isEmpty(), "acknowledged memo pop available");
+   memos.lookup(disclose(wallet)).popFront();
+  }
+ }
+ for (const index of 0..3) {
+  if (index < newerCount) {
+   assert(!newerScratch.lookup(disclose(wallet)).isEmpty(), "scratch head available");
+   const newer = newerScratch.lookup(disclose(wallet)).head().value;
+   assert(!newerScratch.lookup(disclose(wallet)).isEmpty(), "scratch pop available");
+   newerScratch.lookup(disclose(wallet)).popFront();
+   memos.lookup(disclose(wallet)).pushFront(newer);
+  }
+ }
+ assert(newerScratch.lookup(disclose(wallet)).isEmpty(), "scratch ends empty");
+}
+export circuit allowlistedClear(wallet: Bytes<32>, readBoundary: Uint<64>, acknowledgedCount: Uint<64>): [] {
+ assert(allowedIdentities.member(disclose(wrapperCaller())), "allowlist");
+ clearMemos(disclose(wallet), disclose(readBoundary), disclose(acknowledgedCount));
+}

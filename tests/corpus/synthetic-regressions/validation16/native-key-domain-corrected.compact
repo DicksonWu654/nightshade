@@ -1,0 +1,6 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+// The representation equality is an explicit platform assumption at this boundary.
+export circuit isIdentity(pk: JubjubPoint): Boolean {
+  return pk == default<JubjubPoint>;
+}

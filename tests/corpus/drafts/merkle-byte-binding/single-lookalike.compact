@@ -1,0 +1,14 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+
+ledger tree: MerkleTree<2, Field>;
+export ledger accepted: Bytes<32>;
+witness pathFor(item: Bytes<32>): MerkleTreePath<2, Bytes<32>>;
+
+export circuit accept(item: Bytes<32>): [] {
+  const proof = pathFor(disclose(item));
+  const digest = merkleTreePathRootNoLeafHash<2>(proof);
+  assert(tree.checkRoot(disclose(digest)), "member");
+  assert(disclose(item) == proof.leaf, "same-type reversed binding");
+  accepted = disclose(item);
+}

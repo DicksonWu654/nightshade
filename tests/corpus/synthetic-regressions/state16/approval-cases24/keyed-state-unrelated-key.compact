@@ -1,0 +1,17 @@
+// The membership proof is about a different token. It must not protect the
+// key written to approvals, even though the namespaces and types match.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+
+export ledger approvals: Map<Uint<128>, Bytes<32>>;
+export ledger tokenExists: Set<Uint<128>>;
+
+export circuit setApproval(checkedId: Uint<128>, approvalId: Uint<128>, spender: Bytes<32>): [] {
+  assert(tokenExists.member(disclose(checkedId)), "checked token exists");
+  approvals.insert(disclose(approvalId), disclose(spender));
+}
+
+export circuit consume(id: Uint<128>): [] {
+  assert(tokenExists.member(disclose(id)), "token exists");
+  assert(approvals.member(disclose(id)), "approval exists");
+}

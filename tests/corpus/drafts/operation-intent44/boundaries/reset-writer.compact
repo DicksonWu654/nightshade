@@ -1,0 +1,54 @@
+import CompactStandardLibrary;
+// Signed statement binds canonical contract, protocol version, operation, current nonce, and actual input.
+struct OperationAuthorization {
+  domain: Bytes<32>;
+  selfAddress: ContractAddress;
+  version: Uint<32>;
+  operation: Uint<8>;
+  nonce: Uint<64>;
+  input: Field;
+}
+export ledger authorizationDomain: Bytes<32>;
+export ledger controllerCommitment: Bytes<32>;
+export ledger authorizationNonce: Uint<64>;
+export ledger document: Field;
+witness controllerSignature(): Secp256k1EcdsaSignature;
+witness controllerKey(): Secp256k1Point;
+circuit controllerId(pk: Secp256k1Point): Bytes<32> {
+  return persistentHash<Vector<2, Secp256k1Base>>([secp256k1PointX(pk), secp256k1PointY(pk)]);
+}
+circuit authorize(operation: Uint<8>, input: Field): [] {
+  const pk = controllerKey();
+  assert(controllerId(pk) == controllerCommitment, "registered controller key");
+  const statement = OperationAuthorization {
+    domain: authorizationDomain,
+    selfAddress: kernel.self(),
+    version: 1 as Uint<32>,
+    operation: operation,
+    nonce: authorizationNonce,
+    input: input
+  };
+  assert(
+    secp256k1EcdsaVerify(keccak256<OperationAuthorization>(statement), controllerSignature(), pk),
+    "operation intent signature"
+  );
+}
+export circuit updateDocument(next: Field): [] {
+  authorize(1 as Uint<8>, next);
+  document = disclose(next);
+  authorizationNonce = (authorizationNonce + 1) as Uint<64>;
+}
+export circuit revokeDocument(): [] {
+  authorize(2 as Uint<8>, document);
+  document = document - document;
+  authorizationNonce = (authorizationNonce + 1) as Uint<64>;
+}
+export circuit resetDocument(): [] {
+  document = 0 as Field;
+}
+constructor(domainSeed: Bytes<32>, registeredKey: Secp256k1Point) {
+  authorizationDomain = disclose(domainSeed);
+  controllerCommitment = controllerId(disclose(registeredKey));
+  authorizationNonce = 0 as Uint<64>;
+  document = 0 as Field;
+}

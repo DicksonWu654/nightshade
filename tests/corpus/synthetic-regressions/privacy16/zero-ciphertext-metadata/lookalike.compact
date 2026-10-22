@@ -1,0 +1,6 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger memo: Bytes<32>;
+witness freshMemo(): Bytes<32>;
+export circuit initialize(): [] { memo = disclose(freshMemo()); }
+export circuit clear(): [] { memo = disclose(freshMemo()); }

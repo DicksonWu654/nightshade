@@ -1,0 +1,5 @@
+// Synthetic source-pattern regression.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+circuit _mul(a: Uint<128>, b: Uint<128>): Uint<128> { const x = (disclose(a) as Field) * (disclose(b) as Field); return x as Uint<128>; }
+export circuit isApprovedForAll(owner: Bytes<32>, operator: Bytes<32>): Boolean { if (disclose(owner) == disclose(operator)) return true; return false; }

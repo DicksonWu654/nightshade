@@ -1,0 +1,14 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+circuit sendEndpoint(color: Bytes<32>, amount: Uint<128>, recipient: Either<ContractAddress, UserAddress>): [] {
+  sendUnshielded(disclose(color), disclose(amount), disclose(recipient));
+}
+export circuit helperAliasedPair(color: Bytes<32>, recipient: Either<ContractAddress, UserAddress>, total: Uint<128>, part: Uint<128>): [] {
+  assert(disclose(total) > 0 as Uint<128>, "positive total");
+  assert(disclose(part) <= disclose(total), "part within total");
+  const totalAlias: Uint<128> = total as Uint<128>;
+  const partAlias: Uint<128> = part as Uint<128>;
+  const remainder = totalAlias - partAlias;
+  sendEndpoint(color, partAlias, recipient);
+  sendEndpoint(color, remainder, recipient);
+}

@@ -1,0 +1,10 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+
+// Modular accumulation is the specification here: this relation is intentionally
+// interpreted in Field and does not decompose a bounded integer transcript.
+witness fieldTerm(): Field;
+export circuit checkAccumulator(accumulator: Field): [] {
+  const term = fieldTerm();
+  assert(accumulator == accumulator + term - term, "Field modular identity");
+}

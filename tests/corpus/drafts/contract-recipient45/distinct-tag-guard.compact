@@ -1,0 +1,6 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export circuit pay(coin: ShieldedCoinInfo, recipient: Either<ZswapCoinPublicKey, ContractAddress>, other: Either<ZswapCoinPublicKey, ContractAddress>): ShieldedSendResult {
+  assert(other.is_left, "other account");
+  return sendImmediateShielded(disclose(coin), disclose(recipient), 1);
+}

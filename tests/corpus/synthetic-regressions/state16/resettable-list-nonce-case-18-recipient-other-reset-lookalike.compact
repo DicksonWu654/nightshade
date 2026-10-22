@@ -1,0 +1,24 @@
+// Boundary control: credit reads/appends account A, while only account B's List is reset.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger recipientMemos: Map<Bytes<32>, List<Bytes<32>>>;
+witness recipient(): Either<ZswapCoinPublicKey, ContractAddress>;
+export circuit initRecipients(): [] {
+ assert(!recipientMemos.member(pad(32, "source-domain-6eedac")), "A absent");
+ recipientMemos.insertDefault(pad(32, "source-domain-6eedac"));
+ assert(!recipientMemos.member(pad(32, "source-domain-c8c918")), "B absent");
+ recipientMemos.insertDefault(pad(32, "source-domain-c8c918"));
+}
+export circuit creditA(amount: Uint<64>): [] {
+ const targetRecipient = disclose(recipient());
+ assert(targetRecipient.is_left, "shielded recipient");
+ assert(targetRecipient.left.bytes == pad(32, "source-domain-6eedac"), "memo owner matches mint recipient");
+ const memoIndex = recipientMemos.lookup(pad(32, "source-domain-6eedac")).length() as Uint<64>;
+ const nonce = evolveNonce(memoIndex, pad(32, "source-domain-a8b6df"));
+ const ephemeral = evolveNonce(memoIndex, pad(32, "source-domain-333f4b"));
+ mintShieldedToken(pad(32, "source-domain-2c2c0c"), disclose(amount), nonce, targetRecipient);
+ recipientMemos.lookup(pad(32, "source-domain-6eedac")).pushFront(ephemeral);
+}
+export circuit pruneB(): [] {
+ recipientMemos.lookup(pad(32, "source-domain-c8c918")).resetToDefault();
+}

@@ -1,0 +1,6 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+// Contract claim: recipients cannot transfer issued coins to other parties.
+export circuit issueForUser(amount: Uint<64>, nonce: Bytes<32>, key: ZswapCoinPublicKey): [] {
+  mintShieldedToken(pad(32, "claim52"), disclose(amount), disclose(nonce), left<ZswapCoinPublicKey, ContractAddress>(disclose(key)));
+}

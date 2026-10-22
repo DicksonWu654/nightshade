@@ -1,0 +1,49 @@
+// This file is part of midnightntwrk/example-counter.
+// Copyright (C) Midnight Foundation
+// SPDX-License-Identifier: Apache-2.0
+// Licensed under the Apache License, Version 2.0 (the "License");
+// You may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+pragma language_version >= 0.20;
+
+import CompactStandardLibrary;
+
+// public state
+export ledger round: Counter;
+
+// transition function changing public state
+export circuit increment(): [] {
+  round.increment(1);
+}
+
+export circuit signedIncrement(msg: Vector<1, Field>, sig: JubjubSchnorrSignature, pk: JubjubPoint): [] {
+  assert(jubjubSchnorrVerify<1>(msg, sig, default<JubjubPoint>), "signature");
+  round.increment(1);
+}
+
+// Owned source-class seed for the opt-in published digest/scalar review.
+// The witness, digest publication, and generator point are invented here.
+export ledger publishedDigest: Bytes<32>;
+export ledger generatorPoint: JubjubPoint;
+witness seedMaterial(): Bytes<32>;
+pure circuit publishDigest(seed: Bytes<32>): Bytes<32> {
+  return persistentHash<Vector<1, Bytes<32>>>([seed]);
+}
+pure circuit deriveGeneratorPoint(seed: Bytes<32>): JubjubPoint {
+  const scalar = degradeToTransient(persistentHash<Vector<2, Bytes<32>>>([pad(32, "Seed:deriveGeneratorScalar"), seed])) as JubjubScalar;
+  return ecMulGenerator(scalar);
+}
+export circuit registerSeed(): [] {
+  const seed = seedMaterial();
+  publishedDigest = disclose(publishDigest(seed));
+  generatorPoint = disclose(deriveGeneratorPoint(seed));
+}

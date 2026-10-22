@@ -1,0 +1,9 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export circuit colorsDiffer(recipient: Either<ContractAddress, UserAddress>, total: Uint<128>, part: Uint<128>): [] {
+  assert(disclose(total) > 0 as Uint<128>, "positive total");
+  assert(disclose(part) <= disclose(total), "part within total");
+  const remainder = total - part;
+  sendUnshielded(default<Bytes<32>>, disclose(part), disclose(recipient));
+  sendUnshielded(pad(32, "second color"), disclose(remainder), disclose(recipient));
+}

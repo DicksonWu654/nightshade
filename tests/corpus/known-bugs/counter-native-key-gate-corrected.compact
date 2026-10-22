@@ -1,0 +1,19 @@
+pragma language_version >= 0.20;
+
+import CompactStandardLibrary;
+
+export ledger secretOwnerCommitment: Bytes<32>;
+export ledger actions: Counter;
+
+witness localSecretKey(): Bytes<32>;
+
+constructor(secretCommitment: Bytes<32>) {
+  secretOwnerCommitment = disclose(secretCommitment);
+}
+
+export circuit publish(): [] { }
+
+export circuit takeDown(): [] {
+  assert(persistentHash<Bytes<32>>(localSecretKey()) == secretOwnerCommitment, "secret-key authentication");
+  actions.increment(1);
+}

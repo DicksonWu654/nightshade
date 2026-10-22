@@ -1,0 +1,13 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+struct Box { value: Field; }
+export ledger box: Box;
+circuit replace(old: Box): Field {
+  box = Box { value: 0 as Field };
+  return old.value;
+}
+export circuit entry(value: Field): Field {
+  box = Box { value: disclose(value) };
+  const old = box;
+  return replace(old);
+}

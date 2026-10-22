@@ -1,0 +1,18 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger jubjubDevice: JubjubPoint;
+export ledger secpDevice: Secp256k1Point;
+export circuit enroll(j: JubjubPoint, s: Secp256k1Point): [] {
+  jubjubDevice = disclose(j);
+  secpDevice = disclose(s);
+}
+export circuit authorizeSchnorr(msg: Vector<1, Field>, sig: JubjubSchnorrSignature): [] {
+  const snapshot = jubjubDevice;
+  assert(ecMul(snapshot, 8 as JubjubScalar) != default<JubjubPoint>, "identity device key");
+  assert(jubjubSchnorrVerify<1>(msg, sig, snapshot), "device signature");
+}
+export circuit authorizeEcdsa(msg: Bytes<32>, sig: Secp256k1EcdsaSignature): [] {
+  const snapshot = secpDevice;
+  assert(snapshot != default<Secp256k1Point>, "identity device key");
+  assert(secp256k1EcdsaVerify(msg, sig, snapshot), "device signature");
+}

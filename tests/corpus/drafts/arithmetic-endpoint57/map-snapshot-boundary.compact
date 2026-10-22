@@ -1,0 +1,9 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger values: Map<Bytes<32>, Uint<128>>;
+export circuit snapshotThenWrite(key: Bytes<32>): [] {
+  const snapshot = values.lookup(disclose(key));
+  values.insert(disclose(key), disclose(snapshot));
+  const retained = snapshot;
+  sendUnshielded(pad(32, ""), disclose(retained), disclose(right<ContractAddress, UserAddress>(UserAddress { bytes: pad(32, "") })));
+}

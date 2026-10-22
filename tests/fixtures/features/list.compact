@@ -1,0 +1,9 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger items: List<Field>;
+export circuit entry(value: Field): Field {
+  items.pushFront(disclose(value));
+  const first = items.head();
+  items.popFront();
+  return first.value;
+}

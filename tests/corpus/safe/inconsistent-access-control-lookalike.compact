@@ -1,0 +1,10 @@
+import CompactStandardLibrary;
+export ledger owner: Bytes<32>;
+export ledger stored: Field;
+witness secret(): Bytes<32>;
+circuit assertOnlyOwner(): [] {
+  const ignored = persistentHash<Bytes<32>>(secret()) == owner;
+}
+export circuit first(next: Field): [] { assertOnlyOwner(); stored = disclose(next); }
+export circuit second(next: Field): [] { assertOnlyOwner(); stored = disclose(next); }
+export circuit publicWriter(next: Field): [] { stored = disclose(next); }

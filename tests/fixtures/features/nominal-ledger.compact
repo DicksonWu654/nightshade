@@ -1,0 +1,19 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+
+new type Token = Field;
+new type Table = Map<Field, Token>;
+new type Count = Counter;
+export ledger stored: Table;
+export ledger count: Count;
+
+circuit put(value: Token): [] {
+  stored.insert(default<Field>, disclose(value));
+  count.increment(1);
+}
+
+export circuit entry(value: Token): Token {
+  put(value);
+  put(value);
+  return stored.lookup(default<Field>);
+}

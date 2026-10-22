@@ -1,0 +1,3 @@
+module Ownable { export circuit initialize(): [] {} }
+import Ownable prefix O_;
+export circuit entry(): [] { O_initialize(); }

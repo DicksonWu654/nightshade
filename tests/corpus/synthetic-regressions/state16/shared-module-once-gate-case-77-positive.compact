@@ -1,0 +1,8 @@
+// Owned two-module import composition shape. Compiler pathname/module identity behavior remains an integration concern.
+pragma language_version >= 0.20;
+import CompactStandardLibrary;
+module First { import "shared-module-once-gate-case-77-positive/security/Initializable" prefix I_; export circuit initialize(): [] { I_initialize(); } }
+module Second { import "shared-module-once-gate-case-77-positive/security/Initializable" prefix I_; export circuit initialize(): [] { I_initialize(); } }
+import First prefix F_; import Second prefix S_;
+export circuit initializeFirst(): [] { F_initialize(); }
+export circuit initializeSecond(): [] { S_initialize(); }

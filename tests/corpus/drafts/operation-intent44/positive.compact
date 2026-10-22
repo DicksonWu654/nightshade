@@ -1,0 +1,22 @@
+import CompactStandardLibrary;
+// The same reusable private-preimage predicate authorizes distinct document mutations.
+export ledger controllerCommitment: Bytes<32>;
+export ledger authorizationNonce: Uint<64>;
+export ledger document: Field;
+witness localSecretKey(): Bytes<32>;
+circuit authorize(): [] {
+  assert(persistentHash<Bytes<32>>(localSecretKey()) == controllerCommitment, "controller preimage");
+}
+export circuit updateDocument(next: Field): [] {
+  authorize();
+  document = disclose(next);
+}
+export circuit revokeDocument(): [] {
+  authorize();
+  document = document - document;
+}
+constructor(controllerSeed: Bytes<32>) {
+  controllerCommitment = persistentHash<Bytes<32>>(disclose(controllerSeed));
+  authorizationNonce = 0 as Uint<64>;
+  document = 0 as Field;
+}

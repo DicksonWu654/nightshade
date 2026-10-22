@@ -1,0 +1,9 @@
+pragma language_version >= 0.26.0;
+export ledger allowed: Boolean;
+export ledger published: Field;
+circuit authorize(): [] { assert(allowed, "permission required"); }
+circuit store(value: Field): [] { published = disclose(value); }
+export circuit publish(value: Field): [] {
+  authorize();
+  store(value);
+}

@@ -1,0 +1,11 @@
+pragma language_version >= 0.23;
+import CompactStandardLibrary;
+export ledger startedAt2: Uint<64>;
+export ledger authenticated2: Boolean;
+constructor() { startedAt2 = 0; authenticated2 = false; }
+export circuit authenticate2(expectedTimeWindow: Uint<64>): [] {
+  assert(blockTimeGte(disclose(expectedTimeWindow)), "future window");
+  assert(disclose(expectedTimeWindow >= startedAt2), "window");
+  startedAt2 = disclose(expectedTimeWindow);
+  authenticated2 = true;
+}

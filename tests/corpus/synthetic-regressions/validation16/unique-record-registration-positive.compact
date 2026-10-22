@@ -1,0 +1,7 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger records: Map<Bytes<32>, Opaque<"string">>;
+export circuit register(id: Bytes<32>, payload: Opaque<"string">): [] {
+  assert(!records.member(disclose(id)), "duplicate id");
+  records.insert(disclose(id), disclose(payload));
+}

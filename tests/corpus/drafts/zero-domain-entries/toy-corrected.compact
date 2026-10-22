@@ -1,0 +1,10 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+
+export ledger supply: Map<Bytes<32>, Uint<64>>;
+
+export circuit credit(domain: Bytes<32>, amount: Uint<64>): [] {
+  if (disclose(amount) > 0) {
+    supply.insert(disclose(domain), disclose(amount));
+  }
+}

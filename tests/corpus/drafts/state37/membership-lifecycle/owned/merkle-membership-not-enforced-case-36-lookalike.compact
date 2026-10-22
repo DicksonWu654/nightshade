@@ -1,0 +1,50 @@
+// Independently authored owned static lifecycle case; no runtime, proof, or attack reproduction.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+
+export ledger roleTree: MerkleTree<2, Field>;
+export ledger revoked: Set<Bytes<32>>;
+export ledger grantIndex: Set<Bytes<32>>;
+export ledger administrators: Set<Bytes<32>>;
+
+witness caller(): Bytes<32>;
+witness rolePath(commitment: Field): MerkleTreePath<2, Field>;
+
+circuit roleAccountCommitment(role: Bytes<32>, account: Bytes<32>): Bytes<32> {
+  return persistentHash<Vector<2, Bytes<32>>>([disclose(role), disclose(account)]);
+}
+
+circuit revocationKey(commitment: Bytes<32>): Bytes<32> {
+  return persistentHash<Bytes<32>>(disclose(commitment));
+}
+
+export circuit grantRole(role: Bytes<32>, account: Bytes<32>): [] {
+  assert(administrators.member(disclose(caller())), "administrator authorizes grant");
+  const commitment = roleAccountCommitment(role, account);
+  const nullifier = revocationKey(commitment);
+  // A prior renunciation for this exact role/account pair blocks this grant.
+  assert(!revoked.member(disclose(nullifier)), "role/account not revoked");
+  const leaf = disclose(commitment) as Field;
+  roleTree.insert(leaf);
+  grantIndex.insert(disclose(commitment));
+}
+
+export circuit renounceRole(role: Bytes<32>, account: Bytes<32>): [] {
+  assert(disclose(account) == disclose(caller()), "caller owns account");
+  const commitment = roleAccountCommitment(role, account);
+  const nullifier = revocationKey(commitment);
+  const p = rolePath(disclose(commitment) as Field);
+  assert(p.leaf == disclose(commitment) as Field, "path leaf is queried role/account commitment");
+  const digest = merkleTreePathRoot<2, Field>(p);
+  assert(roleTree.checkRoot(disclose(digest)), "role/account commitment is a granted member");
+  revoked.insert(disclose(nullifier));
+}
+
+// Separate preview is intentionally disconnected from recording and lifecycle state.
+export circuit previewPath(role: Bytes<32>, account: Bytes<32>): [] {
+  const commitment = roleAccountCommitment(role, account);
+  const p = rolePath(disclose(commitment) as Field);
+  assert(p.leaf == disclose(commitment) as Field, "preview leaf matches query");
+  const previewRoot = merkleTreePathRoot<2, Field>(p);
+  assert(roleTree.checkRoot(disclose(previewRoot)), "preview path is a member");
+}

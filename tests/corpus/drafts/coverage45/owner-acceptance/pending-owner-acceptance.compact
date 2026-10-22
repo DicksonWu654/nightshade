@@ -1,0 +1,41 @@
+import CompactStandardLibrary;
+
+// Constructor state is active immediately; proposals remain pending until proof and
+// current-owner authorization both succeed in acceptOwnership.
+export ledger activeOwner: Bytes<32>;
+ledger pendingOwner: Bytes<32>;
+ledger hasPendingOwner: Boolean;
+
+constructor(initialOwnerCommitment: Bytes<32>) {
+  activeOwner = disclose(initialOwnerCommitment);
+  pendingOwner = pad(32, "");
+  hasPendingOwner = false;
+}
+
+witness currentOwnerSecret(): Bytes<32>;
+witness recipientSecret(): Bytes<32>;
+
+circuit currentOwnerCommitment(): Bytes<32> {
+  return persistentHash<Bytes<32>>(currentOwnerSecret());
+}
+
+export circuit proposeOwnership(nextOwnerCommitment: Bytes<32>): [] {
+  assert(currentOwnerCommitment() == activeOwner, "current owner");
+  assert(nextOwnerCommitment != pad(32, ""), "non-default owner");
+  pendingOwner = disclose(nextOwnerCommitment);
+  hasPendingOwner = true;
+}
+
+export circuit acceptOwnership(): [] {
+  assert(currentOwnerCommitment() == activeOwner, "current owner");
+  assert(hasPendingOwner, "pending owner required");
+  const recipientCommitment = persistentHash<Bytes<32>>(recipientSecret());
+  assert(recipientCommitment == pendingOwner, "recipient must prove pending owner");
+  activeOwner = pendingOwner;
+  pendingOwner = pad(32, "");
+  hasPendingOwner = false;
+}
+
+export circuit ownerAction(): [] {
+  assert(currentOwnerCommitment() == activeOwner, "current owner");
+}

@@ -1,0 +1,59 @@
+name: Nightshade
+description: Scan a Midnight Compact project with Nightshade and upload SARIF, preserving incomplete-analysis failures.
+inputs:
+  path:
+    description: Compact file or project directory, relative to the caller workspace.
+    default: .
+  config:
+    description: Optional Nightshade JSON configuration path, relative to the caller workspace.
+    default: ''
+  compiler-version:
+    description: Optional pinned compiler profile; otherwise select from source pragmas.
+    default: ''
+  fail-on:
+    description: Finding threshold (info, low, medium, high, critical, none). Baseline incompleteness always fails; rule gaps fail by default.
+    default: info
+  category:
+    description: SARIF category; use distinct values for separate project scans.
+    default: nightshade
+outputs:
+  exit-code:
+    description: Analyzer exit code (0 below threshold under the configured coverage policy, 1 findings, 2 incomplete/invalid).
+    value: ${{ steps.scan.outputs.exit-code }}
+  sarif:
+    description: Local SARIF report path on the runner.
+    value: ${{ steps.scan.outputs.sarif }}
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+      with:
+        node-version: 24.20.0
+        cache: npm
+        cache-dependency-path: ${{ github.action_path }}/package-lock.json
+    - name: Build reviewed source (native parser on clean runners)
+      shell: bash
+      working-directory: ${{ github.action_path }}
+      run: npm ci && npm run build
+    - name: Scan
+      id: scan
+      shell: bash
+      env:
+        NIGHTSHADE_ACTION_PATH: ${{ github.action_path }}
+        NIGHTSHADE_INPUT_PATH: ${{ inputs.path }}
+        NIGHTSHADE_CONFIG: ${{ inputs.config }}
+        NIGHTSHADE_COMPILER_VERSION: ${{ inputs.compiler-version }}
+        NIGHTSHADE_FAIL_ON: ${{ inputs.fail-on }}
+      run: bash "$NIGHTSHADE_ACTION_PATH/scripts/action-scan.sh"
+    - name: Upload SARIF
+      if: ${{ always() && steps.scan.outputs.sarif != '' }}
+      uses: github/codeql-action/upload-sarif@7999b86c43a865dc79d8923397f35af22de63401
+      with:
+        sarif_file: ${{ steps.scan.outputs.sarif }}
+        category: ${{ inputs.category }}
+    - name: Preserve analyzer failure
+      if: ${{ always() && steps.scan.outputs.exit-code != '' }}
+      shell: bash
+      env:
+        NIGHTSHADE_EXIT_CODE: ${{ steps.scan.outputs.exit-code }}
+      run: exit "$NIGHTSHADE_EXIT_CODE"

@@ -1,0 +1,5 @@
+import { ContractAddress, UserAddress, Either } from CompactStandardLibrary;
+circuit sendUnshielded(recipient: Either<ContractAddress, UserAddress>): [] {}
+export circuit namesake(recipient: Either<ContractAddress, UserAddress>): [] {
+  sendUnshielded(recipient);
+}

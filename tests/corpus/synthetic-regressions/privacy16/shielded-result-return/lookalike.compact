@@ -1,0 +1,3 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export circuit drain(coin: QualifiedShieldedCoinInfo, recipient: Either<ZswapCoinPublicKey, ContractAddress>): Uint<64> { const result = sendShielded(disclose(coin), disclose(recipient), 1); return 1; }

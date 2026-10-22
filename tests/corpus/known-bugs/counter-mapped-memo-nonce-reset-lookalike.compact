@@ -1,0 +1,51 @@
+// This file is part of midnightntwrk/example-counter.
+// Copyright (C) Midnight Foundation
+// SPDX-License-Identifier: Apache-2.0
+// Licensed under the Apache License, Version 2.0 (the "License");
+// You may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+pragma language_version >= 0.20;
+
+import CompactStandardLibrary;
+
+// public state
+export ledger round: Counter;
+
+// transition function changing public state
+export circuit increment(): [] {
+  round.increment(1);
+}
+
+export ledger recipientMemos: Map<Bytes<32>, List<Bytes<32>>>;
+witness freshCoinNonce(): Bytes<32>;
+witness freshMemoEphemeral(): Bytes<32>;
+
+export circuit initRecipient(recipientKey: Bytes<32>): [] {
+  assert(!recipientMemos.member(disclose(recipientKey)), "recipient List absent");
+  recipientMemos.insertDefault(disclose(recipientKey));
+}
+
+export circuit credit(
+  recipientKey: Bytes<32>,
+  recipient: Either<ZswapCoinPublicKey, ContractAddress>,
+  amount: Uint<64>
+): [] {
+  assert(recipient.is_left, "shielded recipient");
+  assert(recipient.left.bytes == disclose(recipientKey), "memo owner matches recipient");
+  const memoCount = recipientMemos.lookup(disclose(recipientKey)).length();
+  mintShieldedToken(pad(32, "counter-mapped-credit"), disclose(amount), disclose(freshCoinNonce()), disclose(recipient));
+  recipientMemos.lookup(disclose(recipientKey)).pushFront(disclose(freshMemoEphemeral()));
+}
+
+export circuit pruneRecipientMemos(recipientKey: Bytes<32>): [] {
+  recipientMemos.lookup(disclose(recipientKey)).resetToDefault();
+}

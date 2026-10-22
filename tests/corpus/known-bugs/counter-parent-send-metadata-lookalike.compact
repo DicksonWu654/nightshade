@@ -1,0 +1,15 @@
+pragma language_version >= 0.20;
+
+import CompactStandardLibrary;
+
+export ledger round: Counter;
+
+circuit _deposit(coin: ShieldedCoinInfo, parent: ContractAddress): ShieldedCoinInfo {
+  return coin;
+}
+
+export circuit forwardToParent(coin: ShieldedCoinInfo, parent: ContractAddress): ShieldedCoinInfo {
+  const original = _deposit(coin, parent);
+  round.increment(1);
+  return original;
+}

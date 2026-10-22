@@ -1,0 +1,6 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export circuit verifyKnownGenerator(msg: Vector<1, Field>, sig: JubjubSchnorrSignature): Boolean {
+  const generatorKey = ecMulGenerator(1 as JubjubScalar);
+  return jubjubSchnorrVerify<1>(msg, sig, generatorKey);
+}

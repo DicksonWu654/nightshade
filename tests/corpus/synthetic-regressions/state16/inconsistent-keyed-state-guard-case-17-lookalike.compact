@@ -1,0 +1,17 @@
+// Intentional control: spender approvals are independent of token ownership.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+
+export ledger approvals: Map<Uint<128>, Bytes<32>>;
+
+export circuit _approve(id: Uint<128>, spender: Bytes<32>, auth: Bytes<32>): [] {
+  if (disclose(auth) != default<Bytes<32>>) {
+    // This policy checks auth-to-spender equality, not token lifecycle.
+    assert(disclose(auth) == disclose(spender), "authorized");
+    approvals.insert(disclose(id), disclose(spender));
+  }
+}
+
+export circuit consumeApproval(id: Uint<128>): [] {
+  assert(approvals.member(disclose(id)), "approval exists");
+}

@@ -1,0 +1,16 @@
+import CompactStandardLibrary;
+// Pairwise equality is all-pairs complete for at most two presented signers.
+export ledger registered: Set<Bytes<32>>;
+struct SignerClaim { commitment: Bytes<32>; signature: Secp256k1EcdsaSignature; key: Secp256k1Point; }
+circuit signerCommitment(key: Secp256k1Point): Bytes<32> { return persistentHash<Vector<2, Secp256k1Base>>([secp256k1PointX(key), secp256k1PointY(key)]); }
+export circuit verifyTwo(claims: Vector<2, SignerClaim>, threshold: Uint<8>): [] {
+  assert(registered.member(disclose(claims[0].commitment)), "registered");
+  assert(claims[0].commitment == signerCommitment(claims[0].key), "key commitment");
+  assert(registered.member(disclose(claims[1].commitment)), "registered");
+  assert(claims[1].commitment == signerCommitment(claims[1].key), "key commitment");
+  assert(secp256k1EcdsaVerify(keccak256<Bytes<32>>(claims[0].commitment), claims[0].signature, claims[0].key), "signature 0");
+  assert(secp256k1EcdsaVerify(keccak256<Bytes<32>>(claims[1].commitment), claims[1].signature, claims[1].key), "signature 1");
+  assert(claims[0].commitment != claims[1].commitment, "unique");
+  const accepted: Uint<8> = 2 as Uint<8>;
+  assert(accepted >= threshold, "threshold");
+}

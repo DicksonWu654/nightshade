@@ -1,0 +1,9 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export circuit intentionalZero(color: Bytes<32>, recipient: Either<ContractAddress, UserAddress>, total: Uint<128>): [] {
+  assert(disclose(total) > 0 as Uint<128>, "positive total");
+  const part = 0 as Uint<128>;
+  const remainder = total - part;
+  sendUnshielded(disclose(color), disclose(part), disclose(recipient));
+  sendUnshielded(disclose(color), disclose(remainder), disclose(recipient));
+}

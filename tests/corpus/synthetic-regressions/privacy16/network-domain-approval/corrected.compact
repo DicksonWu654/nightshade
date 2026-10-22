@@ -1,0 +1,11 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+struct Domain { name: Bytes<32>; version: Bytes<32>; instanceSalt: Bytes<32>; selfAddress: ContractAddress; networkId: Bytes<32>; }
+struct Operation { domain: Domain; nonce: Uint<64>; operation: Field; }
+export ledger approvalNonce: Uint<64>;
+export circuit verifyApproval(networkId: Bytes<32>, sig: Secp256k1EcdsaSignature, pk: Secp256k1Point): [] {
+  const domain = Domain { name: pad(32, "NST"), version: pad(32, "1"), instanceSalt: pad(32, "instance"), selfAddress: kernel.self(), networkId: networkId };
+  const approval = Operation { domain, nonce: approvalNonce, operation: 1 as Field };
+  assert(secp256k1EcdsaVerify(keccak256<Operation>(approval), sig, pk), "approval");
+  approvalNonce = (approvalNonce + 1) as Uint<64>;
+}

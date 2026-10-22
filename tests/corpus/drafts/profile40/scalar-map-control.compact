@@ -1,0 +1,22 @@
+pragma language_version >= 0.18.0 && <= 0.18.0;
+import CompactStandardLibrary;
+
+export ledger total: Uint<32>;
+export ledger records: Map<Uint<32>, Uint<32>>;
+
+constructor() {
+  total = 0;
+}
+
+export circuit record(key: Uint<32>, value: Uint<32>): [] {
+  assert(value > 0, "value must be positive");
+  records.insert(disclose(key), disclose(value));
+  total = (total + disclose(value)) as Uint<32>;
+}
+
+export circuit clear(key: Uint<32>): [] {
+  const value = records.lookup(disclose(key));
+  assert(value > 0, "record must exist");
+  records.remove(disclose(key));
+  total = (total - value) as Uint<32>;
+}

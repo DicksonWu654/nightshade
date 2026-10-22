@@ -1,0 +1,21 @@
+pragma language_version >= 0.23;
+import CompactStandardLibrary;
+
+export ledger milestoneConfirmed: Boolean;
+export ledger settled: Boolean;
+export ledger deadline: Uint<64>;
+
+constructor() {
+  milestoneConfirmed = false;
+  settled = false;
+  deadline = 0;
+}
+
+export circuit attestMilestone(): [] {
+  assert(!milestoneConfirmed, "already attested");
+  milestoneConfirmed = true;
+}
+
+export circuit payBonus(recipient: UserAddress): [] {
+  sendUnshielded(pad(32, "gap:payout"), 1, disclose(right<ContractAddress, UserAddress>(recipient)));
+}

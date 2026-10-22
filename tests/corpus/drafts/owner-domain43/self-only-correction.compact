@@ -1,0 +1,11 @@
+// Domain control: binds the contract but accepts the default salt.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+struct OwnerCommitment { selfAddress: ContractAddress; salt: Bytes<32>; owner: Bytes<32>; }
+export ledger commitment: Bytes<32>;
+export ledger initialized: Boolean;
+export circuit initialize(salt: Bytes<32>, ownerSecret: Bytes<32>): [] {
+  assert(!initialized, "already initialized");
+  commitment = disclose(persistentHash<OwnerCommitment>(OwnerCommitment { selfAddress: kernel.self(), salt: salt, owner: ownerSecret }));
+  initialized = true;
+}

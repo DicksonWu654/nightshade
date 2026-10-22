@@ -1,0 +1,4 @@
+import CompactStandardLibrary;
+module Local { export circuit receiveShielded(coin: ShieldedCoinInfo): ShieldedCoinInfo { return coin; } }
+import Local prefix L_;
+export circuit deposit(coin: ShieldedCoinInfo): ShieldedCoinInfo { return L_receiveShielded(coin); }

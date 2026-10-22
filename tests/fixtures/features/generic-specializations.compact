@@ -1,0 +1,11 @@
+pragma language_version >= 0.26.0;
+export ledger stored: Uint<8>;
+circuit identity<T>(value: T): T { return value; }
+circuit put<T>(value: T): [] { stored = disclose(value); }
+witness fetch<T>(value: T): Field;
+export circuit entry(secret: Uint<8>): [Uint<8>, Field, Field] {
+  const values = map(identity<Uint<0..0X100>>, [identity<Uint<0o10>>(secret)]);
+  put<Uint<8>>(values[0]);
+  put<Uint<0..256>>(secret);
+  return disclose([stored, fetch<Uint<8>>(secret), fetch<Uint<0..256>>(secret)]);
+}

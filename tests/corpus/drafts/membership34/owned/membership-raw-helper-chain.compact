@@ -1,0 +1,13 @@
+// Owned source-shape candidate; no runtime or exploit claim.
+import CompactStandardLibrary;
+export ledger admins: Set<Bytes<32>>;
+export ledger lpRoles: Set<Bytes<32>>;
+export ledger traders: Set<Bytes<32>>;
+export ledger value: Field;
+circuit hasRole(account: Bytes<32>, role: Field): Boolean {
+  if (role == (0 as Field)) { return admins.member(disclose(account)); }
+  if (role == (1 as Field)) { return lpRoles.member(disclose(account)); }
+  return traders.member(disclose(account));
+}
+export circuit onlyAdmin(): Boolean { return hasRole(ownPublicKey().bytes, 0 as Field); }
+export circuit grantRole(account: Bytes<32>): [] { assert(onlyAdmin(), "admin"); admins.insert(disclose(account)); }

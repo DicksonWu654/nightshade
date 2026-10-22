@@ -1,0 +1,16 @@
+// This set records independent authorization policy. It is not a token
+// existence fact and should not be treated as the lifecycle relation.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+
+export ledger approvals: Map<Uint<128>, Bytes<32>>;
+export ledger authorizedIds: Set<Uint<128>>;
+
+export circuit setApproval(id: Uint<128>, spender: Bytes<32>): [] {
+  assert(authorizedIds.member(disclose(id)), "authorized id");
+  approvals.insert(disclose(id), disclose(spender));
+}
+
+export circuit consume(id: Uint<128>): [] {
+  assert(approvals.member(disclose(id)), "approval exists");
+}

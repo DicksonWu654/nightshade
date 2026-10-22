@@ -1,0 +1,24 @@
+// Corrected source shape: enforce token existence regardless of auth state.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+
+export ledger approvals: Map<Uint<128>, Bytes<32>>;
+export ledger tokenExists: Set<Uint<128>>;
+
+circuit _approve(id: Uint<128>, spender: Bytes<32>, auth: Bytes<32>): [] {
+  assert(tokenExists.member(disclose(id)), "token exists");
+  if (disclose(auth) != default<Bytes<32>>) {
+    assert(disclose(auth) == disclose(spender), "authorized");
+  }
+  approvals.insert(disclose(id), disclose(spender));
+}
+
+// The public operation is exposed; the internal approval helper is not exported.
+export circuit approve(id: Uint<128>, spender: Bytes<32>, auth: Bytes<32>): [] {
+  _approve(disclose(id), disclose(spender), disclose(auth));
+}
+
+export circuit consumeApproval(id: Uint<128>): [] {
+  assert(tokenExists.member(disclose(id)), "token exists");
+  assert(approvals.member(disclose(id)), "approval exists");
+}

@@ -1,0 +1,17 @@
+pragma language_version >= 0.26.0;
+import { Maybe as Optional, some } from CompactStandardLibrary;
+module Types<#N> {
+  export struct Box<T> { values: Vector<N,T>; }
+  export new type Identity<T> = T;
+}
+import Types<2>;
+export { Box, Identity };
+export type Wrapped<T> = Optional<T>;
+export struct Sized<T,#N> { values: Vector<N,T>; }
+
+export circuit entry(secret: Field): Field {
+  const value = Box<Field> { values: [0 as Field, secret] };
+  const wrapped: Wrapped<Field> = some<Field>(value.values[1]);
+  const tagged = wrapped.value as Identity<Field>;
+  return tagged as Field;
+}

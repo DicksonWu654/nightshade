@@ -1,0 +1,7 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export circuit pay(coin: ShieldedCoinInfo, recipient: Either<ZswapCoinPublicKey, ContractAddress>): ShieldedSendResult {
+  const sent = sendImmediateShielded(disclose(coin), disclose(recipient), 1);
+  assert(recipient.is_left, "only account recipients");
+  return sent;
+}

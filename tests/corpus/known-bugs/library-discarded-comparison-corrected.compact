@@ -1,0 +1,70 @@
+// SPDX-License-Identifier: MIT
+// Adapted from OpenZeppelin Compact Contracts MockOwnable.compact.
+// Source: contracts/src/access/test/mocks/MockOwnable.compact
+// Revision: ec1331cd8195694c747d291e8fc8ab6d2914a976
+// Source SHA-256: 0fe6531c186c0944712eab6df5b0a7ac667d9bd50770459dec8fd90b3093c1e6
+// Owned discarded-comparison seed; retain ordinary initialization/ownership APIs.
+
+// WARNING: FOR TESTING PURPOSES ONLY.
+// This contract exposes internal circuits and bypasses safety checks that the
+// corresponding production contract relies on. DO NOT deploy or use this
+// contract in any production application.
+
+pragma language_version >= 0.26.0;
+
+import CompactStandardLibrary;
+
+import "access/Ownable" prefix Ownable_;
+
+export { ContractAddress, Either, Maybe };
+
+export ledger count: Counter;
+
+/**
+ * @description `isInit` is a param for testing.
+ *
+ * If `isInit` is false, the constructor will not initialize the contract.
+ * This behavior is to test that circuits are not callable unless the
+ * contract is initialized.
+*/
+constructor(initialOwner: Either<Bytes<32>, ContractAddress>, isInit: Boolean) {
+  if (disclose(isInit)) {
+    Ownable_initialize(initialOwner);
+  }
+}
+
+export circuit owner(): Either<Bytes<32>, ContractAddress> {
+  return Ownable_owner();
+}
+
+export circuit transferOwnership(newOwner: Either<Bytes<32>, ContractAddress>): [] {
+  return Ownable_transferOwnership(newOwner);
+}
+
+export circuit _unsafeTransferOwnership(newOwner: Either<Bytes<32>, ContractAddress>): [] {
+  return Ownable__unsafeTransferOwnership(newOwner);
+}
+
+export circuit renounceOwnership(): [] {
+  return Ownable_renounceOwnership();
+}
+
+export circuit assertOnlyOwner(): [] {
+  return Ownable_assertOnlyOwner();
+}
+
+export circuit _transferOwnership(newOwner: Either<Bytes<32>, ContractAddress>): [] {
+  return Ownable__transferOwnership(newOwner);
+}
+
+export circuit _unsafeUncheckedTransferOwnership(newOwner: Either<Bytes<32>, ContractAddress>): [] {
+  return Ownable__unsafeUncheckedTransferOwnership(newOwner);
+}
+
+
+// Enforce the limit while preserving the existing owner requirement.
+export circuit increment(limit: Uint<64>): [] {
+  Ownable_assertOnlyOwner();
+  assert(count.read() < disclose(limit), "count limit");
+  count.increment(1);
+}

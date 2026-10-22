@@ -1,0 +1,21 @@
+// Owned static seed adaptation; provenance and exact mutation: ../known-bugs.json.
+import CompactStandardLibrary;
+
+export ledger counter: Counter;
+export ledger reward: QualifiedShieldedCoinInfo;
+
+witness dummy(): [];
+
+export circuit deposit(coin: ShieldedCoinInfo): [] {
+  receiveShielded(disclose(coin));
+  reward.writeCoin(disclose(coin), right<ZswapCoinPublicKey, ContractAddress>(kernel.self()));
+  counter.increment(1);
+  dummy();
+}
+
+export circuit rewardMint(amount: Uint<64>, nonce: Bytes<32>, recipient: ZswapCoinPublicKey): [] {
+  assert(amount > 0,"positive reward");
+  assert(amount <=100,"reward cap");
+  mintShieldedToken(pad(32,"sdk:reward"),disclose(amount),disclose(nonce),left<ZswapCoinPublicKey,ContractAddress>(disclose(recipient)));
+  counter.increment(1);
+}

@@ -1,0 +1,24 @@
+// Only the first administrator() snapshot equals the authenticated identity; the second is independent.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+export ledger memos: Map<Bytes<32>, List<Bytes<32>>>;
+export ledger allowedAdmins: Set<Bytes<32>>;
+witness walletSecret(): Bytes<32>;
+witness administrator(): Bytes<32>;
+export circuit initialize(wallet: Bytes<32>): [] {
+  memos.insertDefault(disclose(wallet));
+}
+export circuit addMemo(wallet: Bytes<32>, memo: Bytes<32>): [] {
+  memos.lookup(disclose(wallet)).pushFront(disclose(memo));
+}
+export circuit allowAdmin(admin: Bytes<32>): [] {
+  allowedAdmins.insert(disclose(admin));
+}
+export circuit distinctAdminSnapshots(wallet: Bytes<32>): [] {
+  const authenticatedWallet = persistentHash<Bytes<32>>(walletSecret());
+  assert(authenticatedWallet == disclose(wallet), "wallet secret");
+  assert(administrator() == authenticatedWallet, "one administrator snapshot matches");
+  assert(allowedAdmins.member(disclose(administrator())), "another administrator snapshot is registered");
+  assert(!memos.lookup(disclose(wallet)).isEmpty(), "memo exists");
+  memos.lookup(disclose(wallet)).popFront();
+}

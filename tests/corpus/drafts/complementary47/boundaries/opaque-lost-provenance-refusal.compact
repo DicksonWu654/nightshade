@@ -1,0 +1,8 @@
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary;
+witness firstAmount(): Uint<128>;
+witness secondAmount(): Uint<128>;
+export circuit unlinkedWitnessAmounts(color: Bytes<32>, recipient: Either<ContractAddress, UserAddress>): [] {
+  sendUnshielded(disclose(color), disclose(firstAmount()), disclose(recipient));
+  sendUnshielded(disclose(color), disclose(secondAmount()), disclose(recipient));
+}

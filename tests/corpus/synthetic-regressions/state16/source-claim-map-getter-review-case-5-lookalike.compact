@@ -1,0 +1,6 @@
+// Synthetic source-pattern regression.
+pragma language_version >= 0.26.0;
+import CompactStandardLibrary; export ledger roleAdmin: Map<Bytes<32>, Bytes<32>>;
+// No documentation claim that this entry controls getRoleAdmin; this is auxiliary data only.
+export circuit setAdmin(role: Bytes<32>, admin: Bytes<32>): [] { roleAdmin.insert(disclose(role), disclose(admin)); }
+export circuit getRoleAdmin(role: Bytes<32>): Bytes<32> { return default<Bytes<32>>; }

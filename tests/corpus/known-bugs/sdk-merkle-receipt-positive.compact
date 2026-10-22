@@ -1,0 +1,21 @@
+// Owned static seed adaptation; provenance and exact mutation: ../known-bugs.json.
+import CompactStandardLibrary;
+
+export ledger counter: Counter;
+export ledger reward: QualifiedShieldedCoinInfo;
+
+witness dummy(): [];
+
+ledger permitted: MerkleTree<2,Field>;
+export ledger acceptedLeaf: Field;
+witness membership(): MerkleTreePath<2,Field>;
+export circuit deposit(coin: ShieldedCoinInfo): [] {
+  const proof = membership();
+  const digest = merkleTreePathRoot<2,Field>(proof);
+  permitted.checkRoot(disclose(digest));
+  acceptedLeaf = disclose(proof.leaf);
+  receiveShielded(disclose(coin));
+  reward.writeCoin(disclose(coin), right<ZswapCoinPublicKey, ContractAddress>(kernel.self()));
+  counter.increment(1);
+  dummy();
+}
