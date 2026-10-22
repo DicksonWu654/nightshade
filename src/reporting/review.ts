@@ -50,7 +50,7 @@ const hash = (value: string) => createHash("sha256").update(value).digest("hex")
 function empty(root: string, options: ReviewOptions): ReviewBrief {
   return { schemaVersion: "nightshade-review-1", root: resolve(root), status: "incomplete",
     scope: "Conservative resolved source relations and separate modeled successful histories. A row points to code for review; it does not detect or verify a vulnerability.",
-    identity: { toolVersion: "0.1.0", sources: [], budgets: { maxSteps: options.maxSteps ?? 40000, maxPaths: options.maxPaths ?? 256, maxValues: options.maxValues ?? 50000 } },
+    identity: { toolVersion: "0.1.1", sources: [], budgets: { maxSteps: options.maxSteps ?? 40000, maxPaths: options.maxPaths ?? 256, maxValues: options.maxValues ?? 50000 } },
     coverage: { scan: null, inventory: "unavailable", histories: "unavailable", diagnostics: [] }, circuits: [],
     stateMachine: { scope: "May-read/write graph and source assignment sketch; marker candidates are heuristics, not proven terminal states or one-time actions.", fields: [] },
     findings: [], questions: [], questionSummary: { visible: 0, collapsed: 0, generated: 0 },
@@ -172,7 +172,9 @@ export function reviewFile(file: string, options: ReviewOptions = {}): ReviewBri
     }
     const addQuestion = (kind: string, priority: ReviewQuestion["priority"], rows: ReviewCircuit[], locations: Span[], question: string, basis: string, score: number, signals: string[]) => {
       charge(); const ids = rows.map(r => r.id);
-      report.questions.push({ id: hash(JSON.stringify([report.root, kind, ids, locations, question, basis])).slice(0, 20), rank: 0, score, signals, kind, priority, circuitIds: ids, locations, question, basis });
+      // IDs use owned semantic/path coordinates; the report retains real paths.
+      report.questions.push({ id: hash(JSON.stringify([program.meteringPath(report.root), kind, ids.map(program.meteringIdentity),
+        locations.map(location => ({ ...location, file: program.meteringPath(location.file) })), question, basis])).slice(0, 20), rank: 0, score, signals, kind, priority, circuitIds: ids, locations, question, basis });
     };
     for (const row of report.circuits) {
       if (row.kind === "constructor") continue;

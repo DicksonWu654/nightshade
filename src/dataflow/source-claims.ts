@@ -1,3 +1,4 @@
+import { pathLength, identityLength, wrapIdentityMeter } from "../semantic/metering.js";
 import type { AnalysisFacts, RuntimeOperation } from "./index.js";
 import { intentBooleanRequirements } from "./operation-intent-booleans.js";
 import { SHIELDED_MINT } from "../semantic/mint-targets.js";
@@ -12,6 +13,7 @@ export function sourceClaimObservations(facts: AnalysisFacts) {
     work += amount; values += retained;
     if (!evidence || facts.metrics.steps + work > evidence.maxSteps || facts.metrics.abstractValues + values > evidence.maxValues) throw new Error("Source claim matching exhausted its shared allowance");
   };
+  Object.assign(charge, { identityText: facts.program.meteringIdentity });
   try {
     charge(1, 2);
     if (!evidence?.claims?.length || !facts.completedEntries.includes(evidence.entry) || facts.diagnostics.length
@@ -28,8 +30,8 @@ export function sourceClaimObservations(facts: AnalysisFacts) {
         charge(operation.callPath.length + (operation.callSites?.length ?? 0));
         if (!operation.callSites || operation.callSites.length !== operation.callPath.length) throw new Error("Canonical mint call identity is unavailable");
         const recipient = operation.args[3];
-        charge(1 + (recipient?.type?.length ?? 0), 1 + Math.ceil((recipient?.type?.length ?? 0) / 16));
-        if (!recipient || !sourceClaimRecipientType(facts.program, recipient.type ?? "", (work = 1, values = 0) => { charge(work, values); return true; })) throw new Error("Exact native mint recipient type is unavailable");
+        charge(1 + identityLength(recipient?.type, charge), 1 + Math.ceil(identityLength(recipient?.type, charge) / 16));
+        if (!recipient || !sourceClaimRecipientType(facts.program, recipient.type ?? "", wrapIdentityMeter(charge, (work = 1, values = 0) => { charge(work, values); return true; }))) throw new Error("Exact native mint recipient type is unavailable");
         const tag = recipient.fields?.is_left;
         if (!tag) throw new Error("Mint recipient tag is unavailable");
         let truth: boolean | undefined;
@@ -52,9 +54,9 @@ export function sourceClaimObservations(facts: AnalysisFacts) {
         if (!truth) continue;
         for (const claim of evidence.claims) {
           // Precharge finding strings, fingerprint source sorting, trace and retained containers.
-          let emission = 160 + claim.quote.length + claim.circuit.length + operation.location.file.length + operation.callPath.length * 8;
-          for (const file of facts.program.files.keys()) { charge(); emission += file.length + 4; }
-          for (const id of operation.callPath) { charge(); emission += id.length * 2; }
+          let emission = 160 + claim.quote.length + identityLength(claim.circuit, charge) + pathLength(operation.location.file, charge) + operation.callPath.length * 8;
+          for (const file of facts.program.files.keys()) { charge(); emission += pathLength(file, charge) + 4; }
+          for (const id of operation.callPath) { charge(); emission += identityLength(id, charge) * 2; }
           charge(emission, emission); observations.push({ claim, operation });
         }
       }

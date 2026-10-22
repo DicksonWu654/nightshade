@@ -19,14 +19,15 @@ const endpointMetadata = Object.freeze({
 });
 
 /** Reserve actual emitted strings and both this bounded fingerprint rehearsal
- * and finding()'s identical file-list/sort/path/replacement/hash preparation.
+ * and finding()'s file-list/sort/path/replacement/hash preparation. Pathname
+ * storage is represented by compilation-local tokens throughout this estimate.
  * Every temporary is charged before allocation; there is no fixed text estimate. */
 export function reserveRefundEndpointFinding(program: Program, certificate: RefundEndpointCertificate, charge: EndpointCharge): void {
   const { candidate } = certificate;
   const name = program.symbols.get(candidate.entry)!.name;
   charge(1, 64); // finding/metadata/trace/callPath/witness/report containers
   let textLength = REFUND_ENDPOINT_RULE.length + 4 + 4 + certificate.scope.length + certificate.formula.length
-    + name.length * 2 + candidate.send.file.length + candidate.assertion.file.length;
+    + name.length * 2 + program.meteringPath(candidate.send.file).length + program.meteringPath(candidate.assertion.file).length;
   for (const [key, value] of Object.entries(endpointText)) { charge(1, 2); textLength += key.length + value.length; }
   for (const [key, value] of Object.entries(endpointMetadata)) {
     charge(1, 2); textLength += key.length;
@@ -40,47 +41,35 @@ export function reserveRefundEndpointFinding(program: Program, certificate: Refu
 
   const count = program.files.size;
   charge(2 + 2 * count * count, 4 + 4 * count); // two key lists and sorts
-  const files = [...program.files.keys()].sort((left, right) => right.length - left.length);
-  const initialLength = candidate.entry.length + 1 + 16; // bounded source offset digits
+  const files = [...program.files.keys()].map(file => ({
+    file: "/" + program.meteringPath(file), normalized: program.meteringPath(file),
+  })).sort((left, right) => right.file.length - left.file.length);
+  const initialLength = program.meteringIdentity(candidate.entry).length + 1 + 16; // bounded source offset digits
   charge(1 + Math.ceil(initialLength / 32), 2 * Math.ceil(initialLength / 8));
-  let discriminator = `${candidate.entry}:${candidate.send.start}`;
-  const root = program.sourceRoot;
-  for (const file of files) {
+  let discriminator = `/${program.meteringIdentity(candidate.entry)}:${candidate.send.start}`;
+  const root = "/";
+  for (const { file, normalized } of files) {
     // relative() normalizes/splits both paths; reserve a conservative linear
     // workspace and output bound for the rehearsal and the future finding().
     const pathLength = root.length + file.length + 4;
     charge(2 + Math.ceil(8 * pathLength / 32), 2 * Math.ceil(8 * pathLength / 8));
-    const normalized = relative(root, file);
     let occurrences = 0, offset = 0, resultLength = discriminator.length;
     while (offset <= discriminator.length) {
       charge(1 + Math.ceil((discriminator.length + file.length) / 32));
       const found = discriminator.indexOf(file, offset);
       if (found < 0) break;
-      // String replacements interpret $$, $&, $` and $' even when the
-      // search argument is a literal pathname. Count that expansion exactly
-      // without allocating it, preserving finding()'s existing fingerprints.
-      let replacementLength = 0;
-      for (let index = 0; index < normalized.length; index++) {
-        charge();
-        const token = normalized[index] === "$" ? normalized[index + 1] : undefined;
-        if (token === "$" || token === "&" || token === "`" || token === "'") {
-          replacementLength += token === "$" ? 1 : token === "&" ? file.length
-            : token === "`" ? found : discriminator.length - found - file.length;
-          index++;
-        } else replacementLength++;
-      }
-      resultLength += replacementLength - file.length;
+      resultLength += normalized.length - file.length;
       if (!Number.isSafeInteger(resultLength)) throw new Error("Refund fingerprint replacement length exceeds bounded work");
       occurrences++; offset = found + file.length;
     }
     const scanLength = discriminator.length + file.length + normalized.length;
     charge(2 + Math.ceil(2 * ((occurrences + 1) * scanLength + resultLength) / 32), 2 * Math.ceil(resultLength / 8));
-    discriminator = discriminator.replaceAll(file, normalized);
+    discriminator = discriminator.replaceAll(file, () => normalized);
   }
-  const rootLength = root.length + program.root.length + 4;
-  const siteLength = root.length + candidate.send.file.length + 4;
+  const rootLength = root.length + program.meteringPath(program.root).length + 4;
+  const siteLength = root.length + program.meteringPath(candidate.send.file).length + 4;
   charge(2 + Math.ceil(8 * (rootLength + siteLength) / 32), 2 * Math.ceil(8 * (rootLength + siteLength) / 8));
-  const rootPath = relative(root, program.root), sitePath = relative(root, candidate.send.file);
+  const rootPath = relative(root, "/" + program.meteringPath(program.root)), sitePath = relative(root, "/" + program.meteringPath(candidate.send.file));
   const keyLength = REFUND_ENDPOINT_RULE.length + rootPath.length + sitePath.length + 16 + discriminator.length + 4;
   // Joining the fingerprint key and UTF-8 encoding for SHA256, plus output.
   charge(2 + Math.ceil(4 * keyLength / 32), Math.ceil(6 * keyLength / 8) + 64);

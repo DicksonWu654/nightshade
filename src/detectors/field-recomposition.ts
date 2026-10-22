@@ -1,3 +1,4 @@
+import { ReportIdentityKeys } from "../reporting/identity-keys.js";
 import type { AnalysisFacts } from "../dataflow/index.js";
 import { successfulIntegerConstraints } from "../dataflow/arithmetic-safety.js";
 import { fieldRecomposition } from "../dataflow/field-recomposition.js";
@@ -17,6 +18,7 @@ export function fieldRecompositionFindings(facts: AnalysisFacts, allowance = 200
   let work = 0;
   const charge = (amount = 1) => { work += amount; if (!Number.isSafeInteger(allowance) || allowance < 1 || work > allowance) throw new Error("Field recomposition review allowance exhausted"); };
   const findings = new Map<string, Finding>();
+  const report = new ReportIdentityKeys(facts.program, FIELD_RECOMPOSITION_RULE, facts.program.rootSource.ast.span);
   try {
     for (const path of facts.paths) {
       if (!entries.includes(path.entry)) continue;
@@ -44,7 +46,7 @@ export function fieldRecompositionFindings(facts: AnalysisFacts, allowance = 200
           if (!observed || observed.maximum < FIELD_MODULUS) continue;
           const range = (v: { minimum: bigint; maximum: bigint }) => ({ minimum: String(v.minimum), maximum: String(v.maximum) });
           const key = `${path.entry}:${spanId(predicate.location)}:${side}`;
-          const history = { scale: String(observed.scale), quotientIdentity: observed.quotient.identity, remainderIdentity: observed.remainder.identity, callPath: predicate.callPath, callSites: predicate.callSites, branches: path.path, quotientBounds: range(observed.q), remainderBounds: range(observed.r), recompositionBounds: range(observed) };
+          const history = { scale: String(observed.scale), quotientIdentity: observed.quotient.identity && report.key(observed.quotient.identity), remainderIdentity: observed.remainder.identity && report.key(observed.remainder.identity), callPath: predicate.callPath, callSites: predicate.callSites, branches: path.path, quotientBounds: range(observed.q), remainderBounds: range(observed.r), recompositionBounds: range(observed) };
           const existing = findings.get(key);
           if (existing) { (existing.metadata.histories as typeof history[]).push(history); continue; }
           findings.set(key, finding(facts, {
@@ -54,7 +56,7 @@ export function fieldRecompositionFindings(facts: AnalysisFacts, allowance = 200
             location: predicate.location, callPath: predicate.callPath.map(id => facts.program.symbols.get(id)!.name),
             trace: [{ kind: "operation", label: "Enforced Field recomposition", location: predicate.location }],
             remediation: "Review whether integer recomposition is intended and enforce sufficiently tight bounds on these exact operands, or document intentional modular arithmetic.",
-            metadata: { evidence: "owned-field-recomposition-envelope", entry: path.entry, scale: String(observed.scale), quotientIdentity: observed.quotient.identity, remainderIdentity: observed.remainder.identity, quotientBounds: range(observed.q), remainderBounds: range(observed.r), recompositionBounds: range(observed), fieldModulus: String(FIELD_MODULUS), branches: path.path, histories: [history], reviewRequired: true, pathFeasibility: "not-proven", ambiguity: "not-proven" },
+            metadata: { evidence: "owned-field-recomposition-envelope", entry: path.entry, scale: String(observed.scale), quotientIdentity: observed.quotient.identity && report.key(observed.quotient.identity), remainderIdentity: observed.remainder.identity && report.key(observed.remainder.identity), quotientBounds: range(observed.q), remainderBounds: range(observed.r), recompositionBounds: range(observed), fieldModulus: String(FIELD_MODULUS), branches: path.path, histories: [history], reviewRequired: true, pathFeasibility: "not-proven", ambiguity: "not-proven" },
           }, key));
         }
       }

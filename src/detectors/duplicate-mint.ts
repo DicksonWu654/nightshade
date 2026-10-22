@@ -18,7 +18,7 @@ export const duplicateShieldedMint: Detector = {
     const findings = new Map<string, Finding>();
     for (const path of facts.paths) {
       if (!facts.completedEntries.includes(path.entry)) continue;
-      const constants = successfulConstants(path, Math.min(100000, 1000000 - work));
+      const constants = successfulConstants(path, Math.min(100000, 1000000 - work), facts.program.meteringIdentity);
       let evidenceComplete = true;
       const seen = new Map<string, NonNullable<typeof path.operations>[number]>();
       for (const operation of path.operations ?? []) {

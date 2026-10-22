@@ -1,3 +1,4 @@
+import type { IdentityMeter } from "../semantic/metering.js";
 import type { AbstractValue, Flow, SuccessfulPath } from "./index.js";
 import { immutableOperandKey } from "./immutable-key.js";
 import { constantOf } from "./transfers.js";
@@ -6,7 +7,7 @@ import { spanId } from "../model.js";
 /** Value-specific assertion dependency, not proof that an assertion is adequate
  * authentication or an application invariant. Witness-return argument dependency
  * is not a circuit validation of the argument. Branch choices are not assertions. */
-export function uncheckedWitnessState(path: SuccessfulPath, charge: (work?: number) => void) {
+export function uncheckedWitnessState(path: SuccessfulPath, charge: ((work?: number) => void) & Pick<IdentityMeter, "identityText">) {
   if (!path.predicates) throw new Error("Successful assertion predicates are unavailable");
   const assertions = new Set(path.path.filter(step => step.kind === "constraint").map(step => spanId(step.location)));
   charge(path.path.length);
@@ -67,10 +68,10 @@ export function uncheckedWitnessState(path: SuccessfulPath, charge: (work?: numb
 
 /** Required witness-leaf dependencies, not equalities or a proof that the
  * relation is adequate. Decode Boolean/aggregate alternatives before joining. */
-export function assertionWitnessDependencies(value: AbstractValue, truth: boolean, charge: (work?: number) => void): ReadonlySet<string> {
+export function assertionWitnessDependencies(value: AbstractValue, truth: boolean, charge: ((work?: number) => void) & Pick<IdentityMeter, "identityText">): ReadonlySet<string> {
   const memo = new WeakMap<AbstractValue, Map<boolean, ReadonlySet<string>>>();
   const same = (left: AbstractValue, right: AbstractValue) => {
-    const a = immutableOperandKey(left), b = immutableOperandKey(right);
+    const a = immutableOperandKey(left, undefined, undefined, undefined, charge.identityText), b = immutableOperandKey(right, undefined, undefined, undefined, charge.identityText);
     charge(a.work + b.work);
     if (!a.complete || !b.complete) throw new Error("Assertion operand identity allowance exhausted");
     return !!a.key && a.key === b.key;

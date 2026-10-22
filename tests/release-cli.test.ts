@@ -31,7 +31,7 @@ test("usage aliases work and human argument errors use stderr without a scan env
   }
   for (const arg of ["-V", "--version"]) {
     const row = spawnSync(process.execPath, [binary, arg], { encoding: "utf8" });
-    assert.equal(row.status, 0); assert.equal(row.stdout.trim(), "Nightshade 0.1.0");
+    assert.equal(row.status, 0); assert.equal(row.stdout.trim(), "Nightshade 0.1.1");
   }
   for (const arg of ["-v", "--bogus"]) {
     const row = spawnSync(process.execPath, [binary, arg], { encoding: "utf8" });

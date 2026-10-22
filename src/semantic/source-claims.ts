@@ -36,16 +36,17 @@ export function validateSourceClaims(value: unknown, location: Span, code: strin
 export function prepareSourceClaims(program: Program, policies: readonly SourceClaimPolicy[], charge: SourceClaimCharge): Map<string, ResolvedSourceClaim[]> {
   charge(0, 2); const selected = new Map<string, ResolvedSourceClaim[]>(), identities = new Set<string>();
   for (const policy of policies) {
-    charge(1 + policy.circuit.length + policy.quote.length, 4 + Math.ceil((policy.circuit.length + policy.quote.length) / 32));
+    const selectorLength = program.meteringSelector(policy.circuit).length;
+    charge(1 + selectorLength + policy.quote.length, 4 + Math.ceil((selectorLength + policy.quote.length) / 32));
     let target: SymbolInfo | undefined;
     for (const symbol of program.symbols.values()) {
-      charge(1 + Math.ceil((symbol.id.length + symbol.name.length) / 64));
+      charge(1 + Math.ceil((program.meteringIdentity(symbol.id).length + symbol.name.length) / 64));
       if (symbol.kind !== "circuit" || !program.isActiveSymbol(symbol) || symbol.id !== policy.circuit && symbol.name !== policy.circuit) continue;
       if (target) fail("invalid-policy", "Source claim selector is ambiguous; use a canonical exported circuit ID", symbol.span);
       target = symbol;
     }
     if (!target || !program.entries.includes(target.id)) fail("invalid-policy", "Source claim selector requires a unique canonical exported circuit", target?.span ?? program.rootSource.ast.span);
-    charge(1 + target.id.length, 2 + Math.ceil(target.id.length / 32)); const identity = target.id + ":" + policy.kind;
+    charge(1 + program.meteringIdentity(target.id).length, 2 + Math.ceil(program.meteringIdentity(target.id).length / 32)); const identity = target.id + ":" + policy.kind;
     if (identities.has(identity)) fail("invalid-policy", "Duplicate resolved source claim for one entry and kind", target.span);
     identities.add(identity);
     const source = program.files.get(target.span.file);
@@ -108,7 +109,7 @@ export function sourceClaimRecipientType(program: Program, type: string, charge:
   const account = (text: string): void => {
     let current = text, depth = 0;
     for (;;) {
-      charge(4 + current.length * 4, 2 + Math.ceil(current.length / 8));
+      charge(4 + program.meteringIdentity(current).length * 4, 2 + Math.ceil(program.meteringIdentity(current).length / 8));
       if (++depth > 64) throw new Error("Source claim native identity depth is unavailable");
       const nominal = program.nominalTypes.get(current);
       if (!nominal) break;
@@ -117,7 +118,7 @@ export function sourceClaimRecipientType(program: Program, type: string, charge:
   };
   account(type);
   const representation = program.representationOf(type);
-  charge(4 + representation.length * 4, 2 + Math.ceil(representation.length / 8));
+  charge(4 + program.meteringIdentity(representation).length * 4, 2 + Math.ceil(program.meteringIdentity(representation).length / 8));
   const term = parseType(representation);
   if (program.nativeTypeOf(type) !== "Either" || term.args.length !== 2) return false;
   charge(0, 2); const left = printType(term.args[0]), right = printType(term.args[1]);

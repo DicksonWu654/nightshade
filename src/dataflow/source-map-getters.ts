@@ -1,3 +1,4 @@
+import { pathLength, identityLength } from "../semantic/metering.js";
 import type { AbstractValue, AnalysisFacts, RuntimeOperation, SuccessfulPath } from "./index.js";
 import { immutableOperandKey } from "./immutable-key.js";
 import { enforcedEqualities } from "./predicates.js";
@@ -16,6 +17,7 @@ export function sourceMapGetterObservations(facts: AnalysisFacts) {
     if (!evidence || facts.metrics.steps + work > evidence.maxSteps || facts.metrics.abstractValues + values > evidence.maxValues) throw new Error("Source Map getter matching exhausted its shared allowance");
     return true;
   };
+  Object.assign(charge, { identityText: facts.program.meteringIdentity });
   const exact = (value: AbstractValue): string => {
     const result = immutableOperandKey(value, Math.max(0, evidence!.maxSteps - facts.metrics.steps - work), undefined, charge);
     if (!result.complete || !result.key) throw new Error("Source Map getter immutable operand is unavailable");
@@ -99,8 +101,8 @@ export function sourceMapGetterObservations(facts: AnalysisFacts) {
       constant = observed;
     }
     if (write && returned && constant !== undefined) {
-      let emission = 192 + claim.quote.length + claim.setter.length + claim.getter.length + claim.map.length + claim.setterKey.length + claim.setterValue.length + claim.getterKey.length + constant.length;
-      for (const file of facts.program.files.keys()) { charge(); emission += file.length + 4; }
+      let emission = 192 + claim.quote.length + identityLength(claim.setter, charge) + identityLength(claim.getter, charge) + identityLength(claim.map, charge) + identityLength(claim.setterKey, charge) + identityLength(claim.setterValue, charge) + identityLength(claim.getterKey, charge) + constant.length;
+      for (const file of facts.program.files.keys()) { charge(); emission += pathLength(file, charge) + 4; }
       charge(emission, emission); observations.push({ setter: write.location, returned, constant });
     }
   } catch (error) {

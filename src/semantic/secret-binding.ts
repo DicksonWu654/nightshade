@@ -10,15 +10,15 @@ export function scalarSecretKeySource(program: Program, source: PrivateSource,
   charge(1, 0);
   const symbol = source.symbol && program.symbols.get(source.symbol);
   if (!symbol) return false;
-  charge(1, 1 + Math.ceil(symbol.type.length / 64));
+  charge(1, 1 + Math.ceil(program.meteringIdentity(symbol.type).length / 64));
   const represented = program.representationOf(symbol.type);
-  charge(1, 1 + Math.ceil(represented.length / 64));
+  charge(1, 1 + Math.ceil(program.meteringIdentity(represented).length / 64));
   const primitive = /^(Boolean|Field|Bytes<\d+>|Uint<\d+(?:\.\.\d+)?>)$/;
   if (!primitive.test(represented)) return false;
   if (observedType !== undefined) {
-    charge(1, 1 + Math.ceil(observedType.length / 64));
+    charge(1, 1 + Math.ceil(program.meteringIdentity(observedType).length / 64));
     const observed = program.representationOf(observedType);
-    charge(1, 1 + Math.ceil(observed.length / 64));
+    charge(1, 1 + Math.ceil(program.meteringIdentity(observed).length / 64));
     if (!primitive.test(observed)) return false;
   }
   return true;

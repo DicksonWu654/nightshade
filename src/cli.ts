@@ -79,7 +79,7 @@ async function main(input: string[]): Promise<number> {
     args.splice(profileIndex, 2);
   }
   if (args.includes("--help") || args.includes("-h") || args.length === 1 && args[0] === "help") { console.log(help); return 0; }
-  if (args.length === 1 && ["--version", "-V"].includes(args[0])) { console.log("Nightshade 0.1.0"); return 0; }
+  if (args.length === 1 && ["--version", "-V"].includes(args[0])) { console.log("Nightshade 0.1.1"); return 0; }
   if (args[0] === "review") return reviewCommand(args.slice(1), compilerVersion, zkirVersion);
   if (args[0] === "detector") {
     const json = args.includes("--json");

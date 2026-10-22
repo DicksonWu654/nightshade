@@ -1,3 +1,4 @@
+import { ReportIdentityKeys } from "../reporting/identity-keys.js";
 import { nativeKeyObservations } from "../analysis/native-key.js";
 import { NATIVE_KEY_RULE } from "../semantic/native-key-targets.js";
 import { spanId } from "../model.js";
@@ -7,6 +8,7 @@ export const nativeKeyAuthenticationReview: Detector = {
   description: "Canonical prover-supplied ownPublicKey participates in a required ledger credential check",
   requires: ["all-successful-predicates", "direct-hash-inputs", "exact-effect-histories"],
   run(facts) {
+    const report = new ReportIdentityKeys(facts.program, NATIVE_KEY_RULE, facts.program.rootSource.ast.span);
     const result = nativeKeyObservations(facts);
     facts.diagnostics.push(...result.diagnostics);
     return result.observations.map(({ entry, guard, reaches }) => finding(facts, {
@@ -17,7 +19,7 @@ export const nativeKeyAuthenticationReview: Detector = {
       trace: [{ kind: "source", label: "canonical prover-supplied key snapshot", location: guard.supplied.location }, { kind: "constraint", label: "required ledger credential equality", location: guard.predicate.location }, ...reaches.map(reach => ({ kind: "effect", label: reach.effect.name, location: reach.effect.location }))],
       callPath: guard.predicate.callPath.map(id => facts.program.symbols.get(id)?.name ?? id),
       remediation: "Review and document the intended key and secret-credential roles. If separate key control is required, enforce the protocol's appropriate proof of that control.",
-      metadata: { entry: facts.program.symbols.get(entry)!.name, reviewRequired: true, evidence: "canonical-native-key-required-ledger-equality", credential: guard.credential, authenticationIntent: "unknown", pathFeasibility: "not-proven", confidenceScope: "static-source-relationship", affectedEffects: reaches.map(reach => reach.effect), historyEvidence: reaches.map(reach => ({ ledgerIdentity: reach.guard.ledgerIdentity })) },
+      metadata: { entry: facts.program.symbols.get(entry)!.name, reviewRequired: true, evidence: "canonical-native-key-required-ledger-equality", credential: guard.credential, authenticationIntent: "unknown", pathFeasibility: "not-proven", confidenceScope: "static-source-relationship", affectedEffects: reaches.map(reach => reach.effect), historyEvidence: reaches.map(reach => ({ ledgerIdentity: report.key(reach.guard.ledgerIdentity) })) },
     }, `${entry}:${spanId(guard.predicate.location)}`));
   },
 };

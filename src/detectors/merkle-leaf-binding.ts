@@ -1,4 +1,5 @@
 import type { AbstractValue } from "../dataflow/index.js";
+import { ReportIdentityKeys } from "../reporting/identity-keys.js";
 import { enforcedMerkleDigests, merkleDigestKey } from "../dataflow/merkle-enforcement.js";
 import { enforcedEqualities } from "../dataflow/predicates.js";
 import { immutableOperandKey } from "../dataflow/immutable-key.js";
@@ -14,6 +15,7 @@ export const merkleLeafBindingReview: Detector = {
   description: "Checked Merkle path leaves lack binding to supplied lookup inputs or exact Field hash write candidates",
   requires: ["merkle-observations", "successful-predicates", "digest-inputs", "mint-quantity-observations", "state-writes", "completed-entries"],
   run(facts) {
+    const report = new ReportIdentityKeys(facts.program, merkleLeafBindingReview.id, facts.program.rootSource.ast.span);
     if (![...facts.program.functions.keys()].some(merkleRootCircuit)) return [];
     const issue = (code: string, message: string) => facts.diagnostics.push({ code,
       message: `${message}; Merkle leaf-binding review is incomplete`, location: facts.program.rootSource.ast.span });
@@ -59,12 +61,12 @@ export const merkleLeafBindingReview: Detector = {
           if (!charge()) { issue("predicate-analysis-budget", "Equality closure exceeded its allowance"); return []; }
           if (!bound.has(other)) { bound.add(other); pending.push(other); }
         }
-        const proof = immutableOperandKey(root.args[0], 1000000 - work);
+        const proof = immutableOperandKey(root.args[0], 1000000 - work, undefined, undefined, facts.program.meteringIdentity);
         if (!charge(proof.work) || !proof.complete) { issue("predicate-analysis-budget", "Checked path identity exceeded its allowance"); return []; }
         for (const invocation of path.operations ?? []) {
           if (!charge()) { issue("predicate-analysis-budget", "Path-witness grouping exceeded its allowance"); return []; }
           if (invocation.kind !== "circuit-invocation" || !witnessTargets.targets.has(invocation.name)) continue;
-          const returned = immutableOperandKey(invocation.result, 1000000 - work);
+          const returned = immutableOperandKey(invocation.result, 1000000 - work, undefined, undefined, facts.program.meteringIdentity);
           if (!charge(returned.work) || !returned.complete) { issue("predicate-analysis-budget", "Returned path identity exceeded its allowance"); return []; }
           if (!proof.key || proof.key !== returned.key) continue;
           for (const [index, candidate] of invocation.args.entries()) {
@@ -113,7 +115,7 @@ export const merkleLeafBindingReview: Detector = {
               callPath: root.callPath.map(id => facts.program.symbols.get(id)?.name ?? id),
               remediation: "If the candidate is intended to be the member leaf, enforce equality with the exact checked path leaf on every successful history, or construct that path using the candidate.",
               metadata: { reviewRequired: true, authenticationIntent: "unknown", entry, evidence: "checked-root-without-required-leaf-candidate-equality", doesNotProve: "security-flaw-or-exploitability" },
-            }, `${path.entry}:${spanId(root.location)}:${spanId(write.location)}:${key}`));
+            }, `${path.entry}:${spanId(root.location)}:${spanId(write.location)}:${report.key(key)}`));
           }
         }
       }

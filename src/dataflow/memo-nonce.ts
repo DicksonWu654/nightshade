@@ -32,8 +32,8 @@ export function memoNoncePairs(facts: AnalysisFacts, entries = facts.completedEn
   for (const path of facts.paths) {
     if (!charge()) break;
     if (!entries.includes(path.entry) || !facts.completedEntries.includes(path.entry)) continue;
-    const equality = immutableEqualities(path, Math.max(0, allowance - work));
-    const constants = successfulConstants(path, Math.max(0, allowance - work - equality.work));
+    const equality = immutableEqualities(path, Math.max(0, allowance - work), undefined, facts.program.meteringIdentity);
+    const constants = successfulConstants(path, Math.max(0, allowance - work - equality.work), facts.program.meteringIdentity);
     let equalityWork = 0, constantsWork = 0;
     const account = () => { charge(equality.work - equalityWork + constants.work - constantsWork);
       equalityWork = equality.work; constantsWork = constants.work; complete &&= equality.complete && constants.complete; return complete; };

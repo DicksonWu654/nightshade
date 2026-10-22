@@ -146,7 +146,7 @@ export function discoverRefundEndpoints(program: Program, entry: string, charge:
       charge(); const call = assertion.call; if (call.args.length !== 4) continue;
       charge(1, 12);
       const keys = call.args.map(arg => { const value = unwrapEndpoint(arg, bindings, charge); return value.kind === "ref" && value.symbol ? value.symbol : undefined; });
-      charge(1 + Math.ceil((b.length + q.length + keys.reduce((total, value) => total + (value?.length ?? 0), 0)) / 64));
+      charge(1 + Math.ceil((program.meteringIdentity(b).length + program.meteringIdentity(q).length + keys.reduce((total, value) => total + (value ? program.meteringIdentity(value).length : 0), 0)) / 64));
       const bi = keys.indexOf(b), qi = keys.indexOf(q); if (bi < 0 || qi < 0 || bi === qi) { if (keys.some(key => !key)) throw new Error("Refund validator argument snapshot mapping is unavailable"); continue; }
       if (keys.some(key => !key) || new Set(keys).size !== 4) throw new Error("Refund validator requires four distinct exact source operands");
       const rest = [0, 1, 2, 3].filter(i => i !== bi && i !== qi);

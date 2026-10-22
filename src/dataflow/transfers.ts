@@ -1,3 +1,4 @@
+import { identityText, wrapIdentityMeter, type IdentityMeter, type IdentityText } from "../semantic/metering.js";
 import type { AbstractValue, Flow, PrivateSource } from "./index.js";
 import type { Span } from "../model.js";
 import { binaryConstant, castConstant, type Constant } from "./constants.js";
@@ -128,7 +129,8 @@ export function counterMutation(previous: AbstractValue, amount: AbstractValue, 
 
 export interface ScalarConstraints {
   /** Optional selected-pass meter; ordinary transfer costs remain unchanged. */
-  scalarMeter?: (work: number, values: number) => void;
+  scalarMeter?: IdentityMeter<void>;
+  identityText?: IdentityText;
   /** Shared immutable recipe definitions; constraints remain owned by each state. */
   hashRecipes?: HashRecipes;
   known: Map<string, Constant>;
@@ -158,7 +160,7 @@ function aggregateKey(value: AbstractValue, key: (part: AbstractValue) => string
     : value.items?.map((part, index) => [index, key(part)] as const);
   if (state?.scalarMeter && parts) {
     let units = 2;
-    for (const [name, part] of parts) { state.scalarMeter(1, 0); units += Math.ceil((String(name).length + (part?.length ?? 0)) / 64); }
+    for (const [name, part] of parts) { state.scalarMeter(1, 0); units += Math.ceil((String(name).length + identityText(part ?? "", state.scalarMeter).length) / 64); }
     state.scalarMeter(1, units);
   }
   return parts?.every(([, value]) => value !== undefined) ? `${value.fields ? "fields" : "items"}:${JSON.stringify(parts)}` : undefined;
@@ -166,7 +168,7 @@ function aggregateKey(value: AbstractValue, key: (part: AbstractValue) => string
 
 /** Structural keys describe immutable values, never a wildcard storage region. */
 export function valueIdentity(value: AbstractValue, state?: ScalarConstraints): string | undefined {
-  state?.scalarMeter?.(1, 1 + Math.ceil((value.identity?.length ?? 0) / 64));
+  state?.scalarMeter?.(1, 1 + Math.ceil(identityText(value.identity ?? "", state?.scalarMeter).length / 64));
   return value.identity ?? aggregateKey(value, part => valueIdentity(part, state) ?? constantKey(part, state), state);
 }
 function constantKey(value: AbstractValue, state?: ScalarConstraints): string | undefined {
@@ -513,7 +515,7 @@ export function assumeScalar(value: AbstractValue, truth: boolean, state: Scalar
   }
   if (value.comparison) {
     const { operator, left, right } = value.comparison, equals = operator === "==" ? truth : !truth;
-    state.scalarMeter?.(1, 4 + Math.ceil(((left.identity?.length ?? 0) + (right.identity?.length ?? 0)) / 64));
+    state.scalarMeter?.(1, 4 + Math.ceil((identityText(left.identity ?? "", state.scalarMeter).length + identityText(right.identity ?? "", state.scalarMeter).length) / 64));
     const equality = aggregateEquality(refineScalar(left, state), refineScalar(right, state), state);
     if (equality !== undefined && equality !== equals) return false;
     // Retain a scalar relation when neither operand supplies a constant. Later
@@ -528,8 +530,8 @@ export function assumeScalar(value: AbstractValue, truth: boolean, state: Scalar
     if (!relation && !equals && (left.items || left.fields) && (right.items || right.fields)) {
       // Traverse represented leaves even when their containers have identities;
       // the retained compound relation will later compare those leaves.
-      const first = immutableOperandKey(left, MAX_AGGREGATE_EXCLUSION_LEAVES, key => key, state.scalarMeter ? (work, values) => { state.scalarMeter!(work, values); return true; } : undefined);
-      const second = immutableOperandKey(right, Math.max(0, MAX_AGGREGATE_EXCLUSION_LEAVES - first.work), key => key, state.scalarMeter ? (work, values) => { state.scalarMeter!(work, values); return true; } : undefined);
+      const first = immutableOperandKey(left, MAX_AGGREGATE_EXCLUSION_LEAVES, key => key, state.scalarMeter ? wrapIdentityMeter(state.scalarMeter, (work: number, values: number) => { state.scalarMeter!(work, values); return true; }) : undefined, state.identityText);
+      const second = immutableOperandKey(right, Math.max(0, MAX_AGGREGATE_EXCLUSION_LEAVES - first.work), key => key, state.scalarMeter ? wrapIdentityMeter(state.scalarMeter, (work: number, values: number) => { state.scalarMeter!(work, values); return true; }) : undefined, state.identityText);
       state.scalarEqualities ??= new Map();
       if (!first.complete || !second.complete) state.scalarEqualitiesExhausted = true;
       else if (first.key && second.key) relation = `aggregate-relation:${JSON.stringify([first.key, second.key].sort())}`;

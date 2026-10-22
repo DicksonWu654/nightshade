@@ -1,3 +1,4 @@
+import { pathLength, identityLength, rememberReportIdentity } from "../semantic/metering.js";
 import { createHash } from "node:crypto";
 import type { AbstractValue, AnalysisFacts, PrivateSource, StateWrite, SuccessfulPath, SuccessfulPredicate } from "./index.js";
 import { projectEnforcedEqualities } from "./predicates.js";
@@ -19,16 +20,18 @@ function descriptor(facts: AnalysisFacts, hash: AbstractValue, ledger: string, c
   charge(1, 2);
   const witness = secretWitnessDeclaration(facts.program, source);
   if (!witness) return;
-  charge(0, 4 + Math.ceil((witness.length + ledger.length + digest.primitive.length) / 64));
+  charge(0, 4 + Math.ceil((identityLength(witness, charge) + identityLength(ledger, charge) + digest.primitive.length) / 64));
   charge(0, 3);
-  const recipe = createHash("sha256");
+  const recipe = createHash("sha256"), reportRecipe = createHash("sha256");
   let holes = 0, constants = 0;
   const visit = (value: AbstractValue, depth: number): boolean => {
     charge(1 + value.flows.length);
     if (depth > 32) throw new Error("Secret domain recipe exceeds its bounded depth");
     if (value.constant !== undefined && value.constantKind && !value.flows.length && !value.ledger.size) {
       charge(1, 3 + Math.ceil(value.constant.length / 64));
-      recipe.update(JSON.stringify(["constant", value.type, value.constantKind, value.constant])); constants++; return true;
+      recipe.update(JSON.stringify(["constant", value.type, value.constantKind, value.constant]));
+      reportRecipe.update(JSON.stringify(["constant", value.type && facts.program.reportIdentity(value.type), value.constantKind, value.constant]));
+      constants++; return true;
     }
     if (value.fields || value.items) {
       if (value.fields) {
@@ -36,24 +39,27 @@ function descriptor(facts: AnalysisFacts, hash: AbstractValue, ledger: string, c
         const names: string[] = [];
         for (const name in value.fields) if (Object.hasOwn(value.fields, name)) { charge(1, 1); names.push(name); }
         charge(names.length * Math.max(1, Math.ceil(Math.log2(names.length + 1)))); names.sort();
-        recipe.update("fields[");
-        for (const name of names) { charge(1, 1 + Math.ceil(name.length / 64)); recipe.update(JSON.stringify(name)); if (!visit(value.fields[name], depth + 1)) return false; }
+        recipe.update("fields["); reportRecipe.update("fields[");
+        for (const name of names) { charge(1, 1 + Math.ceil(name.length / 64)); recipe.update(JSON.stringify(name)); reportRecipe.update(JSON.stringify(name)); if (!visit(value.fields[name], depth + 1)) return false; }
       } else {
-        recipe.update("items[");
+        recipe.update("items["); reportRecipe.update("items[");
         for (const item of value.items!) if (!visit(item, depth + 1)) return false;
       }
-      recipe.update("]"); return true;
+      recipe.update("]"); reportRecipe.update("]"); return true;
     }
     if (value.type !== "Bytes<32>" || value.ledger.size || value.identity !== source.id || value.flows.length !== 1
       || value.flows[0].source.id !== source.id || value.flows[0].form !== "raw"
       || value.directDigest || value.directCommit || value.comparison || value.ordering || value.negated) return false;
-    recipe.update("private-witness-hole"); holes++; return true;
+    recipe.update("private-witness-hole"); reportRecipe.update("private-witness-hole"); holes++; return true;
   };
-  charge(0, 2 + Math.ceil((digest.inputType?.length ?? 0) / 64));
+  charge(0, 2 + Math.ceil(identityLength(digest.inputType, charge) / 64));
   recipe.update(JSON.stringify(digest.inputType));
+  reportRecipe.update(JSON.stringify(digest.inputType && facts.program.reportIdentity(digest.inputType)));
   if (!visit(digest.input, 0) || holes !== 1 || constants === 0) return;
   charge(0, 5);
-  return { witness, primitive: digest.primitive, domain: recipe.digest("hex"), trustedLedger: ledger };
+  const domain = recipe.digest("hex");
+  rememberReportIdentity("domain:" + domain, "domain:" + reportRecipe.digest("hex"), facts.program.meteringIdentity);
+  return { witness, primitive: digest.primitive, domain, trustedLedger: ledger };
 }
 
 /** All matching, recursive identity work and output reservations spend the
@@ -74,6 +80,7 @@ export function secretBindingComparisons(facts: AnalysisFacts): SecretBindingCom
     if (prior + work > evidence.maxSteps || facts.metrics.abstractValues > evidence.maxValues) throw new Error("Secret binding matching exhausted its shared work/value allowance");
     return true;
   };
+  Object.assign(charge, { identityText: facts.program.meteringIdentity });
   const location = (): Span => facts.program.functions.get(entry)?.declaration.span ?? facts.program.rootSource.ast.span;
   try {
     if (facts.diagnostics.length || facts.predicateScope !== "all" || !facts.digestEvidence || facts.pathSemantics !== "equivalent-states")
@@ -106,7 +113,7 @@ export function secretBindingComparisons(facts: AnalysisFacts): SecretBindingCom
         seed(sink.value);
         for (const flow of sink.value.flows) {
           charge(); if (flow.form === "raw") {
-            charge(0, 3 + Math.ceil(flow.source.id.length / 64));
+            charge(0, 3 + Math.ceil(identityLength(flow.source.id, charge) / 64));
             const id = `id:${flow.source.id}`; rawPublic.add(id);
             if (scalarSecretKeySource(facts.program, flow.source, charge)) scalarSources.add(id);
           }
@@ -117,7 +124,7 @@ export function secretBindingComparisons(facts: AnalysisFacts): SecretBindingCom
           if (!equality.equals) return [];
           const a = key(equality.left), b = key(equality.right);
           if (!a || !b) return [];
-          charge(0, 4 + Math.ceil((a.length + b.length) / 64));
+          charge(0, 4 + Math.ceil((identityLength(a, charge) + identityLength(b, charge)) / 64));
           return [{ key: JSON.stringify([a, b]), value: [a, b, equality.left, equality.right] as const }];
         }, charge);
         if (!projected) throw new Error("Secret-binding Boolean equality projection is unavailable");
@@ -144,7 +151,7 @@ export function secretBindingComparisons(facts: AnalysisFacts): SecretBindingCom
       // encodings equal within this atomic history, including late assertions.
       // No current storage alias or cross-entry descriptor supplies an edge.
       const operand = (path: string): string | undefined => {
-        charge(1, 1 + Math.ceil(path.length / 64));
+        charge(1, 1 + Math.ceil(identityLength(path, charge) / 64));
         if (!path.startsWith("key:") || path === "key:*") return;
         return path.startsWith("key:identity:") ? path.slice("key:identity:".length) : `constant:${path.slice("key:".length)}`;
       };
@@ -169,7 +176,7 @@ export function secretBindingComparisons(facts: AnalysisFacts): SecretBindingCom
       const local: Reach[] = []; pathReaches.set(path, local);
       for (let index = 0; index < path.writes.length; index++) {
         const write = path.writes[index]; charge(1 + write.region.length);
-        charge(0, Math.ceil(write.region.reduce((size, part) => size + part.length, 0) / 64));
+        charge(0, Math.ceil(write.region.reduce((size, part) => size + identityLength(part, charge), 0) / 64));
         if (write.region.length !== 1 || !write.region[0].startsWith("key:") || write.region[0] === "key:*"
           || !/^(Field|Uint<\d+>)$/.test(facts.program.representationOf(write.before.type ?? "unknown"))) continue;
         charge(0, 5);
@@ -193,11 +200,11 @@ export function secretBindingComparisons(facts: AnalysisFacts): SecretBindingCom
               if (changed || !hash.directHash) continue;
               if (!hash.directDigest) throw new Error("Exact secret hash domain input is unavailable");
               const source = hash.directHash.source;
-              charge(0, 2 + Math.ceil(source.id.length / 64));
+              charge(0, 2 + Math.ceil(identityLength(source.id, charge) / 64));
               if (rawPublic.has(`id:${source.id}`)) continue;
               const binding = descriptor(facts, hash, region.root, charge);
               if (!binding) continue;
-              charge(0, 8 + Math.ceil((binding.witness.length + binding.trustedLedger.length) / 64));
+              charge(0, 8 + Math.ceil((identityLength(binding.witness, charge) + identityLength(binding.trustedLedger, charge)) / 64));
               const id = JSON.stringify(binding);
               return [{ key: id, value: { key: id, descriptor: binding, source, predicate } }];
             }
@@ -231,22 +238,22 @@ export function secretBindingComparisons(facts: AnalysisFacts): SecretBindingCom
             if (!present) required = false;
           }
           if (!required) continue;
-          charge(0, 10 + Math.ceil((weaker.entry.length + weaker.write.location.file.length + additional.key.length) / 64));
+          charge(0, 10 + Math.ceil((identityLength(weaker.entry, charge) + pathLength(weaker.write.location.file, charge) + identityLength(additional.key, charge)) / 64));
           charge(weaker.write.callSites?.length ?? 0, 4 + (weaker.write.callSites?.length ?? 0) * 4);
           const sites = weaker.write.callSites?.map(site => [site.file, site.start, site.end]);
-          for (const site of weaker.write.callSites ?? []) charge(0, 2 + Math.ceil(site.file.length / 64));
+          for (const site of weaker.write.callSites ?? []) charge(0, 2 + Math.ceil(pathLength(site.file, charge) / 64));
           const id = JSON.stringify([weaker.entry, weaker.write.location.file, weaker.write.location.start, weaker.index, sites, additional.key]);
           if (emitted.has(id)) continue;
           // Reserve finding, metadata, bounded trace and call-stack labels before
           // the detector formats them. Spans/descriptors remain borrowed.
-          let textUnits = weaker.entry.length + peer.entry.length + weaker.write.ledger.length + base.key.length + additional.key.length;
-          for (const symbol of weaker.write.callPath) { charge(); textUnits += symbol.length; }
-          for (const site of weaker.write.callSites ?? []) { charge(); textUnits += site.file.length; }
+          let textUnits = identityLength(weaker.entry, charge) + identityLength(peer.entry, charge) + identityLength(weaker.write.ledger, charge) + identityLength(base.key, charge) + identityLength(additional.key, charge);
+          for (const symbol of weaker.write.callPath) { charge(); textUnits += identityLength(symbol, charge); }
+          for (const site of weaker.write.callSites ?? []) { charge(); textUnits += pathLength(site.file, charge); }
           // finding() normalizes the discriminator through the source inventory.
           // Account for its sorted inventory, replacements and fingerprint text.
           const files = facts.program.files.size;
           charge(files * Math.max(1, Math.ceil(Math.log2(files + 1))), files);
-          for (const file of facts.program.files.keys()) { charge(); textUnits += file.length + weaker.write.location.file.length + additional.key.length; }
+          for (const file of facts.program.files.keys()) { charge(); textUnits += pathLength(file, charge) + pathLength(weaker.write.location.file, charge) + identityLength(additional.key, charge); }
           charge(8 + Math.ceil(textUnits / 64), 80 + Math.ceil(textUnits / 64) + (weaker.write.callPath.length + (weaker.write.callSites?.length ?? 0)) * 4);
           emitted.add(id); comparisons.push({ weaker, peer, base, additional });
         }

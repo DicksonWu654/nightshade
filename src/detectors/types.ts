@@ -71,7 +71,8 @@ export interface Detector {
 
 export function finding(facts: Pick<AnalysisFacts, "program">, value: Omit<Finding, "fingerprint">, discriminator = ""): Finding {
   const root = facts.program.sourceRoot;
-  for (const file of [...facts.program.files.keys()].sort((left, right) => right.length - left.length)) discriminator = discriminator.replaceAll(file, relative(root, file));
+  for (const file of [...facts.program.files.keys()].sort((left, right) => right.length - left.length))
+    discriminator = discriminator.replaceAll(file, () => relative(root, file));
   const key = [value.detectorId, relative(root, facts.program.root), relative(root, value.location.file), value.location.start, discriminator].join(":");
   return withFindingContract({ ...value, fingerprint: createHash("sha256").update(key).digest("hex") });
 }

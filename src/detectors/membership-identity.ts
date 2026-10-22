@@ -20,7 +20,7 @@ export const independentMembershipIdentityReview: Detector = {
         callPath:write.callPath.map(id=>facts.program.symbols.get(id)?.name??id),
         remediation:"If membership must hold for the checked key, reuse the exact checked identity or enforce the intended scalar equality. Document intentional independent administrator membership.",
         metadata:{reviewRequired:true,entry,evidence:"required-independent-membership-and-digest-key-relationship",soleAuthorization:false,authenticationIntent:"unknown",applicationImpact:"not-inferred",pathFeasibility:"not-proven",confidenceScope:"static-snapshot-relationship",effectLedger:facts.program.symbols.get(write.ledger)?.name??write.ledger,effectLine:write.location.line,effectLines:observation.effectSites.map(site=>site.line),effectSitesScope:"observed-occurrences-across-complete-histories",membershipRevision:member.result.collectionPredicate?.revision},
-      },observation.groupId);
+      },JSON.stringify([observation.entry,membership.location,equality.location,member.location,write.ledger,facts.program.reportIdentity(observation.groupId)]));
     }));
   },
 };

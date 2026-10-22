@@ -1,3 +1,4 @@
+import { IdentityAccounting } from "./identity-accounting.js";
 import { realpathSync } from "node:fs";
 import { basename, delimiter, dirname, resolve } from "node:path";
 import { Declaration, Expr, ImportAst, Parameter, Pattern, ScopeAst, SourceFile, Span, Statement, fail, spanId } from "../model.js";
@@ -44,6 +45,7 @@ function signature(symbol: SymbolInfo): { generics?: string; parameters: string[
 
 interface Scope {
   id: string;
+  meteringId: string;
   ast: ScopeAst;
   file: string;
   importBase: string;
@@ -95,6 +97,23 @@ export class Program {
   private readonly instructionGraphs = new Map<string, CFG>();
   private readonly functionScopes = new Map<string, Scope>();
   private readonly declarationSymbols = new Map<Declaration, SymbolInfo>();
+  private readonly identityAccounting = new IdentityAccounting();
+  private readonly reportAccounting = this.identityAccounting.reporting();
+  readonly reportIdentity = this.reportAccounting.text;
+  readonly meteringPath = (path: string): string => this.identityAccounting.path(path);
+  readonly meteringIdentity = Object.assign(this.identityAccounting.text, { pathText: this.meteringPath, reportText: this.reportIdentity, rememberReport: this.reportAccounting.remember });
+
+  meteringSelector(selector: string): string {
+    return this.symbols.has(selector) ? this.meteringIdentity(selector) : selector;
+  }
+
+  private meteringJoin(...parts: string[]): string {
+    return this.identityAccounting.register(parts.join(""), parts.map(this.meteringIdentity).join(""));
+  }
+
+  spanIdentity(span: Span): string {
+    return this.identityAccounting.register(spanId(span), `${this.meteringPath(span.file)}:${span.start}`);
+  }
   private bindingContext = "root";
   private bindingDepth = 0;
   readonly fieldTypes = new Map<string, Record<string, string>>();
@@ -182,14 +201,17 @@ export class Program {
 
   private load(path: string, template = false): Scope {
     const canonical = realpathSync(path);
+    this.meteringPath(path);
+    this.meteringPath(canonical);
     const identity = template ? path : canonical;
     const prior = this.scopes.get(identity);
     if (prior) return prior;
     const source = this.sources.read(canonical);
     const included = this.sources.inclusions.length;
     const expanded = this.sources.expand(source.ast, [], dirname(identity));
+    for (const file of this.files.keys()) this.meteringPath(file);
     for (const inclusion of this.sources.inclusions.slice(included)) this.checkSearchOrder(basename(inclusion.source), inclusion.site, "include");
-    return this.makeScope(identity, expanded, canonical, template, undefined, [], dirname(identity));
+    return this.makeScope(identity, expanded, canonical, template, undefined, [], dirname(identity), this.meteringPath(identity));
   }
 
   /** Compilers before 0.29.105 look for include/import files in the invocation
@@ -199,17 +221,18 @@ export class Program {
       fail("unsupported-profile-search-order", `Compiler ${this.compilerVersion} searches the invocation directory before the including file's directory for ${kind} ${JSON.stringify(name)}; that file lookup is not modeled`, site);
   }
 
-  private makeScope(id: string, ast: ScopeAst, file: string, template = false, parent?: Scope, ancestry: string[] = [], importBase = dirname(file)): Scope {
+  private makeScope(id: string, ast: ScopeAst, file: string, template = false, parent?: Scope, ancestry: string[] = [], importBase = dirname(file), meteringId = this.meteringIdentity(id)): Scope {
     selectCompilerVersion(ast.pragmas, ast.span, this.compilerVersion, this.zkirVersion);
     if (this.compilerVersion === "0.33.0-rc.2") checkRc2Identifiers(ast);
     if (this.scopes.size >= 2048) fail("module-budget", "Module instances exceed 2048 scopes", ast.span);
-    const scope: Scope = { id, ast, file, importBase, names: new Map(), visibleNames: new Map(), exports: new Set(ast.exports), exportedNames: new Map(), modules: new Map(), linked: false, linking: false, template, parent, ancestry };
+    const scope: Scope = { id, meteringId, ast, file, importBase, names: new Map(), visibleNames: new Map(), exports: new Set(ast.exports), exportedNames: new Map(), modules: new Map(), linked: false, linking: false, template, parent, ancestry };
     this.scopes.set(id, scope);
     for (const declaration of ast.declarations) {
       if (COMPILER_PROFILES[this.compilerVersion].legacy && declaration.body) checkLegacySyntax(declaration.body, this.compilerVersion);
       if (declaration.body) returnFlow(declaration.body);
       const symbol: SymbolInfo = { id: id === "standard-library" && declaration.exported && declaration.kind === "type" ? `standard-type::${declaration.name}` : `${id}::${declaration.name}`, name: declaration.name, kind: declaration.kind, type: declaration.type, span: declaration.span, declaration };
       if (scope.names.has(symbol.name)) symbol.id += `::overload:${declaration.span.start}`;
+      this.identityAccounting.register(symbol.id, symbol.id.startsWith(id + "::") ? meteringId + symbol.id.slice(id.length) : symbol.id);
       this.insert(scope.names, symbol.name, symbol);
       this.declarationSymbols.set(declaration, symbol);
       this.functionScopes.set(symbol.id, scope);
@@ -279,7 +302,10 @@ export class Program {
       const instances = this.instances.get(template.id) ?? [];
       let target = instances.find(instance => this.sameGenericArguments(instance.arguments, argumentsList))?.scope;
       if (!target) {
-        target = this.makeScope(`${scope.id}::import:${imported.order}:${spanId(imported.span)}`, specializeScope(template.ast, bindings), template.file, false, template.parent, [...scope.ancestry, template.id], template.externalBase ?? scope.importBase);
+        const site = this.spanIdentity(imported.span);
+        const id = this.identityAccounting.register(`${scope.id}::import:${imported.order}:${site}`,
+          `${scope.meteringId}::import:${imported.order}:${this.meteringIdentity(site)}`);
+        target = this.makeScope(id, specializeScope(template.ast, bindings), template.file, false, template.parent, [...scope.ancestry, template.id], template.externalBase ?? scope.importBase);
         instances.push({ arguments: argumentsList, scope: target });
         this.instances.set(template.id, instances);
       }
@@ -317,7 +343,9 @@ export class Program {
     // helpers must not become application inventory or constructor storage.
     const scope = this.makeScope("standard-library", ast, library.path, true);
     this.sources.files.set(library.path, library);
+    this.meteringPath(library.path);
     if (this.zkirVersion === 3) this.sources.files.set(zkir3Library.path, zkir3Library);
+    if (this.zkirVersion === 3) this.meteringPath(zkir3Library.path);
     const native = (symbol: SymbolInfo): void => {
       this.insert(scope.names, symbol.name, symbol);
       this.insert(scope.visibleNames, symbol.name, symbol);
@@ -838,7 +866,7 @@ export class Program {
         for (const local of locals) {
           if (seen.has(local.name)) fail("duplicate-symbol", `Duplicate local ${local.name}`, local.span);
           seen.add(local.name);
-          inner.set(local.name, { id: `${functionId}::pending:${spanId(local.span)}`, name: local.name, kind: "local", type: "unknown", span: local.span, uninitialized: true });
+          inner.set(local.name, { id: this.meteringJoin(functionId, "::pending:", this.spanIdentity(local.span)), name: local.name, kind: "local", type: "unknown", span: local.span, uninitialized: true });
         }
       }
       for (const child of statement.body) {
@@ -852,7 +880,7 @@ export class Program {
       this.bindExpr(statement.expr, names, effects);
       if (statement.type) statement.type = this.canonicalType(statement.type, names, statement.span);
       if (statement.type) this.checkValue(statement.expr.inferredType ?? "unknown", statement.type, statement.span, "binding");
-      const symbol: SymbolInfo = { id: `${functionId}::local:${spanId(statement.span)}`, name: statement.name, kind: "local", type: statement.type ?? statement.expr.inferredType ?? "unknown", span: statement.span };
+      const symbol: SymbolInfo = { id: this.meteringJoin(functionId, "::local:", this.spanIdentity(statement.span)), name: statement.name, kind: "local", type: statement.type ?? statement.expr.inferredType ?? "unknown", span: statement.span };
       statement.symbol = symbol.id;
       names.set(symbol.name, symbol);
       this.symbols.set(symbol.id, symbol);
@@ -883,12 +911,12 @@ export class Program {
         }
       }
       if (typeof statement.start !== "number" || typeof statement.end !== "number") fail("unsupported-generics", "Loop bounds require natural-parameter specialization", statement.span);
-      const symbol: SymbolInfo = { id: `${functionId}::loop:${spanId(statement.span)}`, name: statement.name, kind: "local", type: sequenceElement ?? (statement.end > statement.start ? `Uint<0..${statement.end}>` : EMPTY_ELEMENT_TYPE), span: statement.span };
+      const symbol: SymbolInfo = { id: this.meteringJoin(functionId, "::loop:", this.spanIdentity(statement.span)), name: statement.name, kind: "local", type: sequenceElement ?? (statement.end > statement.start ? `Uint<0..${statement.end}>` : EMPTY_ELEMENT_TYPE), span: statement.span };
       statement.symbol = symbol.id;
       this.symbols.set(symbol.id, symbol);
       inner.set(symbol.name, symbol);
       if (statement.sequence) {
-        statement.sequenceSymbol = `${symbol.id}:sequence`;
+        statement.sequenceSymbol = this.meteringJoin(symbol.id, ":sequence");
         this.symbols.set(statement.sequenceSymbol, { id: statement.sequenceSymbol, name: "$sequence", kind: "local", type: statement.sequence.inferredType!, span: statement.span });
       }
       this.bindStatement(statement.body, inner, effects, functionId);
@@ -915,7 +943,7 @@ export class Program {
     }
     if (expr.kind === "lambda") {
       const flow = returnFlow(expr.body!);
-      const id = `${this.bindingContext}::lambda:${spanId(expr.span)}`;
+      const id = this.meteringJoin(this.bindingContext, "::lambda:", this.spanIdentity(expr.span));
       const declaration: Declaration = { kind: "circuit", name: expr.name!, span: expr.span, exported: false, type: expr.type ?? "unknown", parameters: expr.parameters!, body: expr.body };
       const symbol: SymbolInfo = { id, name: expr.name!, kind: "circuit", type: declaration.type, span: expr.span, declaration };
       this.symbols.set(id, symbol);
@@ -1004,7 +1032,7 @@ export class Program {
         let specialized = specializations.find(candidate => this.sameGenericArguments(candidate.arguments, argumentsList))?.symbol;
         const scope = this.functionScopes.get(symbol.id)!;
         if (!specialized) {
-          const id = `${symbol.id}<${argumentsList.join(",")}>`;
+          const id = this.meteringJoin(symbol.id, "<", ...argumentsList.flatMap((argument, index) => [index ? "," : "", argument]), ">");
           const declaration = specializeDeclaration(symbol.declaration!, bindings);
           specialized = { ...symbol, id, type: declaration.type, declaration, specializationOrigin: symbol.id };
           specializations.push({ arguments: argumentsList, symbol: specialized });
@@ -1234,7 +1262,7 @@ export class Program {
     for (const parameter of parameters) {
       if (declared.has(parameter.name)) fail("duplicate-symbol", `Duplicate parameter ${parameter.name}`, parameter.span);
       declared.add(parameter.name);
-      parameter.symbol = `${functionId}::parameter:${parameter.name}`;
+      parameter.symbol = this.meteringJoin(functionId, "::parameter:", parameter.name);
       const symbol: SymbolInfo = { id: parameter.symbol, name: parameter.name, kind: "parameter", type: parameter.type, span: parameter.span };
       names.set(parameter.name, symbol);
       this.symbols.set(symbol.id, symbol);
@@ -1248,7 +1276,7 @@ export class Program {
     if (pattern.kind === "name") {
       if (declared.has(pattern.name!)) fail("duplicate-symbol", `Duplicate pattern binding ${pattern.name}`, pattern.span);
       declared.add(pattern.name!);
-      const id = `${functionId}::pattern:${spanId(pattern.span)}:${pattern.name}`;
+      const id = this.meteringJoin(functionId, "::pattern:", this.spanIdentity(pattern.span), ":", pattern.name!);
       pattern.symbol = id;
       const symbol: SymbolInfo = { id, name: pattern.name!, kind: "local", type, span: pattern.span };
       names.set(symbol.name, symbol);

@@ -12,19 +12,19 @@ export interface PredicateCover {
  * conjunctions: independent Boolean encodings cannot prove that arbitrary public
  * comparisons (e.g. ledger == 1 and ledger == 2) coexist. This queries completed
  * histories without new execution. A non-cover does not certify authentication. */
-export function privatePredicateCover(paths: readonly SuccessfulPath[], allowance = 100000): PredicateCover {
+export function privatePredicateCover(paths: readonly SuccessfulPath[], allowance = 100000, identityText: (identity: string) => string = identity => identity): PredicateCover {
   let work = 0, exhausted = false;
   const charge = () => { if (++work > allowance) exhausted = true; return !exhausted; };
   const cubes: Map<string, boolean>[] = [];
   const privateAtoms = new Set<string>();
   const boundedKey = (key: string | undefined): string | undefined => {
-    if (key && key.length > 65536) { exhausted = true; return undefined; }
+    if (key && identityText(key).length > 65536) { exhausted = true; return undefined; }
     return key;
   };
   // Children are bounded before composition, so even escaped nested keys have
   // bounded temporary allocation. The result must pass the same limit.
   const compositeKey = (parts: readonly (string | boolean)[]): string | undefined => {
-    if (parts.some(part => typeof part === "string" && part.length > 65536)) { exhausted = true; return undefined; }
+    if (parts.some(part => typeof part === "string" && identityText(part).length > 65536)) { exhausted = true; return undefined; }
     return boundedKey(JSON.stringify(parts));
   };
   // Execution constants may come from earlier assumptions. Read the retained
@@ -91,7 +91,7 @@ export function privatePredicateCover(paths: readonly SuccessfulPath[], allowanc
       const { key, truth, private: dependsOnPrivate, constant } = condition(predicate.value, predicate.truth, path);
       if (exhausted) return { status: "incomplete", work };
       if (constant !== undefined) { contradictory ||= !constant; continue; }
-      if (key && key.length > 65536) return { status: "incomplete", work };
+      if (key && identityText(key).length > 65536) return { status: "incomplete", work };
       const atom = key ?? `opaque:${pathIndex}:${index}`;
       if (dependsOnPrivate) privateAtoms.add(atom);
       if (cube.has(atom) && cube.get(atom) !== truth) contradictory = true;

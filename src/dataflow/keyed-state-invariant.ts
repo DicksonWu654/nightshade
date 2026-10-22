@@ -83,13 +83,13 @@ function componentObservations(facts: AnalysisFacts, allowance: number, entries:
       || facts.diagnostics.length || entries.some(entry => !facts.completedEntries.includes(entry)))
       throw new Unavailable("Keyed-state review requires completed exact entry histories, all predicates and collection observations without analysis gaps");
     const address = (operation: RuntimeOperation) => {
-      charge(); const result = immutableCollectionAddress(operation.args[0], Math.max(0, allowance - work)); charge(result.work);
+      charge(); const result = immutableCollectionAddress(operation.args[0], Math.max(0, allowance - work), undefined, undefined, facts.program.meteringIdentity); charge(result.work);
       if (!result.complete) throw new Unavailable("Collection address traversal is incomplete");
       return result.key;
     };
     const key = (operation: RuntimeOperation) => {
       charge(); if (!operation.args[1]) return undefined;
-      const result = immutableOperandKey(operation.args[1], Math.max(0, allowance - work)); charge(result.work);
+      const result = immutableOperandKey(operation.args[1], Math.max(0, allowance - work), undefined, undefined, facts.program.meteringIdentity); charge(result.work);
       if (!result.complete) throw new Unavailable("Collection key traversal is incomplete");
       return result.key;
     };

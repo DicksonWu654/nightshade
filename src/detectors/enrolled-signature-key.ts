@@ -30,10 +30,10 @@ export const enrolledSignatureKeyReview: Detector = {
         const root = persistentSignatureKeySnapshot(key);
         if (!root || !persistentSchnorrKeyCell(facts.program, root) || operation.signatureKeyExcludesIdentity) continue;
         if (!exclusion) {
-          exclusion = signatureKeyIdentityExclusions(path, allowance); allowance -= exclusion.work;
+          exclusion = signatureKeyIdentityExclusions(path, allowance, undefined, undefined, undefined, facts.program.meteringIdentity); allowance -= exclusion.work;
           if (!exclusion.complete) return incomplete("signature-key-review-predicate-unavailable", "Mandatory signature-key predicate closure is unavailable or exhausted; review is incomplete");
         }
-        const snapshot = immutableOperandKey(key, Math.min(4096, allowance)); allowance -= snapshot.work;
+        const snapshot = immutableOperandKey(key, Math.min(4096, allowance), undefined, undefined, facts.program.meteringIdentity); allowance -= snapshot.work;
         if (!snapshot.complete || !snapshot.key)
           return incomplete("signature-key-review-evidence-unavailable", "Persistent verification key has no bounded immutable identity; review is incomplete");
         if (exclusion.excluded.has(snapshot.key)) continue;

@@ -1,3 +1,4 @@
+import { ReportIdentityKeys } from "../reporting/identity-keys.js";
 import { callerEqualityObservations } from "../analysis/caller-equality.js";
 import { CALLER_EQUALITY_RULE } from "../semantic/caller-equality-targets.js";
 import { spanId } from "../model.js";
@@ -8,6 +9,7 @@ export const callerSuppliedLedgerEquality: Detector = {
   description: "An unchanged caller input must equal preexisting public ledger bytes before a state-changing effect",
   requires: ["all-successful-predicates", "private-provenance", "exact-effect-histories"],
   run(facts) {
+    const report = new ReportIdentityKeys(facts.program, CALLER_EQUALITY_RULE, facts.program.rootSource.ast.span);
     const result = callerEqualityObservations(facts);
     facts.diagnostics.push(...result.diagnostics);
     return result.observations.map(({ entry, guard, reaches }) => {
@@ -28,7 +30,7 @@ export const callerSuppliedLedgerEquality: Detector = {
           confidenceScope: "required-static-equality", pathFeasibility: "not-proven", guardPosition: "before-effect",
           affectedEffects: effects.map(effect => ({ ...effect, callIdentities: effect.callPath, callPath: names(effect.callPath) })),
           historyEvidence: reaches.map(({ path, effect, guard: match }) => ({ branches: path.path, effect,
-            supplied: match.supplied, ledger: names(match.ledger), ledgerIdentity: match.ledgerIdentity,
+            supplied: match.supplied, ledger: names(match.ledger), ledgerIdentity: report.key(match.ledgerIdentity),
             predicateLocation: match.predicate.location, predicateCallPath: match.predicate.callPath, predicateCallSites: match.predicate.callSites,
             writesBefore: match.predicate.writesBefore, operationsBefore: match.predicate.operationsBefore })) },
       }, `${entry}:${spanId(guard.predicate.location)}`);

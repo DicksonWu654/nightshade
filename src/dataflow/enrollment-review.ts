@@ -1,3 +1,4 @@
+import { identityLength } from "../semantic/metering.js";
 import type { AbstractValue, AnalysisFacts, PrivateSource, RuntimeOperation, StateWrite, SuccessfulPath } from "./index.js";
 import type { EnrollmentScope, EnrollmentCharge } from "../semantic/enrollment-review.js";
 import { enrollmentParameter, enrollmentReviewScope, STORED_ENROLLMENT_RULE } from "../semantic/enrollment-review.js";
@@ -155,6 +156,7 @@ export function enrollmentReviewObservations(facts: AnalysisFacts) {
       throw new Error("Enrollment proof exhausted its shared work/value allowance");
     return true;
   };
+  Object.assign(charge, { identityText: facts.program.meteringIdentity });
   try {
     charge(0, 4);
     if (!facts.signatureEvidence || facts.predicateScope !== "all" || facts.pathSemantics !== "equivalent-states" || facts.diagnostics.length)
@@ -230,7 +232,7 @@ export function enrollmentReviewObservations(facts: AnalysisFacts) {
       let emission = 160 + writer.write.callPath.length * 8 + writer.write.callSites!.length * 8 + use.use.callPath.length * 8;
       charge(0, 8 + writer.write.callPath.length + use.use.callPath.length + evidence.entries.length + evidence.constructors.length);
       for (const text of [writer.entry, use.entry, writer.write.ledger, writer.parameter.id, ...writer.write.callPath, ...use.use.callPath,
-        ...evidence.entries, ...evidence.constructors, writer.parameter.location.file, writer.write.location.file, use.use.location.file]) { charge(); emission += Math.ceil(text.length / 64) * 4; }
+        ...evidence.entries, ...evidence.constructors, writer.parameter.location.file, writer.write.location.file, use.use.location.file]) { charge(); emission += Math.ceil(identityLength(text, charge) / 64) * 4; }
       charge(emission, emission);
       observations.push({ writerEntry: writer.entry, write: writer.write, parameter: writer.parameter, useEntry: use.entry, use: use.use });
     }

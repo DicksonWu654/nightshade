@@ -1,3 +1,4 @@
+import { pathLength, identityLength } from "../semantic/metering.js";
 import type { AbstractValue, AnalysisFacts, RuntimeOperation, SuccessfulPath } from "./index.js";
 import { immutableOperandKey } from "./immutable-key.js";
 import { successfulIntegerConstraints } from "./arithmetic-safety.js";
@@ -16,10 +17,10 @@ export interface ComplementarySendObservation {
 /** Source endpoints plus the original invocation sites identify a reportable
  * pair across sibling histories, without depending on unrelated effect order. */
 export function complementaryPairKey(entry: string, part: RuntimeOperation, remainder: RuntimeOperation, charge: ComplementaryCharge): string {
-  let units = 12 + Math.ceil(entry.length / 64);
+  let units = 12 + Math.ceil(identityLength(entry, charge) / 64);
   for (const operation of [part, remainder]) {
-    charge(); units += 4 + Math.ceil(operation.location.file.length / 64);
-    for (const site of operation.callSites ?? []) { charge(); units += 4 + Math.ceil(site.file.length / 64); }
+    charge(); units += 4 + Math.ceil(pathLength(operation.location.file, charge) / 64);
+    for (const site of operation.callSites ?? []) { charge(); units += 4 + Math.ceil(pathLength(site.file, charge) / 64); }
   }
   charge(0, units);
   return JSON.stringify([entry, part.location.file, part.location.start, remainder.location.file, remainder.location.start,
@@ -100,6 +101,7 @@ export function complementarySendObservations(facts: AnalysisFacts) {
       throw new Error("Complementary send proof exhausted the shared preparation/execution allowance");
     return true;
   };
+  Object.assign(charge, { identityText: facts.program.meteringIdentity });
   const type = (value: AbstractValue) => { charge(); return facts.program.representationOf(value.type ?? "unknown"); };
   const unsigned = (value: AbstractValue, maximum = 1n << 248n) => {
     const bound = numericBound(type(value)); return bound !== undefined && bound <= maximum;
@@ -158,11 +160,11 @@ export function complementarySendObservations(facts: AnalysisFacts) {
         // strings and uniqueness arrays before retaining its operands.
         let siteUnits = 4;
         for (const sites of [partSend.callSites, remainderSend.callSites]) for (const site of sites ?? []) {
-          charge(); siteUnits += 8 + Math.ceil(site.file.length / 64) * 4;
+          charge(); siteUnits += 8 + Math.ceil(pathLength(site.file, charge) / 64) * 4;
         }
         charge(facts.program.files.size + partSend.callPath.length + remainderSend.callPath.length,
           160 + siteUnits + facts.program.files.size * 4 + (partSend.callPath.length + remainderSend.callPath.length) * 8
-          + Math.ceil((partSend.location.file.length + remainderSend.location.file.length + path.entry.length) / 64) * 8);
+          + Math.ceil((pathLength(partSend.location.file, charge) + pathLength(remainderSend.location.file, charge) + identityLength(path.entry, charge)) / 64) * 8);
         charge(0, 1); reported.add(pairKey);
         observations.push({ entry: path.entry, partSend, remainderSend, pairKey, part: partRange, remainder: remainderRange, total: totalRange });
       }

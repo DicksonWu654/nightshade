@@ -53,7 +53,7 @@ export const defaultRecipientOrOwner: Detector = {
     };
     for (const path of facts.paths) {
       if (!facts.completedEntries.includes(path.entry)) continue;
-      const constants = successfulConstants(path, Math.min(100000, 1000000 - work));
+      const constants = successfulConstants(path, Math.min(100000, 1000000 - work), facts.program.meteringIdentity);
       const outputs = (path.operations ?? []).map(operation => ({ ...operation,
         args: operation.args.map(value => constants.refine(value)) }));
       const writes = path.writes.map(write => ({ ...write, after: constants.refine(write.after) }));

@@ -67,6 +67,7 @@ export function callerZeroObservations(facts: AnalysisFacts, allowance = 200000)
       throw new Unavailable("Caller-key zero-entry evidence exhausted its work/value allowance");
     return true;
   };
+  Object.assign(charge, { identityText: facts.program.meteringIdentity });
   try {
     if (!observed || facts.pathSemantics !== "equivalent-states" || facts.predicateScope !== "all" || !facts.collectionEvidence
       || facts.diagnostics.length || !facts.completedEntries.includes(observed.entry))
@@ -91,7 +92,7 @@ export function callerZeroObservations(facts: AnalysisFacts, allowance = 200000)
           || !key || facts.program.representationOf(keyValue.type ?? "unknown") !== "Bytes<32>"
           || !facts.program.functions.get(observed.entry)!.declaration.parameters.some(parameter => parameter.symbol === key.symbol)) continue;
         if (keyValue.constant !== undefined) continue;
-        const operand = immutableOperandKey(keyValue); charge(operand.work);
+        const operand = immutableOperandKey(keyValue, undefined, undefined, undefined, facts.program.meteringIdentity); charge(operand.work);
         if (!operand.complete || !operand.key || receiver.path.includes("key:*")) throw new Unavailable("Map key or receiver lacks an exact immutable identity");
         const keyIdentity = `identity:${operand.key}`, cell = { ...receiver, path: [...receiver.path, `key:${keyIdentity}`] };
         const position = operation.writesBefore;
@@ -115,7 +116,7 @@ export function callerZeroObservations(facts: AnalysisFacts, allowance = 200000)
             || regionKey(otherReceiver) !== regionKey(receiver)) return true;
           // Match the ordered retained write too: ancestor replacements and
           // unknown effect records cannot borrow another operation's proof.
-          const otherOperand = immutableOperandKey(otherKey); charge(otherOperand.work);
+          const otherOperand = immutableOperandKey(otherKey, undefined, undefined, undefined, facts.program.meteringIdentity); charge(otherOperand.work);
           if (!otherOperand.complete) throw new Unavailable("Later Map selector identity allowance exhausted");
           if (!otherOperand.key || regionKey({ ...otherReceiver, path: [...otherReceiver.path, `key:identity:${otherOperand.key}`] })
             !== regionKey({ root: later.ledger, path: later.region, type: "unknown" })) return true;

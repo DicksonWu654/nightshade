@@ -28,7 +28,7 @@ export function merkleInsertFindings(facts: AnalysisFacts, allowance = 1000000, 
     if (!Number.isSafeInteger(allowance) || work > allowance) throw new Error("Insertion matching allowance exhausted");
   };
   const address = (operation: RuntimeOperation) => {
-    const result = immutableCollectionAddress(operation.args[0], Math.min(4096, allowance - work));
+    const result = immutableCollectionAddress(operation.args[0], Math.min(4096, allowance - work), undefined, undefined, facts.program.meteringIdentity);
     charge(result.work);
     if (!result.complete || !result.key) throw new Error("Exact collection receiver is unavailable");
     return result.key;
@@ -69,7 +69,7 @@ export function merkleInsertFindings(facts: AnalysisFacts, allowance = 1000000, 
           return incomplete("Insertion lacks original receiver, operand or ordering boundary");
         address(operation);
         const result = collectionAbsenceConsumption(path, allowance - work,
-          { value: operation.args[1], beforeOperation: operation.operationsBefore });
+          { value: operation.args[1], beforeOperation: operation.operationsBefore, identityText: facts.program.meteringIdentity });
         charge(result.work);
         if (!result.complete) return incomplete("Required-absence matching lacks exact operands or exhausted its allowance");
         if (result.absences.some(absence => { charge(); return absence.survives && currentAt(path, absence.query, operation, absence.preservingInsertWrites); })) continue;

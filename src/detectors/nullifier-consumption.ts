@@ -21,7 +21,7 @@ export const nullifierCheckWithoutInsert: Detector = {
       if (!completed.has(path.entry) || facts.program.symbols.get(path.entry)!.kind === "constructor") continue;
       if (!path.writes.length && !(path.operations ?? []).some(operation => ["kernel-write", "native-witness"].includes(operation.kind)
         && operation.callPath.some(id => VALUE_TRANSFER_CIRCUITS.has(id)))) continue;
-      const result = unconsumedAbsences(path, 1000000 - work);
+      const result = unconsumedAbsences(path, 1000000 - work, facts.program.meteringIdentity);
       work += result.work;
       if (!result.complete) { issue("predicate-analysis-budget", "Collection matching exhausted its allowance or exact key/address evidence is unavailable"); return []; }
       for (const query of result.queries) {

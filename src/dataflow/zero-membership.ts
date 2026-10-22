@@ -38,12 +38,12 @@ export function initialMapRequirements(facts: AnalysisFacts, path: SuccessfulPat
     if (!key || wildcard || position === undefined || !Number.isSafeInteger(position) || position < 0 || position > path.writes.length
       || source.callSites.length !== source.callPath.length)
       return unavailable("Membership lacks an exact key, receiver or query/write position");
-    const keyUnits = 6 * (1 + Math.ceil(key.length / 64));
+    const keyUnits = 6 * (1 + Math.ceil(facts.program.meteringIdentity(key).length / 64));
     charge(keyUnits + region.path.length + 1, keyUnits + region.path.length + 4);
     const cell = { ...region, path: [...region.path, `key:${key}`] };
     const recordedKey = (target: Region) => {
-      let units = 1 + Math.ceil(target.root.length / 64);
-      for (const part of target.path) { charge(); units += 1 + Math.ceil(part.length / 64); }
+      let units = 1 + Math.ceil(facts.program.meteringIdentity(target.root).length / 64);
+      for (const part of target.path) { charge(); units += 1 + Math.ceil(facts.program.meteringIdentity(part).length / 64); }
       charge(6 * units, 6 * units + target.path.length + 1);
       return regionKey(target);
     };
@@ -91,7 +91,7 @@ export function initialMapRequirements(facts: AnalysisFacts, path: SuccessfulPat
     const member = value.collectionPredicate;
     if (!member || member.region.root !== map) return false;
     const type = facts.program.representationOf(member.region.type);
-    charge(type.length, type.length);
+    charge(facts.program.meteringIdentity(type).length, facts.program.meteringIdentity(type).length);
     return parseType(type).name === "Map";
   };
   const containsMember = (value: AbstractValue, depth = 0): boolean => {

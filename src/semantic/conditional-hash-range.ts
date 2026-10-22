@@ -52,12 +52,12 @@ export function conditionalHashRanges(program: Program, allowance = 20000): Cond
     let current = type!;
     const seen = new Set<string>();
     while (program.nominalTypes.has(current)) {
-      charge(current.length + 1);
+      charge(program.meteringIdentity(current).length + 1);
       if (seen.has(current) || seen.size >= 32) unavailable("Conditional hash range nominal schema is unavailable");
       seen.add(current); current = program.nominalTypes.get(current)!.underlying;
     }
     if (current === "unknown") unavailable("Conditional hash range input lacks a resolved nominal schema");
-    charge(current.length + 1);
+    charge(program.meteringIdentity(current).length + 1);
     let nesting = 0;
     for (const character of current) {
       if ("<[".includes(character) && ++nesting > 32) unavailable("Conditional hash range schema exceeds its qualified depth");
@@ -184,7 +184,7 @@ export function conditionalHashRanges(program: Program, allowance = 20000): Cond
             if (!target) unavailable("Conditional hash range operand identity is unresolved");
             // A captured alias reuses this exact read site. A fresh ledger read
             // or witness invocation never shares an identity merely by spelling.
-            return target!.kind === "parameter" ? `parameter:${target!.id}` : `read:${spanId(value.span)}`;
+            return target!.kind === "parameter" ? `parameter:${target!.id}` : `read:${program.spanIdentity(value.span)}`;
           }
           if (value.kind === "conditional") return JSON.stringify(["select", booleanKey(value.args[0], depth + 1),
             key(value.args[1], depth + 1), key(value.args[2], depth + 1)]);
@@ -303,7 +303,7 @@ export function conditionalHashRanges(program: Program, allowance = 20000): Cond
             const entryFunction = program.functions.get(entry);
             if (!entryFunction || !entryFunction.readsState.size && !entryFunction.writesState.size)
               unavailable("Conditional hash range review does not qualify pure source entry/backend retention");
-            charge(hash.generics!.length + 1); const types = typeArguments(hash.generics);
+            charge(program.meteringIdentity(hash.generics!).length + 1); const types = typeArguments(hash.generics);
             if (types.length !== 1 || representation(types[0]) !== "Uint<128>"
               || numericBound(representation(subtraction.numericType)) !== (1n << 128n)
               || unwrap(hash.args[0]) !== subtraction)

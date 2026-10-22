@@ -1,4 +1,7 @@
 import { publicKeyMembershipObservations } from "../analysis/public-key-membership.js";
+import { createHash } from "node:crypto";
+import { immutableCollectionAddress, immutableOperandKey } from "../dataflow/immutable-key.js";
+import { ReportIdentityKeys } from "../reporting/identity-keys.js";
 import { spanId } from "../model.js";
 import { finding, unique, type Detector } from "./types.js";
 
@@ -11,6 +14,46 @@ export const publicKeyMembershipAuthorization: Detector = {
     const result = publicKeyMembershipObservations(facts);
     facts.diagnostics.push(...result.diagnostics);
     const names = (ids: string[]) => ids.map(id => facts.program.symbols.get(id)?.name ?? id);
+    const reportedKeys = new WeakMap<object, { receiver: string; member: string; query: string }>();
+    const identities = new ReportIdentityKeys(facts.program, publicKeyMembershipAuthorization.id, facts.program.rootSource.ast.span);
+    // Report stable semantic tokens while the guard retains its original
+    // physical-path equality keys. Reconstruct represented aggregates so an
+    // already-hashed raw aggregate cannot carry a checkout path into metadata.
+    const reported = (guard: typeof result.observations[number]["guard"], entry: string) => {
+      const cached = reportedKeys.get(guard.query);
+      if (cached) return cached;
+      const normalize = facts.program.meteringIdentity;
+      // Opaque analysis digests cannot be recovered from their spelling. Reject
+      // those leaves throughout represented keys, including nested selectors
+      // and byte projections, then use a source-occurrence report token.
+      const opaque = /^(?:id:)?(?:native|hash-derived|collection-derived|merkle-digest|collection-query|hash-choice|hash-relation|expression|aggregate):[0-9a-f]{64}(?=$|::)/;
+      let reconstructible = true;
+      const canonicalize = (key: string) => {
+        if (opaque.test(key)) reconstructible = false;
+        return normalize(key);
+      };
+      const receiver = immutableCollectionAddress(guard.query.args[0], 4096, canonicalize, undefined, normalize);
+      const member = immutableOperandKey(guard.query.args[1], 4096, canonicalize, undefined, normalize);
+      const hash = (parts: unknown[]) => createHash("sha256").update(JSON.stringify(parts)).digest("hex");
+      // A complete guard can have a pre-hashed aggregate whose represented
+      // fields exceed the report reconstruction bound. Its source/query site
+      // gives a stable namespace. Canonical companion recipes preserve distinctions between
+      // branch values at that same site without exposing path-bearing digests.
+      const value = reconstructible && receiver.complete && member.complete && receiver.key && member.key
+        ? { receiver: normalize(receiver.key), member: member.key, query: `collection-query:${hash([normalize(receiver.key), guard.revision, member.key])}` }
+        : (() => {
+          const coordinates = [normalize(entry), facts.program.meteringPath(guard.source.location.file), guard.source.location.start,
+            guard.source.invocation && { ...guard.source.invocation, site: normalize(guard.source.invocation.site) },
+            facts.program.meteringPath(guard.query.location.file), guard.query.location.start,
+            guard.query.callPath.map(normalize), guard.query.callSites?.map(site => [facts.program.meteringPath(site.file), site.start]),
+            guard.queryIndex, guard.revision];
+          const token = (raw: string) => hash([...coordinates, identities.opaqueIdentity(raw)]);
+          return { receiver: `opaque-receiver:${token(guard.receiver)}`, member: `opaque-member:${token(guard.member)}`,
+            query: `collection-query:${token(guard.query.result.identity!)}` };
+        })();
+      reportedKeys.set(guard.query, value);
+      return value;
+    };
     return unique(result.observations.map(({ entry, guard, reaches }) => {
       const effects = [...new Map(reaches.map(({ effect }) => [JSON.stringify([effect.kind, spanId(effect.location), effect.callPath, effect.callSites.map(spanId), effect.occurrence]), effect])).values()];
       const histories = new Map([...new Set(reaches.map(reach => reach.path))].map((path, index) => [path, index]));
@@ -41,8 +84,8 @@ export const publicKeyMembershipAuthorization: Detector = {
           successfulReaches, guardEffectRelations: reaches.length,
           historyEvidence: reaches.map(({ path, effect, guard }) => ({ branches: path.path, witnessCalls: [...path.witnessCalls!], effectKind: effect.kind, effectIndex: effect.index, effectOccurrence: effect.occurrence,
             effectCallIdentities: effect.callPath, effectCallSites: effect.callSites,
-            queryIndex: guard.queryIndex, queryResultIdentity: guard.query.result.identity, receiverIdentity: guard.receiver,
-            memberIdentity: guard.member, receiverRevision: guard.revision, receiverProvenance: [...guard.query.args[0].preexistingLedger!],
+            queryIndex: guard.queryIndex, queryResultIdentity: reported(guard, entry).query, receiverIdentity: reported(guard, entry).receiver,
+            memberIdentity: reported(guard, entry).member, receiverRevision: guard.revision, receiverProvenance: [...guard.query.args[0].preexistingLedger!],
             nativeSource: guard.source, queryLocation: guard.query.location, queryCallIdentities: guard.query.callPath, queryCallSites: guard.query.callSites,
             predicateLocation: guard.predicate.location, predicateTruth: guard.predicate.truth,
             writesBeforeQuery: guard.query.writesBefore, writesBeforeGuard: guard.predicate.writesBefore,

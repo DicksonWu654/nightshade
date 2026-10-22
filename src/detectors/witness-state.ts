@@ -17,6 +17,7 @@ export const unconstrainedWitnessToState: Detector = {
     const findings = new Map<string, Finding>();
     let work = 0;
     const charge = (amount = 1) => { if ((work += amount) > 200000) throw new Error("Witness-state review work allowance exhausted"); };
+    Object.assign(charge, { identityText: facts.program.meteringIdentity });
     for (const path of facts.paths) {
       if (!facts.completedEntries.includes(path.entry) || facts.program.symbols.get(path.entry)?.kind === "constructor") continue;
       try {

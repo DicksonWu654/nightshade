@@ -24,7 +24,7 @@ export function sarifRule(detector: { id: string; description: string; defaultEn
   return { id: detector.id, shortDescription: { text: detector.description },
     fullDescription: { text: documentation.replace(/^#.*\n/, "").trim() },
     help: { text: documentation, markdown: documentation },
-    ...(informationUri && builtIn ? { helpUri: `${informationUri}/blob/v0.1.0/docs/detectors/${detector.id}.md` } : {}),
+    ...(informationUri && builtIn ? { helpUri: `${informationUri}/blob/v0.1.1/docs/detectors/${detector.id}.md` } : {}),
     defaultConfiguration: { enabled: detector.defaultEnabled !== false,
       level: severity === "info" ? "note" : rank[severity] >= rank.high ? "error" : "warning" },
     properties: { tags: ["security"], ...(metadata ? { ...metadata, "security-severity": securityPriority[severity] } : {}) } };

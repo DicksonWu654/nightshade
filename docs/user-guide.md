@@ -179,7 +179,7 @@ from the tarball and is unnecessary for static scanning.
 The [Action](../action.yml) builds the analyzer on Node 24.20.0, scans the caller
 workspace, uploads SARIF even on incomplete results, then preserves the recorded
 scan exit status. The [README workflow template](../README.md#output-configuration-and-ci)
-uses `DicksonWu654/nightshade@v0.1.0`. Install the
+uses `DicksonWu654/nightshade@v0.1.1`. Install the
 application's local source dependencies separately. Inputs are `path`, `config`,
 `compiler-version`, `fail-on` and `category`; outputs are `exit-code` and `sarif`.
 Use a distinct category per application. The `config` input selects a JSON

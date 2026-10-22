@@ -1,3 +1,4 @@
+import { wrapIdentityMeter, type IdentityMeter } from "../semantic/metering.js";
 import type { AbstractValue, SuccessfulPath } from "./index.js";
 import { successfulIntegerConstraints } from "./arithmetic-safety.js";
 import { integerEnvelope } from "./integer-envelope.js";
@@ -7,10 +8,10 @@ export const MINT_MAXIMUM = (1n << 64n) - 1n;
 
 /** Reconstruct only this history's numeric constraints. Observer snapshots can
  * identify one saved computed scalar, never equal independently computed data. */
-export function mintQuantityEvidence(path: SuccessfulPath, charge: (work?: number) => void, meter?: (work: number, values: number) => boolean) {
-  const reserve = (work: number, values: number) => {
+export function mintQuantityEvidence(path: SuccessfulPath, charge: (work?: number) => void, meter?: IdentityMeter) {
+  const reserve = wrapIdentityMeter(meter, (work: number, values: number) => {
     if (meter && !meter(work, values)) throw new Error("Mint numeric projection exhausted its shared allocation allowance");
-  };
+  });
   reserve(0, 4);
   const memo = new WeakMap<AbstractValue, AbstractValue>();
   const project = (value: AbstractValue, depth = 0): AbstractValue => {
@@ -33,7 +34,7 @@ export function mintQuantityEvidence(path: SuccessfulPath, charge: (work?: numbe
   };
   if (!path.predicates) throw new Error("Mint quantity review requires successful predicates");
   reserve(0, 12 + path.predicates.length * 6 + (path.integerDomains?.size ?? 0) * 4);
-  const reconstructed = successfulIntegerConstraints(path.predicates.map(predicate=>({ ...predicate,value:project(predicate.value) })),charge,path.integerDomains,meter ? (work, values) => reserve(work, values) : undefined);
+  const reconstructed = successfulIntegerConstraints(path.predicates.map(predicate=>({ ...predicate,value:project(predicate.value) })),charge,path.integerDomains,meter ? reserve : undefined);
   if (reconstructed.status !== "complete") throw new Error(`Mint numeric constraints are ${reconstructed.status}`);
   const state = reconstructed.state, relations = scalarRelations(state);
   reserve(0, 4);

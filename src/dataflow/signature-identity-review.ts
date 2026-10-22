@@ -1,3 +1,4 @@
+import { identityLength } from "../semantic/metering.js";
 import type { AbstractValue, AnalysisFacts, RuntimeOperation, SuccessfulPath } from "./index.js";
 import { immutableOperandKey } from "./immutable-key.js";
 import { persistentSignatureKeySnapshot, signatureKeyIdentityExclusions } from "./signature-key.js";
@@ -111,6 +112,7 @@ export function signatureIdentityObservations(facts: AnalysisFacts) {
       throw new Error("Signature review proof exhausted the shared observer/preparation allowance");
     return true;
   };
+  Object.assign(charge, { identityText: facts.program.meteringIdentity });
   try {
     if (!evidence || !facts.signatureEvidence || facts.predicateScope !== "all" || facts.pathSemantics !== "equivalent-states"
       || facts.diagnostics.length || !facts.completedEntries.includes(evidence.entry) || evidence.histories !== facts.paths.length
@@ -140,7 +142,7 @@ export function signatureIdentityObservations(facts: AnalysisFacts) {
         let emission = 128 + operation.callPath.length * 3 + facts.program.files.size * 3;
         for (const text of [path.entry, source.symbol, operation.name, operation.location.file,
           facts.program.symbols.get(source.symbol)!.name, facts.program.symbols.get(path.entry)!.name]) {
-          charge(); emission += Math.ceil(text.length / 64) * 8;
+          charge(); emission += Math.ceil(identityLength(text, charge) / 64) * 8;
         }
         for (const id of operation.callPath) { charge(); emission += Math.ceil((facts.program.symbols.get(id)?.name ?? id).length / 64) * 3; }
         charge(0, emission); observations.push({ entry: path.entry, operation, curve, source });

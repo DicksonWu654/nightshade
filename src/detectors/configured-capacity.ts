@@ -1,3 +1,4 @@
+import { ReportIdentityKeys } from "../reporting/identity-keys.js";
 import { CONFIGURED_CAPACITY_RULE, configuredCapacityConflicts } from "../dataflow/configured-capacity.js";
 import { finding, unique, type Detector } from "./types.js";
 import { spanId } from "../model.js";
@@ -9,6 +10,7 @@ export const configuredMembershipCapacityReview: Detector = {
     // Registry consumers can dispatch all rules on ordinary facts. Only the
     // independent observer supplies this optional constructor boundary.
     if (!facts.configuredCapacity) return [];
+    const report = new ReportIdentityKeys(facts.program, CONFIGURED_CAPACITY_RULE, facts.program.rootSource.ast.span);
     const result = configuredCapacityConflicts(facts); facts.diagnostics.push(...result.diagnostics);
     return unique(result.conflicts.map(conflict => finding(facts, {
       detectorId: CONFIGURED_CAPACITY_RULE, severity: "info", confidence: "high",
@@ -21,12 +23,12 @@ export const configuredMembershipCapacityReview: Detector = {
       remediation: "Align the accepted initial configuration with the gate's distinct-member requirement, or explicitly provide the required members before exposing that operation. Review staged configuration separately.",
       metadata: { reviewRequired: true, stateBoundary: "immediate-post-constructor", feasibility: "unproven", cryptographicValidity: "unproven", permanentUnusability: "unproven",
         entry: facts.program.symbols.get(facts.configuredCapacity!.entry)!.name, entryIdentity: facts.configuredCapacity!.entry,
-        constructorIdentity: facts.configuredCapacity!.constructor, address: conflict.address, revision: conflict.revision, upperBound: conflict.bound, requiredDistinct: conflict.members.length,
+        constructorIdentity: facts.configuredCapacity!.constructor, address: report.key(conflict.address), revision: conflict.revision, upperBound: conflict.bound, requiredDistinct: conflict.members.length,
         construction: { entry: conflict.prefix.construction.entry, branches: conflict.prefix.construction.path,
-          writes: conflict.prefix.construction.writes.map(write => ({ ledger: write.ledger, region: write.region, location: write.location, callIdentities: write.callPath, callSites: write.callSites })),
+          writes: conflict.prefix.construction.writes.map(write => ({ ledger: write.ledger, region: report.region(write.region), location: write.location, callIdentities: write.callPath, callSites: write.callSites })),
           predicates: conflict.prefix.construction.predicates?.map(predicate => ({ truth: predicate.truth, location: predicate.location, callIdentities: predicate.callPath, callSites: predicate.callSites })) }, gateBranches: conflict.prefix.gate.path,
-        members: conflict.members.map(member => ({ key: member.key, query: member.query.location, guard: member.predicate.location, callIdentities: member.predicate.callPath, callSites: member.predicate.callSites })),
+        members: conflict.members.map(member => ({ key: report.key(member.key), query: member.query.location, guard: member.predicate.location, callIdentities: member.predicate.callPath, callSites: member.predicate.callSites })),
         distinctness: conflict.distinctness.map(predicate => ({ location: predicate.location, callIdentities: predicate.callPath, callSites: predicate.callSites })) },
-    }, `${facts.configuredCapacity!.entry}:${conflict.address}:${conflict.bound}:${conflict.members.map(member => spanId(member.predicate.location)).sort().join(";")}:${conflict.distinctness.map(predicate => spanId(predicate.location)).sort().join(";")}`)));
+    }, `${facts.configuredCapacity!.entry}:${report.key(conflict.address)}:${conflict.bound}:${conflict.members.map(member => spanId(member.predicate.location)).sort().join(";")}:${conflict.distinctness.map(predicate => spanId(predicate.location)).sort().join(";")}`)));
   },
 };

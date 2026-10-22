@@ -1,4 +1,5 @@
 import { secretBindingComparisons } from "../dataflow/secret-binding.js";
+import { ReportIdentityKeys } from "../reporting/identity-keys.js";
 import { SECRET_BINDING_RULE } from "../semantic/secret-binding.js";
 import { finding, type Detector } from "./types.js";
 
@@ -8,6 +9,7 @@ export const secretBindingDivergenceReview: Detector = {
   requires: ["secret-binding-histories", "successful-predicates", "digest-inputs", "state-writes", "completed-entries"],
   run(facts) {
     const name = (id: string) => facts.program.symbols.get(id)?.name ?? id;
+    const report = new ReportIdentityKeys(facts.program, SECRET_BINDING_RULE, facts.program.rootSource.ast.span);
     return secretBindingComparisons(facts).map(({ weaker, peer, base, additional }) => finding(facts, {
       detectorId: SECRET_BINDING_RULE, severity: "info", confidence: "high",
       title: "Keyed writers enforce different secret-binding families",
@@ -23,9 +25,11 @@ export const secretBindingDivergenceReview: Detector = {
       metadata: { reviewRequired: true, authenticationIntent: "unknown", authenticationStrength: "not-compared",
         pathFeasibility: "not-proven", applicationImpact: "not-inferred", crossEntryValueEquality: "not-inferred",
         entry: name(weaker.entry), sibling: name(peer.entry), target: name(weaker.write.ledger),
-        baseBinding: base.descriptor, additionalBinding: additional.descriptor,
+        baseBinding: { ...base.descriptor, domain: report.domain(base.descriptor.domain) },
+        additionalBinding: { ...additional.descriptor, domain: report.domain(additional.descriptor.domain) },
         effectCallSites: weaker.write.callSites, effectOrdinal: weaker.index,
         effectKind: "keyed-numeric-mutation-occurrence", sourceComparison: "declaration-families", majorityPremise: false },
-    }, JSON.stringify([weaker.entry, weaker.write.location.start, weaker.index, weaker.write.callSites?.map(site => [site.file, site.start, site.end]), additional.key])));
+    }, JSON.stringify([weaker.entry, weaker.write.location.start, weaker.index, weaker.write.callSites?.map(site => [site.file, site.start, site.end]),
+      { ...additional.descriptor, domain: report.domain(additional.descriptor.domain) }])));
   },
 };

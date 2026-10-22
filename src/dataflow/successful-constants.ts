@@ -5,7 +5,7 @@ import { constantOf } from "./transfers.js";
 
 /** History-local constants on immutable operands, including later atomic guards.
  * Never use ledger dependency unions or wildcard regions as equality evidence. */
-export function successfulConstants(path: SuccessfulPath, allowance = 100000) {
+export function successfulConstants(path: SuccessfulPath, allowance = 100000, identityText: (identity: string) => string = identity => identity) {
   let work = 0, complete = path.predicates !== undefined;
   const charge = () => { if (++work > allowance) complete = false; return complete; };
   const parents = new Map<string, string>(), constants = new Map<string, Constant>();
@@ -15,7 +15,7 @@ export function successfulConstants(path: SuccessfulPath, allowance = 100000) {
       if (constant.value.length > 65536) { complete = false; return undefined; }
       return `constant:${JSON.stringify(constant)}`;
     }
-    if ((value.identity?.length ?? 0) > 65536) { complete = false; return undefined; }
+    if (identityText(value.identity ?? "").length > 65536) { complete = false; return undefined; }
     // Storage allocates a distinct snapshot: identity for each wildcard read;
     // the shared wildcard region itself is never an equality certificate.
     if (value.region?.path.some(part => part === "*" || part === "key:*")

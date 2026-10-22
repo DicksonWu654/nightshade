@@ -1,3 +1,4 @@
+import { wrapIdentityMeter, type IdentityMeter } from "../semantic/metering.js";
 import type { AbstractValue } from "./index.js";
 import { scalarRelations } from "./scalar-relations.js";
 import { MAX_AGGREGATE_EXCLUSION_LEAVES, MAX_ORDERED_PREDICATES, refineScalar, type ScalarConstraints } from "./transfers.js";
@@ -11,9 +12,9 @@ export type CommonConstraints =
  * a=b in common. The original alternatives remain necessary for queries that
  * depend on disjunctions this domain cannot express. */
 export function commonScalarConstraints(left: ScalarConstraints, right: ScalarConstraints,
-  charge: (work: number, values: number) => boolean): CommonConstraints {
+  charge: IdentityMeter): CommonConstraints {
   class Incomplete extends Error {}
-  const spend = (work = 1, values = 0): void => { if (!charge(work, values)) throw new Incomplete("Common scalar constraints exhausted the shared allowance"); };
+  const spend = wrapIdentityMeter(charge, (work = 1, values = 0): void => { if (!charge(work, values)) throw new Incomplete("Common scalar constraints exhausted the shared allowance"); });
   const incomplete = (reason: string): never => { throw new Incomplete(reason); };
   const empty = (): AbstractValue => ({ flows: [], ledger: new Set() });
   const leaf = (identity: string): AbstractValue => ({ ...empty(), identity });

@@ -33,7 +33,7 @@ export function nftMetadataObservations(facts: AnalysisFacts, policies?: Resolve
   };
   const key = (value: Parameters<typeof immutableOperandKey>[0]): string | undefined => {
     if (!charge()) return;
-    const result = immutableOperandKey(value, Math.min(4096, Math.max(0, allowance - work)));
+    const result = immutableOperandKey(value, Math.min(4096, Math.max(0, allowance - work)), undefined, undefined, facts.program.meteringIdentity);
     work += result.work;
     if (!result.complete || work > allowance) complete = false;
     return complete ? result.key : undefined;

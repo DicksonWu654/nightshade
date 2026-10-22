@@ -1,3 +1,4 @@
+import { ReportIdentityKeys } from "../reporting/identity-keys.js";
 import { KEYED_STATE_INVARIANT, keyedStateInvariantObservations } from "../dataflow/keyed-state-invariant.js";
 import { finding, unique, type Detector } from "./types.js";
 
@@ -7,6 +8,7 @@ export const inconsistentKeyedStateGuard: Detector = {
   defaultEnabled: false,
   requires: ["collection-observations", "successful-predicates", "successful-histories", "state-writes", "runtime-operations", "completed-entries"],
   run(facts) {
+    const report = new ReportIdentityKeys(facts.program, KEYED_STATE_INVARIANT, facts.program.rootSource.ast.span);
     const result = keyedStateInvariantObservations(facts);
     facts.diagnostics.push(...result.diagnostics);
     facts.metrics.steps += result.work;
@@ -27,12 +29,12 @@ export const inconsistentKeyedStateGuard: Detector = {
         remediation: "Confirm the intended collection relationship. If insertion requires prerequisite membership, enforce it on every successful insertion history; otherwise document why consumers intentionally reject surplus entries.",
         metadata: { reviewRequired: true, invariantIntent: "unknown", exploitability: "unproven", evidence: "consumer-co-membership-and-writer-guard-divergence",
           historyCoverage: "exact-completed-entry-histories", entry: name, entryIdentity: observation.entry,
-          prerequisiteAddress: observation.prerequisite, targetAddress: observation.target,
-          guardedHistories: observation.guarded.map(({ path, guard }) => ({ branches: path.path, key: guard.key, revision: guard.query.result.collectionPredicate?.revision, guard: guard.predicate.location })),
+          prerequisiteAddress: report.key(observation.prerequisite), targetAddress: report.key(observation.target),
+          guardedHistories: observation.guarded.map(({ path, guard }) => ({ branches: path.path, key: report.key(guard.key), revision: guard.query.result.collectionPredicate?.revision, guard: guard.predicate.location })),
           bypassedHistories: observation.bypassed.map(path => ({ branches: path.path })),
           consumerEntries: observation.consumers.map(consumer => consumer.entry),
-          consumerEvidence: observation.consumers.map(consumer => ({ entry: consumer.entry, histories: consumer.histories.map(history => ({ key: history.target.key, prerequisite: history.prerequisite.predicate.location, target: history.target.predicate.location })) })) },
-      }, `${observation.entry}:${observation.prerequisite}:${observation.target}`);
+          consumerEvidence: observation.consumers.map(consumer => ({ entry: consumer.entry, histories: consumer.histories.map(history => ({ key: report.key(history.target.key), prerequisite: history.prerequisite.predicate.location, target: history.target.predicate.location })) })) },
+      }, `${observation.entry}:${report.key(observation.prerequisite)}:${report.key(observation.target)}`);
     }));
   },
 };

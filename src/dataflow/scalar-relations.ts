@@ -1,3 +1,4 @@
+import { identityText, wrapIdentityMeter } from "../semantic/metering.js";
 import type { AbstractValue } from "./index.js";
 import type { Constant } from "./constants.js";
 import type { ScalarConstraints } from "./transfers.js";
@@ -8,7 +9,7 @@ import type { ScalarConstraints } from "./transfers.js";
  * cannot share a stale equivalence class. The owning domain bounds the edges.
  */
 export function scalarRelations(state: ScalarConstraints) {
-  const charge = (work = 1, values = 0) => state.scalarMeter?.(work, values);
+  const charge = wrapIdentityMeter(state.scalarMeter, (work = 1, values = 0) => state.scalarMeter?.(work, values));
   charge(1, 10);
   const parents = new Map<string, string>();
   const constants = new Map<string, Constant>();
@@ -43,7 +44,7 @@ export function scalarRelations(state: ScalarConstraints) {
   const constant = (value: AbstractValue): Constant | undefined => value.constantKind && value.constant !== undefined
     ? { kind: value.constantKind, value: value.constant } : undefined;
   const operand = (value: AbstractValue): string | undefined => {
-    charge(1, 4 + Math.ceil((value.identity?.length ?? value.constant?.length ?? 0) / 64));
+    charge(1, 4 + Math.ceil((value.identity ? identityText(value.identity, state.scalarMeter).length : value.constant?.length ?? 0) / 64));
     if (value.items || value.fields) return;
     const normalized = state.hashRecipes?.refine(value, state) ?? value;
     const actual = constant(normalized);
@@ -85,7 +86,7 @@ export function scalarRelations(state: ScalarConstraints) {
     for (const value of state.excluded.get(identity) ?? []) { charge(1, 1); values.add(value); }
     excludedConstants.set(root, values);
   }
-  const pair = (a: string, b: string): string => { charge(1, 3 + Math.ceil((a.length + b.length) / 64)); return JSON.stringify([a, b].sort()); };
+  const pair = (a: string, b: string): string => { charge(1, 3 + Math.ceil((identityText(a, state.scalarMeter).length + identityText(b, state.scalarMeter).length) / 64)); return JSON.stringify([a, b].sort()); };
   for (const [a, b] of different) {
     charge(1, 1); const first = find(a), second = find(b), x = known.get(first), y = known.get(second);
     if (first === second || x && y && same(x, y)) consistent = false;
@@ -94,7 +95,7 @@ export function scalarRelations(state: ScalarConstraints) {
   // Queries never add operands to the closure: its constants and classes are
   // frozen after construction. Original observations remain intact in State.
   const keyOf = (value: AbstractValue): string | undefined => {
-    charge(1, 1 + Math.ceil((value.identity?.length ?? 0) / 64));
+    charge(1, 1 + Math.ceil(identityText(value.identity ?? "", state.scalarMeter).length / 64));
     if (value.items || value.fields) return;
     const identity = (state.hashRecipes?.refine(value, state) ?? value).identity;
     return identity ? identityKey(identity) : undefined;

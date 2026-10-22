@@ -1,6 +1,6 @@
 {
   "name": "nightshade-compact",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "Apache-2.0",
   "description": "Offline static security analysis for Compact smart contracts, with text, JSON and SARIF reports",
   "keywords": ["compact", "midnight", "static-analysis", "security", "sarif"],

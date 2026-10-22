@@ -1,3 +1,4 @@
+import { pathLength, identityLength } from "../semantic/metering.js";
 import type { AbstractValue, AnalysisFacts } from "../dataflow/index.js";
 import { immutableOperandKey } from "../dataflow/immutable-key.js";
 import { spanId } from "../model.js";
@@ -28,6 +29,7 @@ export function publicScalarFindings(facts: AnalysisFacts, allowance = 200000): 
       || evidence && ((evidence.entrySteps.get(entry) ?? 0) > evidence.maxSteps || facts.metrics.abstractValues > evidence.maxValues)) throw new Exhausted();
     return true;
   };
+  Object.assign(charge, { identityText: facts.program.meteringIdentity });
   // Diagnostic slots were reserved by the selected Dataflow carrier. Refusal
   // never retries interpretation or reconstructs a new observation.
   const incomplete = (code: string, message: string) => {
@@ -51,8 +53,8 @@ export function publicScalarFindings(facts: AnalysisFacts, allowance = 200000): 
     }
     // Bound and reserve type parsing/printing and representation strings before
     // allocating. Nominal expansion above is charged one declaration at a time.
-    if (type.length > 4096) throw new Exhausted();
-    charge(type.length + 1, type.length * 6 + 8);
+    if (identityLength(type, charge) > 4096) throw new Exhausted();
+    charge(identityLength(type, charge) + 1, identityLength(type, charge) * 6 + 8);
     if (printType(parseType(facts.program.representationOf(type))) !== "Vector<1,Bytes<32>>") return;
     return digest.input.items[0];
   };
@@ -119,9 +121,9 @@ export function publicScalarFindings(facts: AnalysisFacts, allowance = 200000): 
                     const ledger = facts.program.symbols.get(registration.ledger)!.name;
                     let callChars = 0;
                     for (const id of sink.callPath) { charge(); callChars += facts.program.symbols.get(id)!.name.length; }
-                    const originChars = ledger.length + callChars + entry.length + generator.location.file.length + registration.location.file.length + sink.location.file.length + (source!.invocation?.site.length ?? 0) + 256;
+                    const originChars = identityLength(ledger, charge) + callChars + identityLength(entry, charge) + pathLength(generator.location.file, charge) + pathLength(registration.location.file, charge) + pathLength(sink.location.file, charge) + identityLength(source!.invocation?.site, charge) + 256;
                     let fileChars = 0;
-                    for (const file of facts.program.files.keys()) { charge(); fileChars += file.length; }
+                    for (const file of facts.program.files.keys()) { charge(); fileChars += pathLength(file, charge); }
                     const fileCount = facts.program.files.size;
                     charge(1 + fileCount * (fileCount + 1) + sink.callPath.length,
                       180 + sink.callPath.length * 4 + fileCount * 6 + Math.ceil((originChars * (fileCount + 4) + fileChars * 3) / 32));

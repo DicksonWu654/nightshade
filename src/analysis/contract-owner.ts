@@ -80,7 +80,7 @@ export function contractOwnerObservations(facts: AnalysisFacts, policies?: Resol
       if (!value) {
         issue(owner, entry, "contract-owner-tag-unavailable", "The final owner write is missing its exact discriminator"); continue;
       }
-      const constants = successfulConstants(path, Math.max(0, allowance - work));
+      const constants = successfulConstants(path, Math.max(0, allowance - work), facts.program.meteringIdentity);
       const tag = constants.refine(value);
       work += constants.work;
       if (!constants.complete || work > allowance) { exhausted = true; break; }

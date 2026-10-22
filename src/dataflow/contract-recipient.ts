@@ -1,3 +1,4 @@
+import { pathLength, identityLength } from "../semantic/metering.js";
 import type { AbstractValue, AnalysisFacts, RuntimeOperation, SuccessfulPath } from "./index.js";
 import { CONTRACT_RECIPIENT_RULE, CONTRACT_RECIPIENT_SENDS, contractRecipientType, recipientTagParameter, type RecipientCharge } from "../semantic/contract-recipient.js";
 import { immutableOperandKey } from "./immutable-key.js";
@@ -50,6 +51,7 @@ export function contractRecipientObservations(facts: AnalysisFacts, deferSupplie
       throw new Error("Recipient proof exhausted its shared work/value allowance");
     return true;
   };
+  Object.assign(charge, { identityText: facts.program.meteringIdentity });
   const remaining = () => Math.max(0, evidence.maxSteps - facts.metrics.steps - work);
   try {
     charge(facts.completedEntries.length);
@@ -98,8 +100,8 @@ export function contractRecipientObservations(facts: AnalysisFacts, deferSupplie
         if (relation === "self") continue;
         if (relation !== "non-self") throw new Error("Exact non-self recipient relation is unavailable");
         let emission = 120 + operation.callPath.length * 4 + operation.callSites.length * 4;
-        charge(2); emission += Math.ceil(path.entry.length / 64) * 4 + Math.ceil(operation.location.file.length / 64) * 4;
-        for (const text of operation.callPath) { charge(); emission += Math.ceil(text.length / 64) * 4; }
+        charge(2); emission += Math.ceil(identityLength(path.entry, charge) / 64) * 4 + Math.ceil(pathLength(operation.location.file, charge) / 64) * 4;
+        for (const text of operation.callPath) { charge(); emission += Math.ceil(identityLength(text, charge) / 64) * 4; }
         charge(emission, emission);
         observations.push({ entry: path.entry, operation, recipient, specializedParameter: evidence.parameter });
       }

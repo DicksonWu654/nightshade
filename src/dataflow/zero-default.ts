@@ -1,3 +1,4 @@
+import { identityLength, type IdentityMeter } from "../semantic/metering.js";
 import type { AbstractValue, AnalysisFacts, RuntimeOperation, SuccessfulPath } from "./index.js";
 import { exactMapDebits, type Debit } from "./map-debit.js";
 import { initialMapRequirements } from "./zero-membership.js";
@@ -13,11 +14,11 @@ type Charge = (work?: number, retained?: number) => boolean;
 // Bound generated text in addition to counting its dimensions. Source-owned
 // scalar leaves and identifiers are borrowed; new serialized keys are charged
 // in 64-code-unit chunks before serialization, including escaping overhead.
-function textUnits(value: string): number { return 1 + Math.ceil(value.length / 64); }
+function textUnits(value: string, charge: Charge): number { return 1 + Math.ceil(identityLength(value, charge) / 64); }
 function serialize(parts: readonly string[], charge: Charge): string {
   charge(0, 1);
   let units = 1;
-  for (const part of parts) { charge(); units += 6 * textUnits(part); }
+  for (const part of parts) { charge(); units += 6 * textUnits(part, charge); }
   charge(units, units);
   return JSON.stringify(parts);
 }
@@ -57,12 +58,12 @@ function keyPattern(facts: AnalysisFacts, entry: string, operation: RuntimeOpera
       }
       // Keep the established numeric role encoding, including represented type.
       const type = facts.program.representationOf(facts.program.symbols.get(source.symbol)!.type);
-      const units = 6 * (textUnits(type) + 2);
+      const units = 6 * (textUnits(type, charge) + 2);
       charge(units, units);
       return JSON.stringify(["parameter", role, type]);
     }
     if (!value.flows.length && !value.ledger.size && value.constant !== undefined && value.constantKind) {
-      const units = 6 * (textUnits(value.constant) + textUnits(value.constantKind) + 1);
+      const units = 6 * (textUnits(value.constant, charge) + textUnits(value.constantKind, charge) + 1);
       charge(units, units);
       return JSON.stringify(["constant", value.constantKind, value.constant]);
     }
@@ -110,6 +111,7 @@ export function zeroDefaultGetterCertificate(facts: AnalysisFacts, entry: string
       || facts.metrics.abstractValues + values > facts.mapDebitEvidence.maxValues) throw new Error("Getter certificate exhausted its shared work/value allowance");
     return true;
   };
+  Object.assign(charge, { identityText: facts.program.meteringIdentity });
   try {
     complete(facts, entry, charge);
     charge(0, 2);
@@ -156,7 +158,7 @@ export function zeroDefaultGetterCertificate(facts: AnalysisFacts, entry: string
     // this getter, every prefix must use the actual parameters of the returned
     // lookup chain; member(otherKey) cannot donate lookup(actualKey) evidence.
     const sameGetterPrefix = (pattern: KeyPattern) => {
-      charge(textUnits(pattern.signature));
+      charge(textUnits(pattern.signature, charge));
       return prefixes.has(pattern.signature) && sameParameters(pattern.parameters, target!.parameters, charge, true);
     };
     charge(0, 1);
@@ -209,7 +211,7 @@ export function zeroDefaultGetterCertificate(facts: AnalysisFacts, entry: string
       if (isZero && !required.size || !isZero && required.size) return;
       for (const [key, span] of required) { charge(1, 1); absent.set(key, span); }
     }
-    for (const prefix of prefixes) { charge(textUnits(prefix)); if (!absent.has(prefix)) return; }
+    for (const prefix of prefixes) { charge(textUnits(prefix, charge)); if (!absent.has(prefix)) return; }
     charge(0, 1);
     const absences: Span[] = [];
     for (const span of absent.values()) { charge(1, 1); absences.push(span); }
@@ -231,6 +233,7 @@ export function zeroDefaultObservations(facts: AnalysisFacts) {
       throw new Error("Cross-entry getter/membership relation exhausted its shared work/value allowance");
     return true;
   };
+  Object.assign(charge, { identityText: facts.program.meteringIdentity });
   const unavailable = (message: string): never => { throw new Error(message); };
   try {
     complete(facts, entry, charge);
@@ -251,7 +254,7 @@ export function zeroDefaultObservations(facts: AnalysisFacts) {
         const pattern = keyPattern(facts, entry, debit.lookup, charge);
         if (!pattern) continue;
         let matched = false;
-        for (const getter of facts.zeroDefaultEvidence.getters) { charge(textUnits(pattern.signature)); if (getter.pattern.signature === pattern.signature) { matched = true; break; } }
+        for (const getter of facts.zeroDefaultEvidence.getters) { charge(textUnits(pattern.signature, charge)); if (getter.pattern.signature === pattern.signature) { matched = true; break; } }
         if (!matched) continue;
         const member = debit.lookup.membership!;
         const required = initialMapRequirements(facts, path, member.region.root, charge, unavailable);
@@ -261,13 +264,13 @@ export function zeroDefaultObservations(facts: AnalysisFacts) {
         // Exact raw region operands, not normalized parameter-family roles,
         // select supporting outer-to-inner requirements for this lookup only.
         for (let index = 0; index <= member.region.path.length; index++) {
-          charge(index === member.region.path.length ? textUnits(member.key!) : 1,
-            index === member.region.path.length ? textUnits(member.key!) + 1 : 1);
+          charge(index === member.region.path.length ? textUnits(member.key!, charge) : 1,
+            index === member.region.path.length ? textUnits(member.key!, charge) + 1 : 1);
           const part = index === member.region.path.length ? `key:${member.key}` : member.region.path[index];
           selectedParts.push(part);
           cell = serialize(selectedParts, charge);
           if (part.startsWith("key:")) {
-            charge(textUnits(cell));
+            charge(textUnits(cell, charge));
             const requirement = required.get(cell);
             if (requirement) { charge(0, 1); chain.push(requirement.location); }
           }
@@ -284,7 +287,7 @@ export function zeroDefaultObservations(facts: AnalysisFacts) {
       for (const history of histories) {
         let matched = false;
         for (const other of history) {
-          charge(textUnits(candidate.pattern.signature) + textUnits(candidate.cell), 2);
+          charge(textUnits(candidate.pattern.signature, charge) + textUnits(candidate.cell, charge), 2);
           if (other.pattern.signature === candidate.pattern.signature && other.cell === candidate.cell && other.required.has(other.cell)
             && spanId(other.debit.write.location) === spanId(candidate.debit.write.location)) { matched = true; break; }
         }
@@ -292,11 +295,12 @@ export function zeroDefaultObservations(facts: AnalysisFacts) {
       }
       if (!every) continue;
       for (const getter of facts.zeroDefaultEvidence.getters) {
-        charge(textUnits(candidate.pattern.signature));
+        charge(textUnits(candidate.pattern.signature, charge));
         if (getter.pattern.signature !== candidate.pattern.signature) continue;
         const requirement = candidate.required.get(candidate.cell)!;
         charge(0, 6);
-        const id = serialize([getter.entry, entry, amount, candidate.cell, spanId(requirement.location)], charge);
+        // Register this explicit span atom before its serialized key is metered.
+        const id = serialize([getter.entry, entry, amount, candidate.cell, facts.program.spanIdentity(requirement.location)], charge);
         if (seen.has(id)) continue;
         const emission = 45 + 5 * getter.absences.length + 5 * candidate.pattern.parameters.length
           + candidate.debit.lookup.callPath.length + candidate.chain.length;

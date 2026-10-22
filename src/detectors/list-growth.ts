@@ -1,3 +1,4 @@
+import { ReportIdentityKeys } from "../reporting/identity-keys.js";
 import type { AnalysisFacts } from "../dataflow/index.js";
 import { retainedListGrowth } from "../dataflow/list-growth.js";
 import { LIST_GROWTH_RULE } from "../semantic/list-growth.js";
@@ -5,6 +6,7 @@ import { finding, type Detector, type Finding } from "./types.js";
 
 export function retainedListGrowthFindings(facts: AnalysisFacts): Finding[] {
   const results: Finding[] = [];
+  const report = new ReportIdentityKeys(facts.program, LIST_GROWTH_RULE, facts.program.rootSource.ast.span);
   try {
     retainedListGrowth(facts, (item, key) => results.push(finding(facts, {
       detectorId: LIST_GROWTH_RULE, severity: "info", confidence: "high",
@@ -17,7 +19,7 @@ export function retainedListGrowthFindings(facts: AnalysisFacts): Finding[] {
       remediation: "If zero transfers should not create recipient records, require a positive actual sent amount or skip the corresponding append for zero.",
       metadata: { evidence: "exact-recipient-zero-envelope-retained-list-append", reviewRequired: true,
         entry: facts.program.symbols.get(item.entry)?.name, ledger: facts.program.symbols.get(item.root)?.name,
-        selectedAddress: item.address, revision: item.revision, minimum: String(item.minimum), maximum: String(item.maximum),
+        selectedAddress: report.key(item.address), revision: item.revision, minimum: String(item.minimum), maximum: String(item.maximum),
         sameRevisionLengthBeforeAppend: !!item.lengthBeforeAppend,
         ...(item.lengthBeforeAppend ? { lengthLocation: item.lengthBeforeAppend.location } : {}),
         pathFeasibility: "not-proven", contention: "not-inferred", unboundedGrowth: "not-inferred", applicationImpact: "not-inferred", fullRecordRecallCredit: false },

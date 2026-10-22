@@ -60,7 +60,7 @@ export function zeroConsumptionFindings(facts: AnalysisFacts, allowance = 200000
           const receiver = insertion.args[0]?.region;
           if (!receiver) return incomplete("Collection insertion lacks a resolved receiver");
           if (parseType(facts.program.representationOf(receiver.type)).name !== "Set") continue;
-          const consumed = requiredAbsenceBeforeSurvivingInsertion(path, index, allowance - work);
+          const consumed = requiredAbsenceBeforeSurvivingInsertion(path, index, allowance - work, facts.program.meteringIdentity);
           charge(consumed.work);
           if (!consumed.complete) return incomplete("Consumption lacks exact operands/order or exhausted its allowance");
           for (const query of consumed.queries) {

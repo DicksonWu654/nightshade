@@ -1,3 +1,4 @@
+import { withIdentityMeter } from "../semantic/metering.js";
 import { membershipIdentityList } from "../semantic/membership-identity.js";
 import { LIST_GROWTH_APPEND } from "../semantic/list-growth.js";
 import { COMPLEMENTARY_SEND_TARGET } from "../semantic/complementary-send-targets.js";
@@ -13,6 +14,7 @@ import { intrinsicModel, standardType } from "../semantic/intrinsics.js";
 import { TUPLE_TYPE, elementType, parseType, printType, sequenceLength, typeArguments } from "../semantic/types.js";
 import { Constant, MAX_LITERAL_BYTES, castConstant, literalConstant } from "./constants.js";
 import { createHash } from "node:crypto";
+import { rememberReportIdentity } from "../semantic/metering.js";
 import { LiveVariables, liveVariables, MAX_LIVENESS_STORAGE_BYTES } from "../analysis/liveness.js";
 import { overwriteFoldPlan, type OverwriteFoldPlan } from "../analysis/overwrite-fold.js";
 import { Region, regionFromKey, regionKey } from "./regions.js";
@@ -515,7 +517,7 @@ function clone(state: State): State {
   // Keep the shape stable across forks; conditional spreads otherwise dominate
   // branch-heavy execution. Every mutable container still receives its own copy.
   const result: State = {
-    scalarMeter: state.scalarMeter, hashRecipes: state.hashRecipes, otherChecks: state.otherChecks,
+    scalarMeter: state.scalarMeter, identityText: state.identityText, hashRecipes: state.hashRecipes, otherChecks: state.otherChecks,
     externalCallWriteIndex: state.externalCallWriteIndex,
     witnessCalls: state.witnessCalls ? new Map(state.witnessCalls) : undefined,
     predicates: state.predicates?.slice(), integerDomains: state.integerDomains ? new Map(state.integerDomains) : undefined,
@@ -613,7 +615,7 @@ export class Dataflow {
   /** State-independent structural identities of retained immutable values.
    * Null also memoizes a failed identity query; no state constraint is cached. */
   private liveValueIdentities = new WeakMap<AbstractValue, string | null>();
-  private hashRecipes = this.newHashRecipes();
+  private hashRecipes: HashRecipes;
   /** Exact-observation modes may use the total scalar comparison fold only while
    * no later evidence can observe its elided byte partitions. These entry-local
    * immutable identities/sources name that compressed disjunction. */
@@ -621,16 +623,26 @@ export class Dataflow {
   private compressionTouchCache = new WeakMap<object, true | number>();
   private observationCompressions = 0;
 
+  /** A report-only digest of the same owned identity slots. The ordinary key
+   * remains byte-for-byte unchanged for analysis, caches and equality. */
+  private derivedIdentity(prefix: string, inputs: unknown[]): string {
+    const digest = (parts: unknown[]) => `${prefix}:${createHash("sha256").update(JSON.stringify(parts)).digest("hex")}`;
+    const canonical = (value: unknown): unknown => typeof value === "string" ? this.program.reportIdentity(value)
+      : Array.isArray(value) ? value.map(canonical) : value;
+    return rememberReportIdentity(digest(inputs), digest(inputs.map(canonical)), this.program.meteringIdentity);
+  }
+
   private newHashRecipes(): HashRecipes {
     return new HashRecipes((work, values) => {
       this.steps += work; this.abstractValues += values;
       if (this.steps <= this.maxSteps && this.abstractValues <= this.maxValues) return true;
       this.issue("analysis-budget", "Hash-choice representation exhausted the shared analysis allowance; results are incomplete", this.program.functions.get(this.currentEntry)?.declaration.span ?? this.program.rootSource.ast.span);
       return false;
-    }, () => this.issue("predicate-budget", "Hash-choice identity traversal exceeds 256 levels; results are incomplete", this.program.functions.get(this.currentEntry)?.declaration.span ?? this.program.rootSource.ast.span));
+    }, () => this.issue("predicate-budget", "Hash-choice identity traversal exceeds 256 levels; results are incomplete", this.program.functions.get(this.currentEntry)?.declaration.span ?? this.program.rootSource.ast.span), true, this.program.meteringIdentity);
   }
 
   constructor(readonly program: Program, readonly maxSteps = 40000, readonly maxPaths = 256, readonly maxValues = 50000, readonly engine: "instructions" | "expressions" = "instructions", readonly useSummaries = engine === "instructions", readonly useStatefulSummaries = useSummaries && engine === "instructions", readonly pathSemantics: AnalysisFacts["pathSemantics"] = "equivalent-states", readonly observeCalls = false, readonly useFoldPartitions = true, readonly predicateScope: NonNullable<AnalysisFacts["predicateScope"]> = "witness", readonly observeMerkle = false, readonly observeCollections = false, readonly observeInitialization = false, readonly useHashChoices = true, readonly observeSignatures = false, readonly observeEither = false, readonly observeDigestInputs = false, readonly observeArithmetic = false, readonly observeMints = false, readonly observeMintQuantities = false, readonly observeInvocations: ReadonlySet<string> = new Set(), readonly observeTransientOrigins = false, readonly observeCommitInputs = false, readonly observeSignatureKeyIdentity = false, readonly observeSecpSignatures = false) {
+    this.hashRecipes = this.newHashRecipes();
     this.summaryEligibility = new PureCircuitEligibility(program);
     this.mutationEligibility = new MutationCircuitEligibility(program);
     this.readEligibility = new ReadCircuitEligibility(program);
@@ -1481,11 +1493,11 @@ export class Dataflow {
   }
 
   private entryState(defaults: boolean): State {
-    const state: State = { hashRecipes: this.useHashChoices ? this.hashRecipes : undefined, env: new Map(), ledger: new Map(), ledgerVersions: new Map(), collections: new CollectionFacts(256, this.observeCapacity), lists: new ListFacts<AbstractValue>(), bindings: [], sinks: [], path: [], control: [], truths: new Map(), known: new Map(), excluded: new Map(), aggregateExclusions: new Map(), aggregateExclusionLeaves: 0, aggregateExclusionsExhausted: false, guards: new Set(), writes: [] };
-    if (this.complementarySendObservation) state.scalarMeter = (work, values) => {
+    const state: State = { identityText: this.program.meteringIdentity, hashRecipes: this.useHashChoices ? this.hashRecipes : undefined, env: new Map(), ledger: new Map(), ledgerVersions: new Map(), collections: new CollectionFacts(256, this.observeCapacity), lists: new ListFacts<AbstractValue>(), bindings: [], sinks: [], path: [], control: [], truths: new Map(), known: new Map(), excluded: new Map(), aggregateExclusions: new Map(), aggregateExclusionLeaves: 0, aggregateExclusionsExhausted: false, guards: new Set(), writes: [] };
+    if (this.complementarySendObservation) state.scalarMeter = withIdentityMeter(this.program.meteringIdentity, (work: number, values: number) => {
       if (!this.complementaryCharge(work, values, this.program.functions.get(this.currentEntry)!.declaration.span))
         throw new Error("Complementary scalar transfer allocation refused");
-    };
+    });
     if (defaults) for (const symbol of this.program.activeSymbols().filter(symbol => symbol.kind === "ledger")) {
       const region = { root: symbol.id, path: [], type: symbol.type };
       const value = this.defaultValue(symbol.type);
@@ -1659,7 +1671,7 @@ export class Dataflow {
       return key;
     };
     const key = (value: AbstractValue): string | undefined => {
-      const result = immutableOperandKey(value, Math.min(4096, Math.max(0, this.maxSteps - this.steps)));
+      const result = immutableOperandKey(value, Math.min(4096, Math.max(0, this.maxSteps - this.steps)), undefined, undefined, this.program.meteringIdentity);
       this.steps += result.work;
       if (!result.complete) this.issue(this.steps >= this.maxSteps ? "analysis-budget" : "predicate-budget", "Initialization equality identity exceeds its allowance; results are incomplete", location);
       return result.key;
@@ -1685,11 +1697,11 @@ export class Dataflow {
   private issue(code: string, message: string, location: Span): void {
     this.incompleteEntries.add(this.currentEntry);
     this.attemptIssues?.push({ code, message });
-    if (!this.diagnostics.some(item => item.code === code && spanId(item.location) === spanId(location))) this.diagnostics.push({ code, message, location });
+    if (!this.diagnostics.some(item => item.code === code && this.program.spanIdentity(item.location) === this.program.spanIdentity(location))) this.diagnostics.push({ code, message, location });
   }
 
   private source(kind: PrivateSource["kind"], name: string, location: Span, symbol?: string, invocation?: PrivateSource["invocation"], digest = false): AbstractValue {
-    const source: PrivateSource = { ...(this.sequenceStep === undefined ? {} : { sequenceStep: this.sequenceStep }), id: `${spanId(location)}:${this.sourceCount++}`, kind, name, location, symbol, ...(invocation ? { invocation } : {}), ...(this.observeMerkle && digest ? { merkleDigest: true as const } : {}) };
+    const source: PrivateSource = { ...(this.sequenceStep === undefined ? {} : { sequenceStep: this.sequenceStep }), id: `${this.program.spanIdentity(location)}:${this.sourceCount++}`, kind, name, location, symbol, ...(invocation ? { invocation } : {}), ...(this.observeMerkle && digest ? { merkleDigest: true as const } : {}) };
     return { flows: [{ source, form: "raw", trace: [{ kind: "source", label: name, location }] }], ledger: new Set(), identity: source.id };
   }
 
@@ -1727,7 +1739,7 @@ export class Dataflow {
           // Outcome identity, input/output operation rows, argument/guard/control
           // copies and both invocation trace arrays are reserved before retention.
           const units = 14 + signatureArgs.length + result.state.guards.size + result.state.control.length
-            + stack.length * 2 + this.callSites.length + Math.ceil(this.currentEntry.length / 64);
+            + stack.length * 2 + this.callSites.length + Math.ceil(this.program.meteringIdentity(this.currentEntry).length / 64);
           if (!this.enrollmentCharge(units, units, location)) return false;
           result.value = { ...result.value, enrollmentSignatureOutcome: `${this.currentEntry}:${this.enrollmentSignatureOccurrence++}` };
         }
@@ -1748,10 +1760,10 @@ export class Dataflow {
         }
       }
       if (!this.observeMerkle || !merkleRootCircuit(fn.symbol.id) || !completed.length) return completed;
-      const operand = immutableOperandKey(args[0], Math.min(4096, this.maxSteps - this.steps));
+      const operand = immutableOperandKey(args[0], Math.min(4096, this.maxSteps - this.steps), undefined, undefined, this.program.meteringIdentity);
       this.steps += operand.work;
       if (!operand.complete) { this.issue("predicate-budget", "Merkle proof identity exceeds its bounded operand traversal; results are incomplete", location); return []; }
-      const identity = operand.key ? `merkle-digest:${createHash("sha256").update(JSON.stringify([fn.symbol.id, operand.key])).digest("hex")}` : `merkle-digest-fresh:${this.snapshotCount++}`;
+      const identity = operand.key ? this.derivedIdentity("merkle-digest", [fn.symbol.id, operand.key]) : `merkle-digest-fresh:${this.snapshotCount++}`;
       return completed.filter(result => {
         const field = result.value.fields?.field;
         if (!field) { this.issue("predicate-evidence-unavailable", "Canonical Merkle root has no modeled digest field; results are incomplete", location); return false; }
@@ -1762,7 +1774,7 @@ export class Dataflow {
   }
 
   private observeCall(fn: FunctionInfo, stack: string[], location: Span): CallReach | undefined {
-    const key = JSON.stringify([this.currentEntry, stack.at(-1), spanId(location), fn.symbol.id]);
+    const key = JSON.stringify([this.currentEntry, stack.at(-1), this.program.spanIdentity(location), fn.symbol.id]);
     let reach = this.callReaches.get(key);
     if (!reach) {
       if (++this.abstractValues > this.maxValues) {
@@ -2742,7 +2754,7 @@ export class Dataflow {
         }
         if (symbol.kind === "witness" || symbol.kind === "intrinsic" && intrinsicModel(symbol).kind === "witness") {
           const dependencies = step(combine(values), "witness-argument", symbol.name, expr.span, "derived");
-          const site = JSON.stringify([stack, this.callSites.map(spanId), spanId(expr.span)]);
+          const site = JSON.stringify([stack, this.callSites.map(site => this.program.spanIdentity(site)), this.program.spanIdentity(expr.span)]);
           const calls = next.witnessCalls ??= new Map(), occurrence = calls.get(site) ?? 0;
           calls.set(site, occurrence + 1);
           let leaf = 0;
@@ -2763,7 +2775,7 @@ export class Dataflow {
             // native operations still obey their selected curve signatures.
             const nativeType = representation === 'Opaque<"JubjubPoint">' ? "JubjubPoint" : representation;
             if (this.observeSecpSignatures && !this.enrollmentCharge(3 + values.length, 3 + values.length, expr.span)) continue;
-            const result = nativeValue(symbol.id.slice("intrinsic::".length), nativeType, values, expr.span, next, () => `native-fresh:${this.nativeCount++}`, this.observeSignatureKeyIdentity, this.observeSecpSignatures);
+            const result = nativeValue(symbol.id.slice("intrinsic::".length), nativeType, values, expr.span, next, () => `native-fresh:${this.nativeCount++}`, this.observeSignatureKeyIdentity, this.observeSecpSignatures, this.program.meteringIdentity);
             if (result) {
               this.trackCompressedValue(result, values, expr.span);
               const observedResult = this.enrollmentDependencies({ ...result, type: expr.inferredType }, values, expr.span);
@@ -2789,7 +2801,7 @@ export class Dataflow {
             // These change representation. Keep dependencies, but give the
             // result its own deterministic value identity: Bytes -> Field ->
             // Bytes is not an equality proof about the original bytes.
-            value.identity = nativeIdentity(symbol.id, values, () => `native-fresh:${this.nativeCount++}`);
+            value.identity = nativeIdentity(symbol.id, values, () => `native-fresh:${this.nativeCount++}`, this.program.meteringIdentity);
           }
           if (this.observeInvocations.has(PUBLIC_SCALAR_CAST) && this.observeInvocations.has(symbol.id) && !this.recordRuntimeOperation(next,
             { kind: "circuit-invocation", name: symbol.id, location: expr.span, args: values, result: { ...value, type: expr.inferredType } }, stack)) continue;
@@ -2826,12 +2838,12 @@ export class Dataflow {
           // detector is selected. Keep this bounded and only retain it when
           // every operand has an immutable key; unknown operands stay fresh.
           if (!value.identity && symbol.type === "hash" && (this.predicateScope !== "witness" || this.useHashChoices)) {
-            const operand = immutableOperandKey({ ...empty(), items: values }, Math.min(1024, Math.max(0, this.maxSteps - this.steps)));
+            const operand = immutableOperandKey({ ...empty(), items: values }, Math.min(1024, Math.max(0, this.maxSteps - this.steps)), undefined, undefined, this.program.meteringIdentity);
             this.steps += operand.work;
-            if (operand.complete && operand.key) value.identity = `hash-derived:${createHash("sha256").update(JSON.stringify([symbol.id, expr.generics, expr.inferredType, operand.key])).digest("hex")}`;
+            if (operand.complete && operand.key) value.identity = this.derivedIdentity("hash-derived", [symbol.id, expr.generics, expr.inferredType, operand.key]);
           }
           if (this.observeCollections && ["hash", "commitment"].includes(symbol.type)) {
-            const operand = immutableOperandKey({ ...empty(), items: values }, Math.min(4096, this.maxSteps - this.steps));
+            const operand = immutableOperandKey({ ...empty(), items: values }, Math.min(4096, this.maxSteps - this.steps), undefined, undefined, this.program.meteringIdentity);
             this.steps += operand.work;
             if (!operand.complete) {
               this.issue(this.steps > this.maxSteps ? "analysis-budget" : "predicate-budget",
@@ -2839,7 +2851,7 @@ export class Dataflow {
                   : "Collection key derivation exceeds its bounded operand traversal; results are incomplete", expr.span);
               continue;
             }
-            value.identity = operand.key ? `collection-derived:${createHash("sha256").update(JSON.stringify([symbol.id, expr.generics, expr.inferredType, operand.key])).digest("hex")}` : `collection-derived-fresh:${this.snapshotCount++}`;
+            value.identity = operand.key ? this.derivedIdentity("collection-derived", [symbol.id, expr.generics, expr.inferredType, operand.key]) : `collection-derived-fresh:${this.snapshotCount++}`;
           }
           if (symbol.type === "hash" && this.useHashChoices && values.some(value => this.hashRecipes.contains(value))) {
             const identity = this.hashRecipes.hash(values, [symbol.id, expr.generics, expr.inferredType], this.observeCollections ? "collection-derived" : "hash-derived");
@@ -2869,7 +2881,7 @@ export class Dataflow {
         }
         const mayFail = values[0].constantKind !== "boolean" || values[0].constant !== "true";
         const possible = this.assume(values[0], true, next);
-        const site = JSON.stringify([this.currentEntry, spanId(expr.span)]);
+        const site = JSON.stringify([this.currentEntry, this.program.spanIdentity(expr.span)]);
         const previous = this.assertionReaches.get(site);
         if (previous) { previous.maySucceed ||= possible; previous.mayFail ||= mayFail; }
         else this.assertionReaches.set(site, { location: expr.span, entry: this.currentEntry, owner: stack.at(-1)!,
@@ -2967,7 +2979,7 @@ export class Dataflow {
           value = { ...value, numericExpression: { operator: expr.name! as "+" | "-" | "*", operands: values, ...(this.complementarySendObservation ? { numericType: expr.numericType ?? expr.inferredType } : {}) } };
         }
         if (this.observeArithmetic && expr.numericType === "Field" && ["+", "-", "*"].includes(expr.name!))
-          value = { ...value, identity: value.identity ?? (value.constant === undefined ? nativeIdentity(`arithmetic:Field:${expr.name}`,values,() => `arithmetic-result:${this.snapshotCount++}`) : undefined), fieldArithmetic: { operator: expr.name! as "+" | "-" | "*", operands: values.map(input => ({
+          value = { ...value, identity: value.identity ?? (value.constant === undefined ? nativeIdentity(`arithmetic:Field:${expr.name}`,values,() => `arithmetic-result:${this.snapshotCount++}`, this.program.meteringIdentity) : undefined), fieldArithmetic: { operator: expr.name! as "+" | "-" | "*", operands: values.map(input => ({
             flows: input.flows, ledger: input.ledger, type: input.type, identity: input.identity,
             constant: input.constant, constantKind: input.constantKind, integerRange: input.integerRange, uintOrigin: input.uintOrigin || numericBound(this.program.representationOf(input.type ?? "unknown")) !== undefined ? true : undefined,
           })), location: expr.span } };
@@ -3009,7 +3021,9 @@ export class Dataflow {
           value = { ...value, ledger: expr.castKind === "numeric" ? value.ledger : new Set(), equalities: undefined, constant: constant?.value, constantKind: constant?.kind, identity: expr.castKind === "numeric" ? value.identity : undefined, comparison: undefined, ordering: undefined, negated: undefined,
             ...(value.predicateHasAlternatives || value.predicateAlternatives || this.currentRootObservation && sourceType === "Boolean" ? { predicateStructureLost: true as const } : {}), collectionPredicate: undefined, listPredicate: undefined, ...(value.merklePredicate ? { merklePredicate: undefined } : {}) };
           if (value.predicateAlternatives) delete value.predicateAlternatives;
-          if (expr.castKind === "scalar" && (foreignField(sourceType) || foreignField(targetType) || this.program.zkirVersion === 3 && targetType === "JubjubScalar")) value.identity = nativeIdentity(`cast:${sourceType}:${targetType}`, values, () => `native-fresh:${this.nativeCount++}`);
+          rememberReportIdentity(`cast:${sourceType}:${targetType}`,
+            `cast:${this.program.reportIdentity(sourceType)}:${this.program.reportIdentity(targetType)}`, this.program.meteringIdentity);
+          if (expr.castKind === "scalar" && (foreignField(sourceType) || foreignField(targetType) || this.program.zkirVersion === 3 && targetType === "JubjubScalar")) value.identity = nativeIdentity(`cast:${sourceType}:${targetType}`, values, () => `native-fresh:${this.nativeCount++}`, this.program.meteringIdentity);
           if (expr.castKind === "scalar" && value.identity && values[0].constant === undefined && this.hashRecipes.contains(values[0])) {
             if (!this.hashRecipes.has(values[0].identity)) {
               this.issue("unsupported-hash-choice", "Scalar cast of an aggregate conditional identity is not modeled; results are incomplete", expr.span);
@@ -3041,7 +3055,7 @@ export class Dataflow {
         && this.program.compilerVersion === "0.34.0"
         && (this.program.zkirVersion === 2 && expr.castKind === "numeric" || this.program.zkirVersion === 3 && expr.castKind === "scalar")
         && values[0].type === "Field" && expr.inferredType === standardType("JubjubScalar")) {
-        value = { ...value, identity: value.identity ?? nativeIdentity(PUBLIC_SCALAR_CAST, values, () => `native-fresh:${this.nativeCount++}`), type: expr.inferredType };
+        value = { ...value, identity: value.identity ?? nativeIdentity(PUBLIC_SCALAR_CAST, values, () => `native-fresh:${this.nativeCount++}`, this.program.meteringIdentity), type: expr.inferredType };
         if (!this.recordRuntimeOperation(next, { kind: "circuit-invocation", name: PUBLIC_SCALAR_CAST,
           location: expr.span, args: values, result: value }, stack)) continue;
       }
@@ -3488,7 +3502,7 @@ export class Dataflow {
       this.issue("either-evidence-unavailable", "Native Either receiver has no modeled tag snapshot; results are incomplete", location);
       return value;
     }
-    const id = JSON.stringify([spanId(location), this.callSites.map(spanId), reads.length]);
+    const id = JSON.stringify([this.program.spanIdentity(location), this.callSites.map(site => this.program.spanIdentity(site)), reads.length]);
     reads.push({ id, arm: name, tag, location, callPath: [...stack], callSites: this.callSites.slice() });
     return markPayload(value, id, () => this.chargeEither(location));
   }
@@ -3559,7 +3573,7 @@ export class Dataflow {
     // These calls supplied the invocation's private proof inputs, not committed effects.
     if (full.witnessCalls) result.witnessCalls = new Map(full.witnessCalls);
     const existing = new Set(prefix.predicates ?? []);
-    const assertions = new Set(full.path.filter(step => step.kind === "constraint").map(step => spanId(step.location)));
+    const assertions = new Set(full.path.filter(step => step.kind === "constraint").map(step => this.program.spanIdentity(step.location)));
     for (const predicate of full.predicates ?? []) {
       if (existing.has(predicate) || (predicate.value.proofLedgerEpoch ?? 0) > epoch) continue;
       if (++this.abstractValues > this.maxValues || ++this.steps > this.maxSteps) {
@@ -3571,7 +3585,7 @@ export class Dataflow {
         break;
       }
       (result.predicates ??= []).push(predicate);
-      if (assertions.has(spanId(predicate.location))) result.path.push({ kind: "constraint", label: "assertion required by the full proof across kernel checkpoint", location: predicate.location });
+      if (assertions.has(this.program.spanIdentity(predicate.location))) result.path.push({ kind: "constraint", label: "assertion required by the full proof across kernel checkpoint", location: predicate.location });
       const coverage = rawPublicPredicate(predicate.value, predicate.truth);
       this.steps += coverage.work;
       if (!coverage.complete || this.steps > this.maxSteps) {
@@ -3895,7 +3909,7 @@ export class Dataflow {
     // aggregates). Unknown or exhausted identities remain wildcard entries.
     if (knownKey === undefined && ["Map", "Set"].includes(type.name) && values[1]) {
       const operand = immutableOperandKey(values[1], Math.min(4096, Math.max(0, this.maxSteps - this.steps)), undefined,
-        this.secretBindingObservation ? (_work, retained) => this.secretBindingCharge(0, retained, expr.span) : undefined);
+        this.secretBindingObservation ? withIdentityMeter(this.program.meteringIdentity, (_work: number, retained: number) => this.secretBindingCharge(0, retained, expr.span)) : undefined, this.program.meteringIdentity);
       this.steps += operand.work;
       if (!operand.complete) {
         this.issue(this.steps > this.maxSteps ? "analysis-budget" : "predicate-budget",
@@ -3908,7 +3922,7 @@ export class Dataflow {
     // Stable identities correlate repeated operands; mayOverlap still treats
     // distinct identities and concrete keys as possible aliases. Unidentified
     // keys stay wildcard regions and never establish must-equality.
-    if (knownKey && !this.secretBindingCharge(0, 3 + Math.ceil(knownKey.length / 64), expr.span)) return undefined;
+    if (knownKey && !this.secretBindingCharge(0, 3 + Math.ceil(this.program.meteringIdentity(knownKey).length / 64), expr.span)) return undefined;
     const key = knownKey ?? "*";
     if (["MerkleTree", "HistoricMerkleTree"].includes(type.name)) return this.merkleOperation(expr, values, receiver, state, stack);
     if (type.name === "Map" && operationName === "lookup") {
@@ -4014,9 +4028,9 @@ export class Dataflow {
       const revision = state.ledgerVersions.get(region.root) ?? 0;
       if (!region.path.includes("key:*") && (expr.name !== "member" || knownKey !== undefined)) result.identity = `collection:${regionKey(region)}:${revision}:${expr.name}:${knownKey ?? ""}`;
       if (operationName === "member") {
-        const address = immutableCollectionAddress(values[0], Math.min(4096, this.maxSteps - this.steps));
+        const address = immutableCollectionAddress(values[0], Math.min(4096, this.maxSteps - this.steps), undefined, undefined, this.program.meteringIdentity);
         this.steps += address.work;
-        const member = immutableOperandKey(values[1], Math.min(4096, this.maxSteps - this.steps));
+        const member = immutableOperandKey(values[1], Math.min(4096, this.maxSteps - this.steps), undefined, undefined, this.program.meteringIdentity);
         this.steps += member.work;
         if (!address.complete || !member.complete) {
           this.issue(this.steps > this.maxSteps ? "analysis-budget" : "predicate-budget",
@@ -4024,7 +4038,7 @@ export class Dataflow {
               : "Collection query identity exceeds its bounded operand traversal; results are incomplete", expr.span);
           return undefined;
         }
-        if (address.key && member.key) result.identity = `collection-query:${createHash("sha256").update(JSON.stringify([address.key, revision, member.key])).digest("hex")}`;
+        if (address.key && member.key) result.identity = this.derivedIdentity("collection-query", [address.key, revision, member.key]);
       }
       if (expr.name !== "size") result.collectionPredicate = { region: { root: region.root, path: [...region.path], type: region.type }, key: knownKey, empty: operationName === "isEmpty", revision,
         ...(this.observeCapacity ? { upperBound: state.collections.upperBound(region) } : {}),
@@ -4180,7 +4194,7 @@ export class Dataflow {
               // The existing marker already summarizes this fold's preceding
               // iterations. Repeating its suffix grows explanation work at
               // every level without adding origin or value evidence.
-              if (flow.trace[prefix].kind === "fold-choice" && spanId(flow.trace[prefix].location) === spanId(expr.span)) break;
+              if (flow.trace[prefix].kind === "fold-choice" && this.program.spanIdentity(flow.trace[prefix].location) === this.program.spanIdentity(expr.span)) break;
               if (!parts.every(part => ++this.steps <= this.maxSteps && JSON.stringify(part.flows[index].trace[prefix]) === JSON.stringify(flow.trace[prefix]))) break;
               prefix++;
             }
@@ -4521,7 +4535,7 @@ export class Dataflow {
       this.issue("observation-compression-dependency", "This rule cannot track all dependencies through an aggregated numeric value within its analysis limits; review this entry manually", location);
     if (kind === "same-value") return { ...value, eitherPayloads: undefined, eitherControls: undefined, eitherLogicalGate: undefined };
     const payloads = [...new Set([...(value.eitherPayloads ?? []), ...(value.eitherControls ?? []).flatMap(control => control.payloads)])].sort();
-    const id = JSON.stringify([this.currentEntry, kind, spanId(location), this.callSites.map(spanId), payloads]);
+    const id = JSON.stringify([this.currentEntry, kind, this.program.spanIdentity(location), this.callSites.map(site => this.program.spanIdentity(site)), payloads]);
     if (!this.chargeEither(location) || this.eitherBranches.size >= 4096 && !this.eitherBranches.has(id)) {
       this.issue("either-evidence-budget", "Either Boolean/control evidence exhausted its bounded allowance; results are incomplete", location);
       return { ...value, eitherEvidenceLost: true };

@@ -1,3 +1,4 @@
+import { wrapIdentityMeter, type IdentityMeter } from "../semantic/metering.js";
 import type { AbstractValue, SuccessfulPath } from "./index.js";
 import { immutableOperandKey } from "./immutable-key.js";
 import { enforcedEqualities } from "./predicates.js";
@@ -8,13 +9,13 @@ import { enforcedEqualities } from "./predicates.js";
  * the pinned native transfer maps identity to identity; no inverse, curve or
  * subgroup property is inferred. */
 export function signatureKeyIdentityExclusions(path: SuccessfulPath, allowance: number,
-  meter?: (work: number, values: number) => boolean,
-  curve = "JubjubPoint", point?: (value: AbstractValue) => boolean): { complete: boolean; work: number; excluded: Set<string> } {
+  meter?: IdentityMeter,
+  curve = "JubjubPoint", point?: (value: AbstractValue) => boolean, identityText?: (identity: string) => string): { complete: boolean; work: number; excluded: Set<string> } {
   let work = 0;
-  const charge = (amount: number, values = 0): boolean => {
+  const charge = wrapIdentityMeter(meter, (amount: number, values = 0): boolean => {
     work += amount;
     return work <= allowance && (!meter || meter(amount, values));
-  };
+  });
   // Precharge every helper container; defaults retain the existing local work cap.
   // A rejected workspace retains only the required empty failure payload.
   if (!charge(0, 4)) return { complete: false, work, excluded: new Set<string>() };
@@ -23,8 +24,7 @@ export function signatureKeyIdentityExclusions(path: SuccessfulPath, allowance: 
   const failed = () => ({ complete: false, work, excluded: meter ? excluded : new Set<string>() });
   const key = (value: AbstractValue): string | undefined => {
     if (keys.has(value)) return keys.get(value);
-    const result = immutableOperandKey(value, Math.min(4096, Math.max(0, allowance - work)), undefined,
-      meter ? (amount, values) => charge(amount, values) : undefined);
+    const result = immutableOperandKey(value, Math.min(4096, Math.max(0, allowance - work)), undefined, meter ? charge : undefined, identityText);
     if (!meter) work += result.work;
     if (!result.complete) { work = allowance + 1; if (meter) return; }
     if (!charge(0, 1)) { work = allowance + 1; return; }
@@ -54,7 +54,7 @@ export function signatureKeyIdentityExclusions(path: SuccessfulPath, allowance: 
   for (const predicate of path.predicates) {
     if (!charge(1)) return failed();
     if (predicate.value.predicateHasAlternatives || predicate.value.predicateStructureLost) return failed();
-    const decoded = enforcedEqualities(predicate.value, predicate.truth, meter ? (amount, values) => charge(amount, values) : undefined);
+    const decoded = enforcedEqualities(predicate.value, predicate.truth, meter ? charge : undefined);
     if (!meter) work += decoded.work;
     if (!decoded.complete || work > allowance) return failed();
     for (const { left, right, equals } of decoded.equalities) {

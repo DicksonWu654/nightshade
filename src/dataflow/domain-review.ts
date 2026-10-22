@@ -1,3 +1,4 @@
+import { pathLength, identityLength } from "../semantic/metering.js";
 import type { AbstractValue, AnalysisFacts, PrivateSource, StateWrite, SuccessfulPath } from "./index.js";
 import { projectEnforcedEqualities } from "./predicates.js";
 import { DOMAIN_REVIEW_RULE, entryParameter, scalarEntryBytes } from "../semantic/domain-review.js";
@@ -34,6 +35,7 @@ export function domainReviewObservations(facts: AnalysisFacts) {
       throw new Error("Domain review exhausted its shared work/value allowance");
     return true;
   };
+  Object.assign(charge, { identityText: facts.program.meteringIdentity });
   const unavailable = (message: string): never => { throw new Error(message); };
   try {
     charge(facts.completedEntries.length);
@@ -126,8 +128,8 @@ export function domainReviewObservations(facts: AnalysisFacts) {
             }
             if (!hash) unavailable("Exact native hash source span is unavailable");
             let emission = 80 + write.callPath.length + write.callSites!.length;
-            for (const component of components) { charge(); emission += 6 * Math.ceil((component.id.length + component.symbol!.length + component.location.file.length) / 64); }
-            for (const id of write.callPath) { charge(); emission += 6 * Math.ceil(id.length / 64); }
+            for (const component of components) { charge(); emission += 6 * Math.ceil((identityLength(component.id, charge) + identityLength(component.symbol!, charge) + pathLength(component.location.file, charge)) / 64); }
+            for (const id of write.callPath) { charge(); emission += 6 * Math.ceil(identityLength(id, charge) / 64); }
             charge(emission, emission);
             observations.push({ entry, write, hash: hash!, components });
             return;

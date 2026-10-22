@@ -1,3 +1,4 @@
+import { ReportIdentityKeys } from "../reporting/identity-keys.js";
 import { mapDebitObservations } from "../dataflow/map-debit.js";
 import { MAP_DEBIT_RULE } from "../semantic/map-debit-targets.js";
 import { finding, unique, type Detector } from "./types.js";
@@ -7,6 +8,7 @@ export const zeroAmountUnguardedMapDebitReview: Detector = {
   description: "Review an amount-zero successful numeric Map debit whose exact lookup has unknown prior membership",
   requires: ["entry-zero-history", "exact-map-lookup", "numeric-subtraction", "ordered-writes"],
   run(facts) {
+    const report = new ReportIdentityKeys(facts.program, MAP_DEBIT_RULE, facts.program.rootSource.ast.span);
     if (!facts.mapDebitEvidence) return [];
     const result = mapDebitObservations(facts);
     facts.diagnostics.push(...result.diagnostics);
@@ -24,6 +26,6 @@ export const zeroAmountUnguardedMapDebitReview: Detector = {
         mapIdentity: lookup.membership!.region.root, zeroSuccesses, membershipBeforeLookup: "unknown",
         initiallyMissing: "not-proven", lookupFailure: "not-proven", newEntry: "not-proven", pathFeasibility: "not-proven",
         deployedImpact: "not-proven" },
-    }, `${entry}:${amount ?? "literal-zero"}:${lookup.membership!.region.root}:${lookup.membership!.key}`)));
+    }, `${entry}:${amount ?? "literal-zero"}:${lookup.membership!.region.root}:${report.key(lookup.membership!.key ?? "")}`)));
   },
 };

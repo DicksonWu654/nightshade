@@ -1,12 +1,13 @@
 import { createHash } from "node:crypto";
 import type { AbstractValue } from "./index.js";
+import { reportIdentity, rememberReportIdentity, type IdentityText, type IdentityMeter } from "../semantic/metering.js";
 import { constantOf } from "./transfers.js";
 
 /** Bounded identity of immutable scalar/aggregate operands. Hash each container
  * separately so repeated DAG edges cannot expand a serialized key exponentially.
  * Unknown leaves stay unknown; dependency unions never identify equal values. */
 export function immutableOperandKey(value: AbstractValue, allowance = 4096, canonicalize?: (key: string) => string,
-  meter?: (work: number, values: number) => boolean): { key?: string; complete: boolean; work: number } {
+  meter?: IdentityMeter, measureIdentity: IdentityText = meter?.identityText ?? (identity => identity)): { key?: string; complete: boolean; work: number } {
   let work = 0, complete = true;
   if (meter && !meter(0, 1)) return { complete: false, work: 0 };
   const memo = new WeakMap<AbstractValue, string | undefined>();
@@ -27,9 +28,13 @@ export function immutableOperandKey(value: AbstractValue, allowance = 4096, cano
       if (keys.some(key => key === undefined)) return undefined;
       if (part.comparison) keys.sort();
       let encodingUnits = 4;
-      for (const key of keys) encodingUnits += Math.ceil((key?.length ?? 0) / 64);
+      for (const key of keys) encodingUnits += Math.ceil(measureIdentity(key ?? "").length / 64);
       if (!retain(encodingUnits)) return undefined;
       const raw = `expression:${createHash("sha256").update(JSON.stringify([operation, part.ordering?.numericType, keys])).digest("hex")}`;
+      const reportedKeys = keys.map(key => reportIdentity(key!, measureIdentity));
+      if (part.comparison) reportedKeys.sort();
+      rememberReportIdentity(raw, `expression:${createHash("sha256").update(JSON.stringify([operation,
+        part.ordering?.numericType && reportIdentity(part.ordering.numericType, measureIdentity), reportedKeys])).digest("hex")}`, measureIdentity);
       const key = canonicalize?.(raw) ?? raw;
       if (!retain(1)) return undefined;
       memo.set(part, key); return key;
@@ -37,8 +42,8 @@ export function immutableOperandKey(value: AbstractValue, allowance = 4096, cano
     // Equality evidence is component-wise. Rebuild represented aggregates from
     // canonical leaves even when the aggregate also has a snapshot identity.
     if (part.identity && !(canonicalize && (part.fields || part.items))) {
-      if (part.identity.length > 65536) { complete = false; return undefined; }
-      if (!retain(1 + Math.ceil(part.identity.length / 64))) return undefined;
+      if (measureIdentity(part.identity).length > 65536) { complete = false; return undefined; }
+      if (!retain(1 + Math.ceil(measureIdentity(part.identity).length / 64))) return undefined;
       const key = `id:${part.identity}`;
       return canonicalize?.(key) ?? key;
     }
@@ -64,14 +69,17 @@ export function immutableOperandKey(value: AbstractValue, allowance = 4096, cano
     if (!children) return undefined;
     if (!retain(2)) return undefined;
     const hash = createHash("sha256").update(part.fields ? "fields" : "items");
+    const reportHash = createHash("sha256").update(part.fields ? "fields" : "items");
     for (const [name, child] of children) {
       const key = visit(child, depth + 1);
       if (!key) { if (!meter || complete && retain(1)) memo.set(part, undefined); return undefined; }
-      if (!retain(2 + Math.ceil((name.length + key.length) / 64))) return undefined;
+      if (!retain(2 + Math.ceil((name.length + measureIdentity(key).length) / 64))) return undefined;
       hash.update(JSON.stringify([name, key]));
+      reportHash.update(JSON.stringify([name, reportIdentity(key, measureIdentity)]));
     }
     if (!retain(2)) return undefined;
     const raw = `aggregate:${hash.digest("hex")}`;
+    rememberReportIdentity(raw, `aggregate:${reportHash.digest("hex")}`, measureIdentity);
     const key = canonicalize?.(raw) ?? raw;
     if (!retain(1)) return undefined;
     memo.set(part, key); return key;
@@ -82,7 +90,7 @@ export function immutableOperandKey(value: AbstractValue, allowance = 4096, cano
 
 /** Exact ledger address from immutable lookup operands. Wildcards alone never
  * identify the same collection. Revision is supplied separately by the caller. */
-export function immutableCollectionAddress(value: AbstractValue, allowance = 4096, canonicalize?: (key: string) => string, meter?: (work: number, values: number) => boolean): { key?: string; complete: boolean; work: number } {
+export function immutableCollectionAddress(value: AbstractValue, allowance = 4096, canonicalize?: (key: string) => string, meter?: IdentityMeter, measureIdentity: IdentityText = meter?.identityText ?? (identity => identity)): { key?: string; complete: boolean; work: number } {
   if (meter && !meter(1, 3)) return { complete: false, work: 0 };
   const region = value.region;
   if (!region) return { complete: true, work: 1 };
@@ -99,7 +107,7 @@ export function immutableCollectionAddress(value: AbstractValue, allowance = 409
     if (meter && !meter(1, 2)) return { complete: false, work };
     const selector = selectors.get(index);
     if (selector) {
-      const result = immutableOperandKey(selector, allowance - work, canonicalize, meter);
+      const result = immutableOperandKey(selector, allowance - work, canonicalize, meter, measureIdentity);
       work += result.work;
       if (!result.complete || !result.key) return { complete: result.complete, work };
       path.push(result.key);

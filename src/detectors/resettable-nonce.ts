@@ -1,3 +1,4 @@
+import { ReportIdentityKeys } from "../reporting/identity-keys.js";
 import { resettableNoncePairs } from "../dataflow/resettable-nonce.js";
 import { finding, unique, type Detector } from "./types.js";
 import { hasShieldedMint } from "../semantic/mint-targets.js";
@@ -17,6 +18,7 @@ export function resettableListNonceFindings(facts: Parameters<Detector["run"]>[0
   if (facts.pathSemantics !== "equivalent-states" || !facts.mintEvidence || !facts.digestEvidence || facts.program.entries.some(entry => !facts.completedEntries.includes(entry))) {
     issue("Complete cross-entry histories and exact canonical nonce inputs required"); return [];
   }
+  const report = new ReportIdentityKeys(facts.program, resettableListNonce.id, facts.program.rootSource.ast.span);
   const checked = resettableNoncePairs(facts, entries);
   if (!checked.complete) { issue("Cross-entry source relationship allowance exhausted"); return []; }
   return unique(checked.pairs.map(pair => {
@@ -29,7 +31,7 @@ export function resettableListNonceFindings(facts: Parameters<Detector["run"]>[0
       trace: [{ kind: "source", label: `reset of ${ledger} in ${resetEntry}`, location: pair.reset.location }, { kind: "sink", label: "length-derived canonical coin nonce", location: pair.operation.location }],
       callPath: pair.operation.callPath.map(id => facts.program.symbols.get(id)?.name ?? id),
       remediation: "Use a separately maintained monotonic nonce source or an appropriate fresh nonce rather than a resettable collection extent.",
-      metadata: { entry: facts.program.symbols.get(pair.entry)!.name, ledger, resetEntry, evidence: "exact-list-length-canonical-nonce-and-cross-entry-reset-overlap", selectedPath: pair.selectedPath, resetPath: pair.reset.region, selectorRelation: pair.exactRegion ? "exact-region" : "may-overlap", reviewRequired: true, transactionFeasibility: "not-proven", authorizationIntent: "not-analyzed" },
+      metadata: { entry: facts.program.symbols.get(pair.entry)!.name, ledger, resetEntry, evidence: "exact-list-length-canonical-nonce-and-cross-entry-reset-overlap", selectedPath: report.region(pair.selectedPath), resetPath: report.region(pair.reset.region), selectorRelation: pair.exactRegion ? "exact-region" : "may-overlap", reviewRequired: true, transactionFeasibility: "not-proven", authorizationIntent: "not-analyzed" },
     }, pair.entry);
   }));
 }

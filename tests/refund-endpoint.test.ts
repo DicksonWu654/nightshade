@@ -1,10 +1,12 @@
 import { execFileSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import { reserveRefundEndpointFinding } from "../src/detectors/refund-endpoint.js";
 import { discoverRefundEndpoints } from "../src/semantic/refund-endpoint.js";
 import { certifyRefundEndpoint } from "../src/dataflow/refund-endpoint.js";
 import assert from "node:assert/strict";
 import test from "node:test";
-import { resolve } from "node:path";
+import { relative, resolve } from "node:path";
+import { symlinkSync } from "node:fs";
 import { Program, scanFile } from "../src/index.js";
 import { withFiles } from "./helpers.js";
 import { observeRefundEndpoints } from "../src/analysis/refund-endpoint-observation.js";
@@ -168,35 +170,51 @@ test("mutating public discovery bindings cannot bypass a privately captured reje
  });
 });
 
-test("fingerprint replacement tokens reserve expansion before allocation",()=>{
- for(const token of ["$'", "$`"]) {
+test("refund fingerprint reservation treats pathname dollar sequences literally", context=>{
+ const identifier="e".repeat(4096);
+ const amounts:number[]=[];
+ for(const token of ["plain", "$'"]) {
   const filename=`prefix${token.repeat(40)}.compact`;
-  const text=source.replace("export circuit entry(", `export circuit ${"e".repeat(4096)}(`);
-  withFiles({[filename]:text},dir=>{
+  withFiles({[filename]:source.replace("export circuit entry(", `export circuit ${identifier}(`)},dir=>{
    const program=new Program(resolve(dir,filename));
    const certificate=discoverRefundEndpoints(program,program.entries[0],()=>{})
     .map(candidate=>certifyRefundEndpoint(program,candidate,()=>{})).find(Boolean)!;
    assert.ok(certificate);
-   const original=String.prototype.replaceAll;let pathnameReplacements=0;
-   String.prototype.replaceAll=function(search:string|RegExp,replacement:string|((substring:string,...args:any[])=>string)):string {
-    if(search===program.root)pathnameReplacements++;
-    return Reflect.apply(original,this,[search,replacement]);
-   };
-   try {
-    let values=0;
-    const reserve=()=>reserveRefundEndpointFinding(program,certificate,(_work=1,retained=0)=>{
-     values+=retained;if(values>20000)throw new Error("allowance exhausted");
-    });
-    if(token==="$'") {
-     assert.throws(reserve,/allowance exhausted/);
-     assert.equal(pathnameReplacements,0,"exhaustion must precede both replacement allocations");
-    } else {
-     // The root pathname is the first match, so its prefix is empty. Preserve
-     // that bounded case rather than assuming every replacement token expands.
-     assert.doesNotThrow(reserve);
-     assert.equal(pathnameReplacements,1);
-    }
-   } finally {String.prototype.replaceAll=original;}
+   let values=0;
+   const reserve=()=>reserveRefundEndpointFinding(program,certificate,(_work=1,retained=0)=>{
+    values+=retained;if(values>20000)throw new Error("allowance exhausted");
+   });
+   assert.doesNotThrow(reserve);
+   amounts.push(values);
+   const result=observeRefundEndpoints(program,rule,{});
+   context.diagnostic(JSON.stringify({token,values,findings:result.findings.length,diagnostics:result.diagnostics.map(d=>d.code)}));
+   assert.equal(result.findings.length,1);
+   assert.equal(result.diagnostics.length,0);
   });
  }
+ assert.deepEqual(amounts,[amounts[0],amounts[0]]);
+});
+
+test("overlapping pathname replacement keeps one source identifier in the fingerprint",()=>{
+ const identifier="e".repeat(4096), suffix="prefix"+("$&$'".repeat(3))+".compact";
+ const root=suffix+".root.compact";
+ const text=`import CompactStandardLibrary; import "Other";${validator}${caller}`
+   .replace("export circuit entry(",`export circuit ${identifier}(`);
+ withFiles({[suffix]:"module Other { export circuit get():Field{return 1;} }",[root]:text},dir=>{
+  symlinkSync(resolve(dir,suffix),resolve(dir,"Other.compact"));
+  const file=resolve(dir,root), program=new Program(file);
+  const certificate=discoverRefundEndpoints(program,program.entries[0],()=>{})
+   .map(candidate=>certifyRefundEndpoint(program,candidate,()=>{})).find(Boolean)!;
+  assert.ok(certificate);
+  const result=observeRefundEndpoints(program,rule,{});
+  assert.equal(result.findings.length,1,JSON.stringify(result.diagnostics));
+  assert.equal(result.diagnostics.length,0);
+  let discriminator=`${certificate.candidate.entry}:${certificate.candidate.send.start}`;
+  for(const loaded of [...program.files.keys()].sort((a,b)=>b.length-a.length))
+   discriminator=discriminator.replaceAll(loaded,()=>relative(program.sourceRoot,loaded));
+  assert.equal(discriminator.split(identifier).length-1,1);
+  const key=[rule.id,relative(program.sourceRoot,program.root),
+   relative(program.sourceRoot,certificate.candidate.send.file),certificate.candidate.send.start,discriminator].join(":");
+  assert.equal(result.findings[0].fingerprint,createHash("sha256").update(key).digest("hex"));
+ });
 });

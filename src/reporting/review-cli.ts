@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { basename, delimiter, resolve } from "node:path";
+import { basename, delimiter, dirname, relative, resolve } from "node:path";
 import { mkdirSync, statSync, writeFileSync, readFileSync, realpathSync } from "node:fs";
 import { discoverProjectIsolated } from "../semantic/project.js";
 import type { CompilerVersion, ZkirVersion } from "../semantic/profile.js";
@@ -53,7 +53,8 @@ export async function reviewCommand(args: string[], compilerVersion?: CompilerVe
   for (const file of files) {
     const brief = await reviewFileIsolated(file, { ...options, searchPaths: [...searchPaths, ...discovery?.searchPaths[file] ?? []] }, limits);
     if (explorer) brief.explorer = explorer;
-    const stem = `${basename(file, ".compact")}-${createHash("sha256").update(file).digest("hex").slice(0, 12)}`;
+    const sourceDirectory = discovery ? root : dirname(root);
+    const stem = `${basename(file, ".compact")}-${createHash("sha256").update(relative(sourceDirectory, file)).digest("hex").slice(0, 12)}`;
     writeFileSync(resolve(output, `${stem}.json`), JSON.stringify(brief, null, 2) + "\n", { flag: "wx" });
     writeFileSync(resolve(output, `${stem}.md`), reviewMarkdown(brief), { flag: "wx" });
     manifest.contracts.push({ root: brief.root, status: brief.status, json: `${stem}.json`, markdown: `${stem}.md`, questions: brief.questions.length });

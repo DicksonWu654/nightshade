@@ -1,3 +1,4 @@
+import { pathLength, identityLength } from "../semantic/metering.js";
 import type { AbstractValue, AnalysisFacts, RuntimeOperation, StateWrite, SuccessfulPredicate } from "./index.js";
 import { immutableOperandKey } from "./immutable-key.js";
 import { projectEnforcedEqualities } from "./predicates.js";
@@ -23,6 +24,7 @@ export function membershipIdentityObservations(facts: AnalysisFacts): Membership
       throw new Error("Membership identity matching exhausted its shared allowance");
     return true;
   };
+  Object.assign(charge, { identityText: facts.program.meteringIdentity });
   const key = (value: AbstractValue): string | undefined => {
     charge();
     if (value.fields || value.items || value.region) return;
@@ -116,10 +118,10 @@ export function membershipIdentityObservations(facts: AnalysisFacts): Membership
           if(!listWrites.has(index))continue;
           if(!membershipIdentityMap(facts.program,write.ledger,write.before.type,charge) || write.region.length!==1 || !write.region[0].startsWith("key:"))continue;
           if(write.region[0]==="key:*")throw new Error("Exact keyed mutation operand unavailable");
-          charge(1,1+Math.ceil(write.region[0].length/64));
+          charge(1,1+Math.ceil(identityLength(write.region[0], charge)/64));
           const target=write.region[0].startsWith("key:identity:")?write.region[0].slice(13):`constant:${write.region[0].slice(4)}`;
           if(!connected(operand,target))continue;
-          charge(member.predicate.callSites.length+digest.predicate.callPath.length,8+Math.ceil((entry.length+a.length+b.length+(member.operation.result.identity?.length??0)+write.ledger.length+write.region[0].length)/64));
+          charge(member.predicate.callSites.length+digest.predicate.callPath.length,8+Math.ceil((identityLength(entry, charge)+identityLength(a, charge)+identityLength(b, charge)+identityLength(member.operation.result.identity, charge)+identityLength(write.ledger, charge)+identityLength(write.region[0], charge))/64));
           const id=JSON.stringify([entry,member.predicate.location.file,member.predicate.location.start,a,b,member.operation.result.identity,write.region[0],write.ledger,member.predicate.callSites.map(site=>site.start),digest.predicate.callPath]);
           const previous = emitted.get(id);
           if(previous) {
@@ -131,9 +133,9 @@ export function membershipIdentityObservations(facts: AnalysisFacts): Membership
             continue;
           }
           // Reserve report text, fingerprint source inventory and metadata.
-          let units=id.length+entry.length+write.ledger.length;
+          let units=identityLength(id, charge)+identityLength(entry, charge)+identityLength(write.ledger, charge);
           charge(facts.program.files.size*Math.max(1,Math.ceil(Math.log2(facts.program.files.size+1))),facts.program.files.size);
-          for(const file of facts.program.files.keys()){charge();units+=file.length+id.length;}
+          for(const file of facts.program.files.keys()){charge();units+=pathLength(file, charge)+identityLength(id, charge);}
           charge(8+Math.ceil(units/64),100+Math.ceil(units/64)+write.callPath.length*4);
           const observation = {entry,groupId:id,write,digest:digest.value,member:member.operation,equality:digest.predicate,membership:member.predicate,effectSites:[write.location]};
           emitted.set(id,observation);histories.set(observation,new Set([path]));observations.push(observation);

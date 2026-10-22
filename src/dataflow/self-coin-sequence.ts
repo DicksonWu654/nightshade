@@ -5,7 +5,7 @@ import { RECEIVE_SHIELDED } from "../semantic/value-transfers.js";
 
 /** Exact returned coin snapshots only. No provenance, name or later predicate
  * equality joins. Ordering comes from one original successful history. */
-export function selfCoinSequences(path: SuccessfulPath, allowance = 100000) {
+export function selfCoinSequences(path: SuccessfulPath, allowance = 100000, identityText?: (identity: string) => string) {
   let work = 0, complete = true;
   const key = (value: Parameters<typeof immutableOperandKey>[0] | undefined) => {
     if (!value) return undefined;
@@ -30,7 +30,7 @@ export function selfCoinSequences(path: SuccessfulPath, allowance = 100000) {
       }
       memo.set(part, result); return result;
     };
-    const result = immutableOperandKey(snapshotValue(value), Math.min(4096, Math.max(0, allowance - work)), value => value);
+    const result = immutableOperandKey(snapshotValue(value), Math.min(4096, Math.max(0, allowance - work)), value => value, undefined, identityText);
     work += result.work; complete &&= result.complete;
     return result.key;
   };

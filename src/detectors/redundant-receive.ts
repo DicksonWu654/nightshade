@@ -22,7 +22,7 @@ export const redundantSelfShieldedReceive: Detector = {
     const results = [];
     for (const path of facts.paths) {
       if (!facts.completedEntries.includes(path.entry)) continue;
-      const checked = selfCoinSequences(path, Math.min(100000, 1000000 - work)); work += checked.work;
+      const checked = selfCoinSequences(path, Math.min(100000, 1000000 - work), facts.program.meteringIdentity); work += checked.work;
       if (!checked.complete) { issue("Immutable coin equality allowance exhausted"); return []; }
       for (const pair of checked.pairs) results.push(finding(facts, {
         detectorId: REDUNDANT_RECEIVE_RULE, severity: "info", confidence: "high",

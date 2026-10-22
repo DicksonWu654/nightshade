@@ -1,3 +1,4 @@
+import { pathLength, identityLength, type IdentityMeter } from "../semantic/metering.js";
 import type { AbstractValue, AnalysisFacts, RuntimeOperation, SuccessfulPath } from "./index.js";
 import { mayOverlap, regionKey, type Region } from "./regions.js";
 import { parseType, printType } from "../semantic/types.js";
@@ -9,7 +10,7 @@ import { spanId, type Diagnostic } from "../model.js";
 export interface Debit { lookup: RuntimeOperation; write: RuntimeOperation; amount?: string }
 export interface MapDebitObservation { entry: string; lookup: RuntimeOperation; write: RuntimeOperation; amount?: string; zeroSuccesses: number }
 
-type DebitCharge = (amount?: number, retained?: number) => void;
+type DebitCharge = ((amount?: number, retained?: number) => void) & Pick<IdentityMeter, "identityText">;
 /** Preflight the bounded immutable-key DAG before the shared key builder owns
  * memo entries, operand arrays or serialized scalar keys. Reserve conservatively
  * for every inspected edge; repeated references do not bypass the walk budget.
@@ -29,7 +30,7 @@ function reserveImmutableKey(value: AbstractValue, charge: DebitCharge): void {
       const operation = part.comparison ?? part.ordering!;
       visit(operation.left, depth + 1); visit(operation.right, depth + 1); return;
     }
-    if (part.identity) { charge(1 + Math.ceil(part.identity.length / 64), 1 + Math.ceil(part.identity.length / 64)); return; }
+    if (part.identity) { charge(1 + Math.ceil(identityLength(part.identity, charge) / 64), 1 + Math.ceil(identityLength(part.identity, charge) / 64)); return; }
     if (part.constant !== undefined) { charge(1 + Math.ceil(part.constant.length / 64), 1 + Math.ceil(part.constant.length / 64)); return; }
     charge(0, 8);
     if (part.fields) {
@@ -53,11 +54,11 @@ function exactKey(value: AbstractValue, charge: DebitCharge): string | undefined
     return `${value.constantKind}:${value.constant}`;
   }
   reserveImmutableKey(value, charge);
-  const operand = immutableOperandKey(value);
+  const operand = immutableOperandKey(value, undefined, undefined, undefined, charge.identityText);
   charge(operand.work);
   if (!operand.complete) throw new Error("Collection key identity traversal is incomplete");
   if (!operand.key) return;
-  const units = 1 + Math.ceil(operand.key.length / 64);
+  const units = 1 + Math.ceil(identityLength(operand.key, charge) / 64);
   charge(units, units);
   return `identity:${operand.key}`;
 }
@@ -71,21 +72,21 @@ function snapshotReservation(operation: RuntimeOperation, path: SuccessfulPath, 
   let retained = 16 + 2 * (operation.args?.length ?? 0);
   for (const region of [operation.args?.[0]?.region, operation.membership?.region, operation.result?.region]) {
     if (!region) continue;
-    let chunks = 1 + Math.ceil(region.root.length / 64);
-    for (const part of region.path) { charge(); chunks += 1 + Math.ceil(part.length / 64); }
+    let chunks = 1 + Math.ceil(identityLength(region.root, charge) / 64);
+    for (const part of region.path) { charge(); chunks += 1 + Math.ceil(identityLength(part, charge) / 64); }
     retained += region.path.length + 6 * chunks;
   }
   const position = operation.writesBefore;
   const write = position === undefined ? undefined : path.writes[position];
   if (write) {
-    let chunks = 1 + Math.ceil(write.ledger.length / 64);
-    for (const part of write.region) { charge(); chunks += 1 + Math.ceil(part.length / 64); }
+    let chunks = 1 + Math.ceil(identityLength(write.ledger, charge) / 64);
+    for (const part of write.region) { charge(); chunks += 1 + Math.ceil(identityLength(part, charge) / 64); }
     retained += write.region.length + 6 * chunks;
   }
-  for (const id of operation.callPath) { charge(); retained += 6 * (1 + Math.ceil(id.length / 64)); }
-  for (const site of operation.callSites ?? []) { charge(); retained += 2 + 12 * (1 + Math.ceil(site.file.length / 64)); }
-  for (const id of write?.callPath ?? []) { charge(); retained += 6 * (1 + Math.ceil(id.length / 64)); }
-  for (const site of write?.callSites ?? []) { charge(); retained += 2 + 12 * (1 + Math.ceil(site.file.length / 64)); }
+  for (const id of operation.callPath) { charge(); retained += 6 * (1 + Math.ceil(identityLength(id, charge) / 64)); }
+  for (const site of operation.callSites ?? []) { charge(); retained += 2 + 12 * (1 + Math.ceil(pathLength(site.file, charge) / 64)); }
+  for (const id of write?.callPath ?? []) { charge(); retained += 6 * (1 + Math.ceil(identityLength(id, charge) / 64)); }
+  for (const site of write?.callSites ?? []) { charge(); retained += 2 + 12 * (1 + Math.ceil(pathLength(site.file, charge) / 64)); }
   charge(retained, retained);
 }
 
@@ -119,7 +120,7 @@ function retainedOperations(facts: AnalysisFacts, path: SuccessfulPath, charge: 
       const receiver = operation.args[0]?.region;
       if (operation.name === "insert" && receiver) {
         const representation = facts.program.representationOf(receiver.type);
-        charge(representation.length, representation.length);
+        charge(identityLength(representation, charge), identityLength(representation, charge));
         const type = parseType(representation);
         if (type.name === "Map" && type.args[1] && /^(Field|Uint<\d+>)$/.test(printType(type.args[1]))
           && (!operation.args[1] || !operation.args[2]))
@@ -166,7 +167,7 @@ export function exactMapDebits(facts: AnalysisFacts, path: SuccessfulPath, zero:
     const receiver = operation.args[0]?.region, expression = operation.args[2]?.numericExpression;
     if (!receiver || !expression || expression.operator !== "-" || expression.operands.length !== 2) continue;
     const representation = facts.program.representationOf(receiver.type);
-    charge(representation.length, representation.length);
+    charge(identityLength(representation, charge), identityLength(representation, charge));
     const map = parseType(representation);
     if (map.name !== "Map" || !map.args[1] || !/^(Field|Uint<\d+>)$/.test(printType(map.args[1]))) continue;
     const minuend = expression.operands[0], amountValue = expression.operands[1];
@@ -221,6 +222,7 @@ export function mapDebitAmountCandidates(facts: AnalysisFacts, entry: string, al
     if (values + facts.metrics.abstractValues > facts.mapDebitEvidence!.maxValues) throw new Error("Map debit candidate value allowance exhausted");
     if (work > allowance) throw new Error("Map debit candidate traversal exhausted its allowance");
   };
+  Object.assign(charge, { identityText: facts.program.meteringIdentity });
   const retain = () => {
     if (++values + facts.metrics.abstractValues > facts.mapDebitEvidence!.maxValues)
       throw new Error("Map debit candidate value allowance exhausted");
@@ -257,6 +259,7 @@ export function mapDebitObservations(facts: AnalysisFacts, allowance = 200000) {
     if (work > allowance || facts.metrics.steps + work > evidence.maxSteps)
       throw new Error("Map debit relation traversal exhausted its shared allowance");
   };
+  Object.assign(charge, { identityText: facts.program.meteringIdentity });
   const retain = () => {
     if (++values + facts.metrics.abstractValues > evidence.maxValues)
       throw new Error("Map debit relation value allowance exhausted");

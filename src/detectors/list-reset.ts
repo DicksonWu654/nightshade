@@ -1,3 +1,4 @@
+import { ReportIdentityKeys } from "../reporting/identity-keys.js";
 import { acknowledgedListReset } from "../dataflow/list-reset.js";
 import { hasListWrites } from "../semantic/list-reset-targets.js";
 import { parseType } from "../semantic/types.js";
@@ -10,6 +11,7 @@ export const destructiveListReset: Detector = {
   requires: ["successful-histories", "successful-predicates", "state-writes", "completed-entries"],
   run(facts) {
     const findings: Finding[] = [];
+    const report = new ReportIdentityKeys(facts.program, destructiveListReset.id, facts.program.rootSource.ast.span);
     let work = 0;
     for (const entry of facts.completedEntries) {
       if (!hasListWrites(facts.program, entry)) continue;
@@ -25,7 +27,7 @@ export const destructiveListReset: Detector = {
         if (checked.acknowledged) continue;
         const key = spanId(write.location);
         const group = groups.get(key) ?? { write, histories: [] };
-        group.histories.push({ region: write.region, revision: write.before.region!.revision,
+        group.histories.push({ region: report.region(write.region), revision: write.before.region!.revision,
           invocationSites: write.callSites ?? [], branches: path.path });
         groups.set(key, group);
       }

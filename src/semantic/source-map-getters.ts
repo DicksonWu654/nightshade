@@ -35,7 +35,7 @@ export function prepareSourceMapGetters(program: Program, policies: readonly Sou
   const account = (text: string) => {
     let current = text, depth = 0;
     for (;;) {
-      charge(4 + current.length * 4, 2 + Math.ceil(current.length / 8));
+      charge(4 + program.meteringIdentity(current).length * 4, 2 + Math.ceil(program.meteringIdentity(current).length / 8));
       if (++depth > 64) throw new Error("Source Map canonical type identity depth is unavailable");
       const nominal = program.nominalTypes.get(current); if (!nominal) break;
       current = nominal.underlying;
@@ -45,7 +45,7 @@ export function prepareSourceMapGetters(program: Program, policies: readonly Sou
   const select = (selector: string, kind: SymbolInfo["kind"]): SymbolInfo => {
     let selected: SymbolInfo | undefined;
     for (const symbol of program.symbols.values()) {
-      charge(1 + Math.ceil((symbol.id.length + symbol.name.length) / 64));
+      charge(1 + Math.ceil((program.meteringIdentity(symbol.id).length + symbol.name.length) / 64));
       if (symbol.kind !== kind || !program.isActiveSymbol(symbol) || symbol.id !== selector && symbol.name !== selector) continue;
       if (selected) fail("invalid-policy", "Source Map getter selector is ambiguous; use a canonical symbol ID", symbol.span);
       selected = symbol;
@@ -55,7 +55,7 @@ export function prepareSourceMapGetters(program: Program, policies: readonly Sou
   };
   for (const policy of policies) {
     let quoted = false;
-    charge(1 + fields.reduce((sum, field) => sum + policy[field].length, 0), 8);
+    charge(1 + fields.reduce((sum, field) => sum + (field === "quote" ? policy[field] : program.meteringSelector(policy[field])).length, 0), 8);
     for (const source of program.files.values()) {
       if (!source.comments) throw new Error("Parser-owned source comments are unavailable");
       for (const comment of source.comments) { charge(1 + comment.text.length); quoted ||= comment.text === policy.quote; }

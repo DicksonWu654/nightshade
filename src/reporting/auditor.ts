@@ -3,6 +3,7 @@ import { createHash } from "node:crypto";
 import { resolve } from "node:path";
 import { Dataflow, type AbstractValue, type SuccessfulPredicate, type TraceStep } from "../dataflow/index.js";
 import { ValueFingerprints } from "../dataflow/fingerprints.js";
+import { ReportIdentityKeys } from "./identity-keys.js";
 import { Program } from "../semantic/index.js";
 import { semanticProfile, validCompilerVersion, validSemanticProfile } from "../semantic/profile.js";
 import { AnalysisError, type Diagnostic, type Span } from "../model.js";
@@ -45,7 +46,7 @@ class Evidence {
   private readonly traceKeys = new Map<string, string>();
   private readonly encoded = new WeakMap<object, Map<string, unknown>>();
   private work = 0;
-  constructor(private readonly span: Span) {}
+  constructor(private readonly span: Span, private readonly reportKeys: ReportIdentityKeys) {}
   private intern(input: unknown, keys: Map<string, string>, table: Record<string, unknown>, prefix: string): string {
     const hash = createHash("sha256").update(JSON.stringify(input)).digest("hex");
     let id = keys.get(hash);
@@ -62,6 +63,8 @@ class Evidence {
   }
   encode(input: unknown, depth = 0, field?: string): unknown {
     if (++this.work > 1000000 || depth > 256) throw new AnalysisError({ code: "printer-budget", message: "Auditor evidence serialization exceeded its bounded work/depth; output is incomplete", location: this.span });
+    if (typeof input === "string" && ["identity", "mintSnapshot", "mapDebitLookupOrigin", "eitherSelection", "enrollmentSignatureOutcome"].includes(field ?? ""))
+      return this.reportKeys.key(input);
     if (!input || typeof input !== "object") return input;
     const role = field === "trace" && Array.isArray(input) ? "trace"
       : field === "source" && "id" in input && "location" in input ? "source" : "plain";
@@ -80,6 +83,9 @@ class Evidence {
       return { source: this.intern(input, this.sourceKeys, this.sources, "s") };
     if (Array.isArray(input)) return input.map(value => this.encode(value, depth + 1));
     if (input && typeof input === "object") {
+      if ("root" in input && typeof input.root === "string" && "path" in input && Array.isArray(input.path))
+        return Object.fromEntries(Object.entries(input).map(([key, part]) => [key,
+          key === "path" ? this.reportKeys.region(input.path as string[]) : this.encode(part, depth + 1, key)]));
       const value = input as AbstractValue;
       if (Array.isArray(value.flows) && value.ledger instanceof Set) {
         let id = this.ids.get(value);
@@ -124,7 +130,8 @@ export function auditFile(path: string, printer: AuditorPrinter, options: Audito
     const symbols = program.activeSymbols().filter(symbol => ["ledger", "circuit", "constructor", "witness"].includes(symbol.kind))
       .map(symbol => ({ id: symbol.id, name: symbol.name, kind: symbol.kind, location: symbol.span }));
     if (printer === "human-summary") { report.data = { symbols, metrics: facts.metrics }; return report; }
-    const evidence = new Evidence(location(path));
+    const reportKeys = new ReportIdentityKeys(program, "auditor", program.rootSource.ast.span);
+    const evidence = new Evidence(location(path), reportKeys);
     const fingerprints = new ValueFingerprints();
     const predicates: Record<string, unknown> = {};
     const predicateKeys = new Map<string, string>();
@@ -135,20 +142,31 @@ export function auditFile(path: string, printer: AuditorPrinter, options: Audito
       if (!id) { id = `p${predicateKeys.size + 1}`; predicateKeys.set(key, id); predicates[id] = encoded; }
       return id;
     };
-    const sites = new Map<string, { entry: string; ledger: string; region: string[]; location: Span; callPath: string[]; callSites?: Span[]; occurrences: number; requiredPredicates: Set<string>; requiredCompletedCalls: Set<string> }>();
+    const sites = new Map<string, { id: string; entry: string; ledger: string; region: string[]; location: Span; callPath: string[]; callSites?: Span[]; occurrences: number; requiredPredicates: Set<string>; requiredCompletedCalls: Set<string> }>();
+    const reportLocation = (location: Span) => ({ ...location, file: program.meteringPath(location.file) });
     const histories = facts.paths.map((path, history) => {
       const base = { history, entry: path.entry, trace: evidence.encode(path.path, 0, "trace") };
       if (printer === "ledger-access") return { ...base, writes: path.writes.map((write, index) => {
         const preceding = (path.predicates ?? []).filter(predicate => predicate.writesBefore <= index).map(predicateId);
         const { ledger, region, location, callPath, callSites } = write;
-        const siteId = fingerprints.key({ entry: path.entry, ledger, region, location, callPath, callSites });
-        const site = sites.get(siteId);
+        const siteKey = fingerprints.key({ entry: path.entry, ledger, region, location, callPath, callSites });
+        let site = sites.get(siteKey);
         if (site) {
           site.occurrences++;
           site.requiredPredicates = new Set([...site.requiredPredicates].filter(id => preceding.includes(id)));
           site.requiredCompletedCalls = new Set([...site.requiredCompletedCalls].filter(id => write.guards.includes(id)));
-        } else sites.set(siteId, { entry: path.entry, ledger, region, location, callPath, callSites, occurrences: 1, requiredPredicates: new Set(preceding), requiredCompletedCalls: new Set(write.guards) });
-        return { site: siteId, index, ledger, region, location, callPath, callSites, before: evidence.encode(write.before), after: evidence.encode(write.after),
+        } else {
+          // Keep raw grouping equality inside the printer. The emitted ID uses
+          // canonical content, including opaque selector companion recipes,
+          // so it does not depend on earlier previews or history order.
+          const id = createHash("sha256").update(JSON.stringify([program.meteringIdentity(path.entry),
+            program.meteringIdentity(ledger), reportLocation(location), callPath.map(program.meteringIdentity),
+            callSites?.map(reportLocation), reportKeys.region(region).map(program.reportIdentity)])).digest("hex");
+          site = { id, entry: path.entry, ledger, region, location, callPath, callSites, occurrences: 1,
+            requiredPredicates: new Set(preceding), requiredCompletedCalls: new Set(write.guards) };
+          sites.set(siteKey, site);
+        }
+        return { site: site.id, index, ledger, region: reportKeys.region(region), location, callPath, callSites, before: evidence.encode(write.before), after: evidence.encode(write.after),
           enforcedBeforeWrite: preceding, completedCallsStillValid: write.guards };
       }) };
       if (printer === "disclosure-map") return { ...base, sinks: path.sinks.map(sink => ({ ...sink, value: evidence.encode(sink.value) })) };
@@ -158,7 +176,7 @@ export function auditFile(path: string, printer: AuditorPrinter, options: Audito
       ].map(item => ({ ...item, value: evidence.encode(item.value), privateSources: evidence.encode(item.value.flows), ledgerSources: [...item.value.ledger].sort() })) };
     });
     report.data = { symbols, histories, values: evidence.values, sources: evidence.sources, traces: evidence.traces, ...(printer === "ledger-access" ? { predicates,
-      sites: [...sites].map(([id, site]) => ({ ...site, id, requiredPredicates: complete.has(site.entry) ? [...site.requiredPredicates] : null,
+      sites: [...sites.values()].map(site => ({ ...site, region: reportKeys.region(site.region), requiredPredicates: complete.has(site.entry) ? [...site.requiredPredicates] : null,
         requiredCompletedCalls: complete.has(site.entry) ? [...site.requiredCompletedCalls] : null })) } : {}) };
   } catch (error) {
     report.status = "incomplete"; report.data = null;

@@ -6,13 +6,11 @@ import { scanFile, type ZkirVersion } from "../src/index.js";
 import { detectors } from "../src/detectors/index.js";
 import type { Policies } from "../src/policies.js";
 import { validateWithCompiler } from "./compiler-fixtures.js";
-import { withFiles } from "./helpers.js";
 
 interface Seed {
   id: string; detector: string; file: string; corrected: string; lookalike: string;
   expectedLines: number[]; test: string; compiler: string; policies?: Policies;
   zkirVersion?: ZkirVersion;
-  isolateSource?: boolean;
   requiresOZ?: boolean; expectedMetadata?: Record<string, string>; expectedSeverity?: string;
   knownGap?: { status: string; observedLines: number[]; diagnosticCodes: string[]; reason: string };
 }
@@ -56,10 +54,7 @@ for (const seed of seeds.filter(seed => seed.test === "tests/known-bugs.test.ts"
         }
       };
       const file = resolve("tests/corpus", path);
-      // Metered operand identities include physical paths. Keep self-contained
-      // fixtures within their default allowance regardless of checkout depth.
-      if (seed.isolateSource) withFiles({ "main.compact": readFileSync(file, "utf8") }, directory => check(resolve(directory, "main.compact")));
-      else check(file);
+      check(file);
     }
   });
 }

@@ -7,7 +7,7 @@ import { mayOverlap } from "./regions.js";
 /** Required absence with no definite surviving insertion in that same receiver.
  * This is one successful history, not cross-transaction replay feasibility. */
 export function collectionAbsenceConsumption(path: SuccessfulPath, allowance = 1000000,
-  options: { value?: AbstractValue; beforeOperation?: number; receiver?: AbstractValue } = {}): {
+  options: { value?: AbstractValue; beforeOperation?: number; receiver?: AbstractValue; identityText?: (identity: string) => string } = {}): {
   complete: boolean; work: number; absences: { query: RuntimeOperation; survives: boolean; preservingInsertWrites: number[]; matchingInsertOperations: number[] }[];
 } {
   let work = 0, complete = true;
@@ -29,7 +29,7 @@ export function collectionAbsenceConsumption(path: SuccessfulPath, allowance = 1
     return current;
   };
   const rawKey = (value: AbstractValue): string | undefined => {
-    const result = immutableOperandKey(value, Math.min(4096, allowance - work));
+    const result = immutableOperandKey(value, Math.min(4096, allowance - work), undefined, undefined, options.identityText);
     charge(result.work); complete &&= result.complete;
     return result.key;
   };
@@ -46,12 +46,12 @@ export function collectionAbsenceConsumption(path: SuccessfulPath, allowance = 1
     }
   }
   const key = (value: AbstractValue): string | undefined => {
-    const result = immutableOperandKey(value, Math.min(4096, allowance - work), find);
+    const result = immutableOperandKey(value, Math.min(4096, allowance - work), find, undefined, options.identityText);
     charge(result.work); complete &&= result.complete;
     return result.key;
   };
   const address = (value: AbstractValue): string | undefined => {
-    const result = immutableCollectionAddress(value, Math.min(4096, allowance - work), find);
+    const result = immutableCollectionAddress(value, Math.min(4096, allowance - work), find, undefined, options.identityText);
     charge(result.work); complete &&= result.complete;
     return result.key;
   };
@@ -192,7 +192,7 @@ export function collectionAbsenceConsumption(path: SuccessfulPath, allowance = 1
  * The caller qualifies the receiver as a canonical Set. Later reinsertion does
  * not rescue an earlier removed key; any overlapping write before insertion
  * invalidates the earlier revision. Ordinary broad consumers remain unchanged. */
-export function requiredAbsenceBeforeSurvivingInsertion(path: SuccessfulPath, insertionIndex: number, allowance = 200000): {
+export function requiredAbsenceBeforeSurvivingInsertion(path: SuccessfulPath, insertionIndex: number, allowance = 200000, identityText?: (identity: string) => string): {
   complete: boolean; work: number; queries: RuntimeOperation[];
 } {
   let work = 0;
@@ -218,7 +218,7 @@ export function requiredAbsenceBeforeSurvivingInsertion(path: SuccessfulPath, in
   if (insertion.kind !== "collection-write" || insertion.name !== "insert" || !region || !value
     || at === undefined || !Number.isSafeInteger(at) || at < 0 || at >= path.writes.length) return failed();
   const result = collectionAbsenceConsumption(path, allowance - work,
-    { value, receiver, beforeOperation: insertionIndex });
+    { value, receiver, beforeOperation: insertionIndex, identityText });
   work += result.work;
   if (!result.complete) return failed();
   const queries: RuntimeOperation[] = [];
@@ -257,10 +257,10 @@ export function requiredAbsenceBeforeSurvivingInsertion(path: SuccessfulPath, in
 }
 
 /** Existing one-use review: preserve the full atomic-history contract. */
-export function unconsumedAbsences(path: SuccessfulPath, allowance = 1000000): {
+export function unconsumedAbsences(path: SuccessfulPath, allowance = 1000000, identityText?: (identity: string) => string): {
   complete: boolean; work: number; queries: RuntimeOperation[];
 } {
-  const result = collectionAbsenceConsumption(path, allowance);
+  const result = collectionAbsenceConsumption(path, allowance, { identityText });
   return { complete: result.complete, work: result.work,
     queries: result.absences.filter(absence => !absence.survives).map(absence => absence.query) };
 }

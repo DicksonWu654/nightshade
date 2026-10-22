@@ -44,7 +44,7 @@ export function encryptionSecretFindings(facts: AnalysisFacts, allowance = 20000
   class Exhausted extends Error {}
   const charge = (amount = 1) => { work += amount; if (!Number.isSafeInteger(allowance) || allowance < 1 || work > allowance) throw new Exhausted(); };
   const key = (value: AbstractValue): string | undefined => {
-    const result = immutableOperandKey(value, Math.min(4096, allowance - work)); charge(result.work);
+    const result = immutableOperandKey(value, Math.min(4096, allowance - work), undefined, undefined, facts.program.meteringIdentity); charge(result.work);
     if (!result.complete) throw new Exhausted();
     return result.key;
   };

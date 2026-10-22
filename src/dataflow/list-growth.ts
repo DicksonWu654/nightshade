@@ -1,3 +1,4 @@
+import { pathLength, identityLength, wrapIdentityMeter } from "../semantic/metering.js";
 import type { AbstractValue, AnalysisFacts, RuntimeOperation } from "./index.js";
 import { immutableEqualities } from "./immutable-equalities.js";
 import { mintQuantityEvidence } from "./mint-quantities.js";
@@ -22,6 +23,7 @@ export function retainedListGrowth(facts: AnalysisFacts, emit: (item: RetainedLi
       throw new Error("List-growth proof exhausted its shared preparation/execution allowance");
     return true;
   };
+  Object.assign(charge, { identityText: facts.program.meteringIdentity });
   if (!evidence || facts.pathSemantics !== "equivalent-states" || facts.predicateScope !== "all"
     || !facts.mintQuantityEvidence || !facts.invocationEvidence?.includes(ZERO_SEND_TARGET)
     || !facts.invocationEvidence.includes(LIST_GROWTH_APPEND) || facts.diagnostics.length
@@ -57,7 +59,7 @@ export function retainedListGrowth(facts: AnalysisFacts, emit: (item: RetainedLi
     const falseTag: AbstractValue = { flows: [], ledger: new Set(), type: "Boolean", constantKind: "boolean", constant: "false" };
     charge(0, 4);
     const trueTag: AbstractValue = { flows: [], ledger: new Set(), type: "Boolean", constantKind: "boolean", constant: "true" };
-    const numeric = mintQuantityEvidence(path, work => { charge(work, 0); }, charge);
+    const numeric = mintQuantityEvidence(path, wrapIdentityMeter(charge, (work?: number) => { charge(work, 0); }), charge);
     for (const send of sends) {
       charge();
       const amount = send.args[1];
@@ -106,10 +108,10 @@ export function retainedListGrowth(facts: AnalysisFacts, emit: (item: RetainedLi
             || query.writesBefore !== start || snapshot.revision !== region.revision) continue;
           if (address(snapshot.receiver) === selected) { lengthBeforeAppend = query; break; }
         }
-        let units = 12 + Math.ceil(path.entry.length / 64);
+        let units = 12 + Math.ceil(identityLength(path.entry, charge) / 64);
         for (const operation of [send, append]) {
-          charge(); units += 4 + Math.ceil(operation.location.file.length / 64);
-          for (const site of operation.callSites ?? []) { charge(); units += 4 + Math.ceil(site.file.length / 64); }
+          charge(); units += 4 + Math.ceil(pathLength(operation.location.file, charge) / 64);
+          for (const site of operation.callSites ?? []) { charge(); units += 4 + Math.ceil(pathLength(site.file, charge) / 64); }
         }
         charge(0, units);
         const pairKey = JSON.stringify([path.entry, send.location.file, send.location.start, append.location.file, append.location.start,

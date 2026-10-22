@@ -63,12 +63,11 @@ export function nativeKeyObservations(facts: AnalysisFacts, allowance = 200000) 
               if (stored.region?.path.includes("key:*")) { unavailable = true; continue; }
               if (!stored.preexistingLedger?.size || stored.negated || stored.comparison || stored.ordering || stored.directDigest) continue;
               if (stored.flows.length) { unavailable = true; continue; }
-              const identity = immutableOperandKey(stored, Math.min(4096, Math.max(0, allowance - work)));
+              const identity = immutableOperandKey(stored, Math.min(4096, Math.max(0, allowance - work)), undefined, undefined, facts.program.meteringIdentity);
               charge(identity.work); if (!identity.complete) throw new Exhausted();
               if (!identity.key) { unavailable = true; continue; }
               const origins = new Map([...ingredients.native, ...ingredients.secret].map(source => [`id:${source.id}`, `source:${predicateSourceKey(source, path)}`]));
-              const snapshot = immutableOperandKey(raw.directCommit ? { flows: [], ledger: new Set(), items: [raw.directCommit.input, raw.directCommit.randomness] } : credentialInput ?? raw,
-                Math.min(4096, Math.max(0, allowance - work)), key => origins.get(key) ?? key);
+              const snapshot = immutableOperandKey(raw.directCommit ? { flows: [], ledger: new Set(), items: [raw.directCommit.input, raw.directCommit.randomness] } : credentialInput ?? raw, Math.min(4096, Math.max(0, allowance - work)), key => origins.get(key) ?? key, undefined, facts.program.meteringIdentity);
               charge(snapshot.work); if (!snapshot.complete) throw new Exhausted();
               if (!snapshot.key) { unavailable = true; continue; }
               const key = JSON.stringify(["guard", spanId(predicate.location), predicate.callPath, predicate.callSites!.map(spanId), predicateSourceKey(supplied, path), identity.key, credential, raw.directDigest?.primitive ?? raw.directCommit?.primitive, snapshot.key]);

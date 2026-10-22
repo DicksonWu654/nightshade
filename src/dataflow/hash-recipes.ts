@@ -1,3 +1,4 @@
+import { reportIdentity, rememberReportIdentity, type IdentityText } from "../semantic/metering.js";
 import { createHash } from "node:crypto";
 import type { AbstractValue } from "./index.js";
 import { refineScalar, type ScalarConstraints } from "./transfers.js";
@@ -33,7 +34,7 @@ export class HashRecipes {
   private readonly contained = new WeakMap<AbstractValue, boolean>();
   private refused = false;
   constructor(private readonly allowance: (work: number, nodes: number) => boolean, private readonly depthExceeded: () => void,
-    private readonly shareContexts = true) {}
+    private readonly shareContexts = true, private readonly identityText: IdentityText = identity => identity) {}
 
   /** A caller composing domain queries must not publish a complete result after
    * an indirect refinement refused work or exceeded the normalization depth. */
@@ -44,14 +45,27 @@ export class HashRecipes {
   }
 
   private key(node: Recipe): string {
-    if (node.kind === "choice") return node.yes === node.no ? node.yes : `id:hash-choice:${digest([node.selector, node.yes, node.no])}`;
-    if (node.kind === "hash") return `id:${node.prefix}:${digest([...node.domain, node.input])}`;
-    if (node.kind === "byte") return `${node.input}::byte:${node.index}`;
-    if (node.kind === "cast") return `id:native:${digest([node.operation, [["value", node.input.slice(3)]]])}`;
-    if (node.kind === "expression") return `expression:${digest([node.operator, node.numericType, node.commutative ? node.inputs.slice().sort() : node.inputs])}`;
-    const hash = createHash("sha256").update(node.fields ? "fields" : "items");
-    for (const child of node.children) hash.update(JSON.stringify(child));
-    return `aggregate:${hash.digest("hex")}`;
+    const encode = (reported: boolean): string => {
+      const text = (key: string) => reported ? reportIdentity(key, this.identityText) : key;
+      const domain = (value: unknown): unknown => typeof value === "string" ? text(value)
+        : Array.isArray(value) ? value.map(domain) : value;
+      if (node.kind === "choice") return node.yes === node.no ? text(node.yes) : `id:hash-choice:${digest([text(node.selector), text(node.yes), text(node.no)])}`;
+      if (node.kind === "hash") return `id:${node.prefix}:${digest([...node.domain.map(domain), text(node.input)])}`;
+      if (node.kind === "byte") return `${text(node.input)}::byte:${node.index}`;
+      if (node.kind === "cast") return `id:native:${digest([text(node.operation), [["value", text(node.input).slice(3)]]])}`;
+      if (node.kind === "expression") {
+        const inputs = node.inputs.map(text);
+        return `expression:${digest([node.operator, node.numericType && text(node.numericType), node.commutative ? inputs.sort() : inputs])}`;
+      }
+      const hash = createHash("sha256").update(node.fields ? "fields" : "items");
+      for (const [name, child] of node.children) hash.update(JSON.stringify([name, text(child)]));
+      return `aggregate:${hash.digest("hex")}`;
+    };
+    const raw = encode(false), companion = encode(true);
+    // Register the atom too: callers strip the owned id: wrapper before
+    // retaining a scalar identity, and may later request byte projections.
+    if (raw.startsWith("id:")) rememberReportIdentity(raw.slice(3), companion.slice(3), this.identityText);
+    return rememberReportIdentity(raw, companion, this.identityText);
   }
 
   private intern(node: Recipe): string | undefined {
@@ -133,7 +147,9 @@ export class HashRecipes {
   relationKey(left: AbstractValue, right: AbstractValue, equals: boolean): string | undefined {
     const memo = new Map<AbstractValue, string | undefined>();
     const first = this.operand(left, memo), second = this.operand(right, memo);
-    return first && second ? `hash-relation:${equals}:${digest([first, second].sort())}` : undefined;
+    if (!first || !second) return;
+    const raw = `hash-relation:${equals}:${digest([first, second].sort())}`;
+    return rememberReportIdentity(raw, `hash-relation:${equals}:${digest([first, second].map(key => reportIdentity(key, this.identityText)).sort())}`, this.identityText);
   }
 
   invalidate(state: ScalarConstraints, identity?: string): void {
@@ -195,7 +211,7 @@ export class HashRecipes {
       if (keys.some(key => key === undefined)) return;
       key = this.intern({ kind: "expression", operator: value.negated ? "!" : value.comparison?.operator ?? value.ordering!.operator,
         numericType: value.ordering?.numericType, inputs: keys as string[], commutative: !!value.comparison });
-    } else if (value.identity) { if (value.identity.length > 65536) return; key = `id:${value.identity}`; }
+    } else if (value.identity) { if (this.identityText(value.identity).length > 65536) return; key = `id:${value.identity}`; }
     else if (value.constantKind && value.constant !== undefined) { if (value.constant.length > 65536) return; key = `constant:${value.constantKind}:${value.constant}`; }
     else {
       const children = value.fields ? Object.entries(value.fields).sort(([a], [b]) => a.localeCompare(b))

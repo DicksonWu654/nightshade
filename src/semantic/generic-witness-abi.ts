@@ -49,7 +49,7 @@ export function genericWitnessAbi(program: Program, allowance = 20000,
   // Bound parsing, alias expansion, field enumeration and the semantic comparison
   // of parameter types before invoking Program's ordinary type operations.
   const typeWork = (type: string, depth = 0): void => {
-    charge(type.length + 1);
+    charge(program.meteringIdentity(type).length + 1);
     if (depth > 32) unavailable("Generic witness ABI type enumeration exceeds its qualified depth");
     const nominal = program.nominalTypes.get(type);
     if (nominal) { typeWork(nominal.underlying, depth + 1); return; }

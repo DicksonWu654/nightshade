@@ -122,9 +122,9 @@ export function publicKeyMembershipObservations(facts: AnalysisFacts, allowance 
           || !predicate.callSites || predicate.callSites.length !== predicate.callPath.length
           || !source.invocation || !path.witnessCalls) { unavailable = true; break; }
         if ((path.witnessCalls.get(source.invocation.site) ?? 0) <= source.invocation.occurrence) { unavailable = true; break; }
-        const address = immutableCollectionAddress(receiver, Math.min(4096, Math.max(0, allowance - work)));
+        const address = immutableCollectionAddress(receiver, Math.min(4096, Math.max(0, allowance - work)), undefined, undefined, facts.program.meteringIdentity);
         work += address.work; complete &&= address.complete && work <= allowance;
-        const member = immutableOperandKey(key, Math.min(4096, Math.max(0, allowance - work)));
+        const member = immutableOperandKey(key, Math.min(4096, Math.max(0, allowance - work)), undefined, undefined, facts.program.meteringIdentity);
         work += member.work; complete &&= member.complete && work <= allowance;
         if (!complete) break;
         if (!address.key || !member.key) continue;

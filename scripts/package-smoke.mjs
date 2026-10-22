@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { spawnSync } from "node:child_process";
 import { chmodSync, existsSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, renameSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -21,6 +22,11 @@ try {
   const nativeFiles = packed.files.filter(file => file.path.endsWith(".node"));
   assert.equal(nativeFiles.length, 1);
   assert.ok(nativeFiles[0].path.startsWith(`prebuilds/${process.platform}-${process.arch}/`));
+  const freshTarball = resolve(temporary, packed.filename);
+  const candidate = process.env.NIGHTSHADE_PACKAGE_TARBALL ? resolve(process.env.NIGHTSHADE_PACKAGE_TARBALL) : freshTarball;
+  const digest = file => createHash("sha256").update(readFileSync(file)).digest("hex");
+  assert.equal(digest(candidate), digest(freshTarball), "Supplied candidate must match the current package exactly");
+  console.log(`Testing package ${candidate}; SHA256 ${digest(candidate)}`);
   const consumer = resolve(temporary, "consumer");
   mkdirSync(consumer);
   writeFileSync(resolve(consumer, "package.json"), JSON.stringify({ name: "nightshade-smoke", version: "1.0.0", private: true, type: "module" }));
@@ -36,7 +42,7 @@ try {
   const installEnv = { ...process.env, PATH: blockedTools + (windows ? ";" : ":") + process.env.PATH,
     CC: resolve(blockedTools, windows ? "cl.cmd" : "cc"), CXX: resolve(blockedTools, windows ? "cl.cmd" : "c++"),
     npm_config_python: resolve(blockedTools, windows ? "python.cmd" : "python3") };
-  run("npm", ["install", "--omit=dev", "--no-audit", "--no-fund", resolve(temporary, packed.filename)], consumer, installEnv);
+  run("npm", ["install", "--omit=dev", "--no-audit", "--no-fund", candidate], consumer, installEnv);
   assert.equal(existsSync(invoked), false, "Production install must not invoke a compiler toolchain");
   const installed = resolve(consumer, "node_modules/nightshade-compact");
   assert.equal(existsSync(resolve(installed, "build")), false);
@@ -55,7 +61,7 @@ try {
   const metadata = JSON.parse(readFileSync(resolve(installed, "package.json"), "utf8"));
   assert.equal(metadata.name, "nightshade-compact");
   assert.deepEqual(metadata.bin, { nightshade: "dist/src/cli.js" });
-  assert.equal(run(executable, ["--version"], consumer).trim(), "Nightshade 0.1.0");
+  assert.equal(run(executable, ["--version"], consumer).trim(), "Nightshade 0.1.1");
   assert.match(run(process.execPath, [resolve(installed, "scripts/demo.mjs")], consumer), /Demo passed: expected finding and corrected control verified/);
   const report = JSON.parse(run(executable, ["main.compact", "--json"], consumer));
   assert.equal(report.status, "complete");

@@ -1,3 +1,4 @@
+import { identityLength, withIdentityMeter } from "../semantic/metering.js";
 import type { AbstractValue, AnalysisFacts, CapacityPrefix, RuntimeOperation, SuccessfulPredicate } from "./index.js";
 import { immutableCollectionAddress, immutableOperandKey } from "./immutable-key.js";
 import { projectEnforcedEqualities } from "./predicates.js";
@@ -19,8 +20,9 @@ export function configuredCapacityConflicts(facts: AnalysisFacts, strict = false
       throw new Unavailable("Configured capacity operand/constraint review exhausted the shared allowance");
     return true;
   };
+  Object.assign(charge, { identityText: facts.program.meteringIdentity });
   const operand = (value: AbstractValue) => {
-    charge(); const result = immutableOperandKey(value, Math.max(0, evidence!.maxSteps - facts.metrics.steps - work), undefined, strict ? (steps, values) => charge(steps + values) : undefined); if (!strict) charge(result.work);
+    charge(); const result = immutableOperandKey(value, Math.max(0, evidence!.maxSteps - facts.metrics.steps - work), undefined, strict ? withIdentityMeter(facts.program.meteringIdentity, (steps: number, values: number) => charge(steps + values)) : undefined, facts.program.meteringIdentity); if (!strict) charge(result.work);
     if (!result.complete || !result.key) throw new Unavailable("Membership/distinctness operand has no complete exact immutable identity");
     return result.key;
   };
@@ -48,7 +50,7 @@ export function configuredCapacityConflicts(facts: AnalysisFacts, strict = false
             return !!value.collectionPredicate || [...value.negated ? [value.negated] : [], ...value.comparison ? [value.comparison.left,value.comparison.right] : [], ...value.predicateAlternatives ?? []].some(part => containsMember(part, depth + 1));
           };
           if (containsMember(equality.left) || containsMember(equality.right)) throw new Unavailable("Nonconstant membership Boolean relation is unsupported");
-          const left = operand(equality.left), right = operand(equality.right); if (strict) charge(8 + Math.ceil((left.length + right.length) / 64));
+          const left = operand(equality.left), right = operand(equality.right); if (strict) charge(8 + Math.ceil((identityLength(left, charge) + identityLength(right, charge)) / 64));
           if (equality.equals) return [{ key: JSON.stringify(["equal", ...[left,right].sort()]), value: { kind: "equal", left, right } }];
           return [{ key: JSON.stringify(["distinct", ...[left, right].sort()]), value: { kind: "distinct", pair: JSON.stringify([left, right].sort()), predicate } }];
         }, charge, (value, truth) => {
@@ -62,7 +64,7 @@ export function configuredCapacityConflicts(facts: AnalysisFacts, strict = false
           // this prefix, including a previously saved Boolean assertion.
           if (prefix.gate.writes.slice(query.writesBefore).some(write => { charge(); return write.ledger === root; }))
             throw new Unavailable("Required membership crosses a collection ledger revision change");
-          const receiver = immutableCollectionAddress(query.args[0], Math.max(0, evidence.maxSteps - facts.metrics.steps - work), undefined, strict ? (steps, values) => charge(steps + values) : undefined); if (!strict) charge(receiver.work);
+          const receiver = immutableCollectionAddress(query.args[0], Math.max(0, evidence.maxSteps - facts.metrics.steps - work), undefined, strict ? withIdentityMeter(facts.program.meteringIdentity, (steps: number, values: number) => charge(steps + values)) : undefined, facts.program.meteringIdentity); if (!strict) charge(receiver.work);
           if (!receiver.complete || !receiver.key || query.args[0].region.revision !== member.revision) throw new Unavailable("Membership receiver has no exact current live collection identity");
           if (strict) {
             charge(); const symbol = facts.program.symbols.get(root);
@@ -72,7 +74,7 @@ export function configuredCapacityConflicts(facts: AnalysisFacts, strict = false
           if (member.upperBound === undefined) throw new Unavailable("Required collection membership has no current constructor-derived capacity bound");
           const key = operand(query.args[1]);
           const atom: Member = { address: receiver.key, key, bound: member.upperBound, revision: member.revision, query, predicate };
-          if (strict) charge(8 + Math.ceil((receiver.key.length + key.length) / 64));
+          if (strict) charge(8 + Math.ceil((identityLength(receiver.key, charge) + identityLength(key, charge)) / 64));
           return [{ key: JSON.stringify(["member", receiver.key, member.revision, key]), value: { kind: "member", member: atom } }];
         });
         if (!projection) throw new Unavailable("Required capacity predicate structure is incomplete");
@@ -87,7 +89,7 @@ export function configuredCapacityConflicts(facts: AnalysisFacts, strict = false
       };
       for (const [left,right] of equalities) { charge(); const a = canonical(left), b = canonical(right); if (a !== b) representatives.set(a < b ? b : a, a < b ? a : b); }
       const normalizedEdges = new Map<string,SuccessfulPredicate>();
-      for (const [pair,predicate] of edges) { charge(strict ? 8 + Math.ceil(pair.length / 64) : 1); const [left,right] = JSON.parse(pair) as [string,string]; normalizedEdges.set(JSON.stringify([canonical(left),canonical(right)].sort()),predicate); }
+      for (const [pair,predicate] of edges) { charge(strict ? 8 + Math.ceil(identityLength(pair, charge) / 64) : 1); const [left,right] = JSON.parse(pair) as [string,string]; normalizedEdges.set(JSON.stringify([canonical(left),canonical(right)].sort()),predicate); }
       for (const member of members) { charge(); member.key = canonical(member.key); }
       const groups = new Map<string, Map<string, Member>>();
       for (const member of members) { charge(); const id = JSON.stringify([member.address, member.revision, member.bound]); if (strict) charge(4); const group = groups.get(id) ?? new Map(); group.set(member.key, member); groups.set(id, group); }

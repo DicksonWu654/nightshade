@@ -46,7 +46,7 @@ export const unprotectedValueTransfer: Detector = {
         }
       }
       for (const [callee, group] of groups) {
-        const cover = privatePredicateCover(group.paths, Math.min(100000, 1000000 - work));
+        const cover = privatePredicateCover(group.paths, Math.min(100000, 1000000 - work), facts.program.meteringIdentity);
         work += cover.work;
         if (cover.status === "incomplete") { issue("predicate-analysis-budget", "Application predicate coverage exceeded its allowance or evidence is missing", group.locations[0]); return []; }
         if (cover.status !== "unconstrained") continue;

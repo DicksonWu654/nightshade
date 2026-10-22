@@ -64,7 +64,7 @@ export function callerEqualityObservations(facts: AnalysisFacts, allowance = 200
               if (stored.region?.path.includes("key:*")) { unavailable = true; continue; }
               if (!stored.preexistingLedger?.size || stored.negated || stored.comparison || stored.ordering || stored.directDigest) continue;
               if (stored.flows.length) { unavailable = true; continue; }
-              const identity = immutableOperandKey(stored, Math.min(4096, Math.max(0, allowance - work)));
+              const identity = immutableOperandKey(stored, Math.min(4096, Math.max(0, allowance - work)), undefined, undefined, facts.program.meteringIdentity);
               charge(identity.work); if (!identity.complete) throw new Exhausted();
               if (!identity.key) { unavailable = true; continue; }
               const key = JSON.stringify(["guard", spanId(predicate.location), predicate.callPath, predicate.callSites!.map(spanId), supplied.symbol, supplied.declarationLeaf, identity.key]);

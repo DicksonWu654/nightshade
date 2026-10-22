@@ -44,7 +44,7 @@ test("CLI errors preserve machine-readable output and cannot become success", ()
 });
 
 test("CLI detector details and structural printers have explicit scope", () => {
-  assert.equal(run("--version").stdout.trim(), "Nightshade 0.1.0");
+  assert.equal(run("--version").stdout.trim(), "Nightshade 0.1.1");
   const detector = run("detector", "show", "declared-secret-publication", "--json");
   assert.equal(JSON.parse(detector.stdout)[0].policyRequired, true);
   for (const printer of ["cfg", "ir", "call-graph", "state", "entrypoints"]) {

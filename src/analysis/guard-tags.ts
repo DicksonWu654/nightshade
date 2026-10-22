@@ -45,7 +45,7 @@ export function guardTagObservations(facts: AnalysisFacts, allowance = 200000) {
       }
       let unavailable = false;
       const identity = (part: AbstractValue) => {
-        const result = immutableOperandKey(part, Math.min(4096, Math.max(0, allowance - work)));
+        const result = immutableOperandKey(part, Math.min(4096, Math.max(0, allowance - work)), undefined, undefined, facts.program.meteringIdentity);
         charge(result.work); if (!result.complete) throw new Exhausted(); return result.key;
       };
       const recipe = (value: AbstractValue): Recipe | undefined => {

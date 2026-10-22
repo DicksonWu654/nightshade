@@ -1,3 +1,4 @@
+import { ReportIdentityKeys } from "../reporting/identity-keys.js";
 import { zeroMembershipObservations, ZERO_MAP_RULE } from "../analysis/zero-membership.js";
 import { spanId } from "../model.js";
 import { finding, type Detector } from "./types.js";
@@ -8,6 +9,7 @@ export const zeroAmountInitialMembership: Detector = {
   policyRequired: true, defaultEnabled: false,
   requires: ["declared-zero-entry", "exact-map-preconditions", "all-successful-predicates", "ordered-writes"],
   run(facts, policies) {
+    const report = new ReportIdentityKeys(facts.program, ZERO_MAP_RULE, facts.program.rootSource.ast.span);
     const result = zeroMembershipObservations(facts, policies);
     facts.diagnostics.push(...result.diagnostics);
     return result.observations.map(({ policy, requirement, histories, zeroSuccesses }) => {
@@ -23,9 +25,11 @@ export const zeroAmountInitialMembership: Detector = {
         remediation: "If the declared zero semantics are intended, bypass the balance/allowance lookup and its membership assertions at zero, or explicitly supply the needed entry before lookup. Document intentional rejection instead of enabling this policy.",
         metadata: { reviewRequired: true, evidence: "all-full-zero-successes-initial-membership", entry: circuit.name, entryIdentity: policy.circuit,
           amount: amount.name, amountIdentity: policy.amount, declaredAmount: "0", map: map.name, mapIdentity: policy.map,
-          region: requirement.region, keyIdentity: requirement.key, zeroSuccesses, historyEvidence: histories,
+          region: { ...requirement.region, path: report.region(requirement.region.path) }, keyIdentity: report.key(requirement.key), zeroSuccesses,
+          historyEvidence: histories.map(history => history.map(item => ({ ...item, key: report.key(item.key),
+            region: { ...item.region, path: report.region(item.region.path) } }))),
           helperAmountZero: "not-claimed", initiallyMissing: "not-proven", runtimeFailure: "not-proven", pathFeasibility: "not-proven" },
-      }, JSON.stringify([policy, requirement.region.path, requirement.key, spanId(requirement.location)]));
+      }, JSON.stringify([policy, report.region(requirement.region.path), report.key(requirement.key), spanId(requirement.location)]));
     });
   },
 };

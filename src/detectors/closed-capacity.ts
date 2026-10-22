@@ -1,3 +1,4 @@
+import { ReportIdentityKeys } from "../reporting/identity-keys.js";
 import { configuredCapacityConflicts } from "../dataflow/configured-capacity.js";
 import { CLOSED_CAPACITY_RULE } from "../semantic/closed-capacity.js";
 import { spanId } from "../model.js";
@@ -11,6 +12,7 @@ export const closedMembershipCapacityReview: Detector = {
     if (!facts.configuredCapacity || !facts.closedCapacity) return [];
     const result = configuredCapacityConflicts(facts, true); facts.diagnostics.push(...result.diagnostics);
     if (result.diagnostics.length) return [];
+    const report = new ReportIdentityKeys(facts.program, CLOSED_CAPACITY_RULE, facts.program.rootSource.ast.span);
     const findings: Finding[] = [], seen = new Set<string>();
     for (const conflict of result.conflicts) {
       const retained = 24 + 8 * conflict.members.length + 4 * conflict.distinctness.length + 4 * conflict.prefix.construction.path.length;
@@ -33,9 +35,9 @@ export const closedMembershipCapacityReview: Detector = {
         remediation: "Align every intended constructor configuration with the gate's distinct-member requirement, or provide an explicit source configuration transition.",
         metadata: { reviewRequired: true, stateBoundary: "source-closed-constructor-history", closure: "complete-resolved-post-constructor-callables", noPostConstructorWriter: true,
           entryIdentity: facts.configuredCapacity.entry, constructorIdentity: facts.configuredCapacity.constructor,
-          address: conflict.address, revision: conflict.revision, upperBound: conflict.bound, requiredDistinct: conflict.members.length,
+          address: report.key(conflict.address), revision: conflict.revision, upperBound: conflict.bound, requiredDistinct: conflict.members.length,
           constructorBranches: conflict.prefix.construction.path, feasibility: "unproven", runtimeImmutability: "unproven", allConfigurations: "unproven" },
-      }, key));
+      }, `${report.key(conflict.address)}:${conflict.bound}:${conflict.members.map(member => spanId(member.predicate.location)).sort().join(";")}`));
     }
     return findings;
   },

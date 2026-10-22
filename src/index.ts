@@ -96,7 +96,7 @@ interface ScanResultBase {
   ruleObservationWork?: Omit<RuleObservationWork, "analysisMs" | "detectorMs">[];
   selection?: { minimumSeverity?: import("./detectors/types.js").Severity; findingsBeforeFilter: number; excludedRoots?: string[]; discovery?: { omittedLibraries: string[]; inferredSearchPaths: Record<string, string[]> } };
   semanticProfile: SemanticProfile | "mixed";
-  toolVersion: "0.1.0";
+  toolVersion: "0.1.1";
   grammarRevision: string;
   grammarBuild: string;
   status: "complete" | "incomplete";
@@ -403,7 +403,7 @@ export function emptyResult(experimentalCounterQueries: true, zkirVersion?: Zkir
 export function emptyResult(experimentalCounterQueries?: false, zkirVersion?: ZkirVersion, compilerVersion?: CompilerVersion): ExactScanResult;
 export function emptyResult(experimentalCounterQueries: boolean, zkirVersion?: ZkirVersion, compilerVersion?: CompilerVersion): ScanResult;
 export function emptyResult(experimentalCounterQueries = false, zkirVersion: ZkirVersion = 2, compilerVersion?: CompilerVersion): ScanResult {
-  const base: ScanResultBase = { semanticProfile: semanticProfile(zkirVersion, validCompilerVersion(compilerVersion) ? compilerVersion : undefined), toolVersion: "0.1.0", grammarRevision: GRAMMAR_REVISION, grammarBuild: GRAMMAR_BUILD, status: "complete", compilerValidated: false, entrypoints: [], scanned: [], findings: [], diagnostics: [], coverage: { noEntrypointRoots: [], attempted: [], parsed: [], resolved: [], completedEntries: [], detectors: [] }, metrics: { frontendMs: 0, analysisMs: 0, detectorMs: 0, totalMs: 0, workerMs: 0, cfgNodes: 0, instructionNodes: 0, calls: 0, steps: 0, sources: 0, paths: 0, abstractValues: 0, summaryHits: 0, summaryEntries: 0, statefulSummaryHits: 0, readSummaryHits: 0, summaryEffects: 0, guardSubsumptions: 0 } };
+  const base: ScanResultBase = { semanticProfile: semanticProfile(zkirVersion, validCompilerVersion(compilerVersion) ? compilerVersion : undefined), toolVersion: "0.1.1", grammarRevision: GRAMMAR_REVISION, grammarBuild: GRAMMAR_BUILD, status: "complete", compilerValidated: false, entrypoints: [], scanned: [], findings: [], diagnostics: [], coverage: { noEntrypointRoots: [], attempted: [], parsed: [], resolved: [], completedEntries: [], detectors: [] }, metrics: { frontendMs: 0, analysisMs: 0, detectorMs: 0, totalMs: 0, workerMs: 0, cfgNodes: 0, instructionNodes: 0, calls: 0, steps: 0, sources: 0, paths: 0, abstractValues: 0, summaryHits: 0, summaryEntries: 0, statefulSummaryHits: 0, readSummaryHits: 0, summaryEffects: 0, guardSubsumptions: 0 } };
   return experimentalCounterQueries ? { ...base, schemaVersion: "1.7.0", scope: "selected-detector-predicates", analysis: {
     mode: "experimental-counter-queries", scope: "selected-detector-predicates", contract: "experimental-counter-scan-1", coverage: [], workPolicies: [],
     queryWork: { preparation: 0, query: 0, witnesses: 0, transferSteps: 0, transferValues: 0, findingChecks: 0, expenditureKnown: true },

@@ -1,3 +1,4 @@
+import { reportIdentity, rememberReportIdentity, type IdentityText } from "../semantic/metering.js";
 import { createHash } from "node:crypto";
 import type { Span } from "../model.js";
 import { fieldModulus, JUBJUB_SCALAR_MODULUS } from "../semantic/fields.js";
@@ -10,13 +11,16 @@ export function pointIdentity(type: string): AbstractValue {
 }
 
 /** Only deterministic native/cast/arithmetic operations use this key. hashToCurve is excluded. */
-export function nativeIdentity(operation: string, values: AbstractValue[], fresh: () => string): string {
+export function nativeIdentity(operation: string, values: AbstractValue[], fresh: () => string, identityText?: IdentityText): string {
   const keys = values.map(value => {
     const constant = constantOf(value);
     return constant ? ["constant", constant.kind, constant.value] : valueIdentity(value) ? ["value", valueIdentity(value)] : undefined;
   });
-  return keys.every(key => key !== undefined)
-    ? `native:${createHash("sha256").update(JSON.stringify([operation, keys])).digest("hex")}` : fresh();
+  if (keys.some(key => key === undefined)) return fresh();
+  const raw = `native:${createHash("sha256").update(JSON.stringify([operation, keys])).digest("hex")}`;
+  const companion = `native:${createHash("sha256").update(JSON.stringify([reportIdentity(operation, identityText),
+    keys.map(key => key![0] === "value" ? ["value", reportIdentity(key![1]!, identityText)] : key)])).digest("hex")}`;
+  return rememberReportIdentity(raw, companion, identityText);
 }
 
 function inverse(value: bigint, modulus: bigint): bigint {
@@ -32,11 +36,11 @@ function inverse(value: bigint, modulus: bigint): bigint {
 
 /** Shared by both execution engines. Undefined is a definite native rejection.
  * Unknown crypto outputs remain abstract; this is not curve execution/proving. */
-export function nativeValue(key: string, type: string, inputs: AbstractValue[], location: Span, state: ScalarConstraints, fresh: () => string, observePointIdentity = false, observeNonidentityOutput = false): AbstractValue | undefined {
+export function nativeValue(key: string, type: string, inputs: AbstractValue[], location: Span, state: ScalarConstraints, fresh: () => string, observePointIdentity = false, observeNonidentityOutput = false, identityText?: IdentityText): AbstractValue | undefined {
   const values = inputs.map(value => refineScalar(value, state));
   const name = key.split(":")[0];
   let result: AbstractValue = { ...step(combine(values), "transform", name, location, "derived"), ledger: new Set(), type,
-    identity: name === "hashToCurve" ? fresh() : nativeIdentity(key, values, fresh) };
+    identity: name === "hashToCurve" ? fresh() : nativeIdentity(key, values, fresh, identityText) };
   const integer = (value: bigint): AbstractValue => ({ flows: [], ledger: new Set(), constantKind: "integer", constant: String(value) });
   const isEqual = (first: AbstractValue, second: AbstractValue): boolean | undefined => {
     const compared = refineScalar(binaryValue([first, second], "==", location, "Boolean")!, state);

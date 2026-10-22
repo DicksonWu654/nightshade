@@ -54,7 +54,7 @@ To create and try a local tarball from this checkout:
 package_dir=$(mktemp -d)
 consumer_dir=$(mktemp -d)
 npm pack --pack-destination "$package_dir"
-npm install --prefix "$consumer_dir" "$package_dir/nightshade-compact-0.1.0.tgz"
+npm install --prefix "$consumer_dir" "$package_dir/nightshade-compact-0.1.1.tgz"
 "$consumer_dir/node_modules/.bin/nightshade" "$consumer_dir/node_modules/nightshade-compact/examples/review/contract.compact" --fail-on high
 ```
 
@@ -105,7 +105,7 @@ known false-positive patterns and limits. Policy rules require explicit intent.
 
 The composite [GitHub Action](action.yml) builds Nightshade, scans the caller's
 workspace, uploads SARIF and preserves the analyzer exit code. The following is
-a workflow template using the v0.1.0 release. Pin the Action to a reviewed commit
+a workflow template using the v0.1.1 release. Pin the Action to a reviewed commit
 for an immutable dependency.
 
 ```yaml
@@ -119,7 +119,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
-      - uses: DicksonWu654/nightshade@v0.1.0
+      - uses: DicksonWu654/nightshade@v0.1.1
         with:
           path: contracts
           fail-on: medium
