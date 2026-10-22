@@ -195,7 +195,7 @@ test("owned real Counter positive/corrected/lookalike seed and JSON/SARIF/human 
     assert.equal(result.status, "complete", JSON.stringify(result.diagnostics));
     assert.deepEqual(result.findings.map(finding => finding.location.line), lines);
     assert.ok(result.coverage.rules!.every(row => row.status !== "incomplete"));
-    assert.match(human(result), /zero-amount-initial-membership/);
+    assert.match(human(result, { verbose: true }), /zero-amount-initial-membership/);
     assert.ok(sarif(result));
   }
 });

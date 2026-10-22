@@ -6,11 +6,13 @@ import { scanFile, type ZkirVersion } from "../src/index.js";
 import { detectors } from "../src/detectors/index.js";
 import type { Policies } from "../src/policies.js";
 import { validateWithCompiler } from "./compiler-fixtures.js";
+import { withFiles } from "./helpers.js";
 
 interface Seed {
   id: string; detector: string; file: string; corrected: string; lookalike: string;
   expectedLines: number[]; test: string; compiler: string; policies?: Policies;
   zkirVersion?: ZkirVersion;
+  isolateSource?: boolean;
   requiresOZ?: boolean; expectedMetadata?: Record<string, string>; expectedSeverity?: string;
   knownGap?: { status: string; observedLines: number[]; diagnosticCodes: string[]; reason: string };
 }
@@ -31,27 +33,33 @@ for (const seed of seeds.filter(seed => seed.test === "tests/known-bugs.test.ts"
     const searchPaths = seed.requiresOZ ? [resolve(process.env.OZ_COMPACT_TEST!, "contracts/src")] : [];
     assert.equal(seed.compiler, "0.34.0");
     for (const [path, expected] of [[seed.file, seed.expectedLines], [seed.corrected, []], [seed.lookalike, []]] as const) {
+      const check = (file: string) => {
+        if (process.env.COMPACTC_TEST) {
+          const compiled = validateWithCompiler(process.env.COMPACTC_TEST, file, searchPaths, 30000, seed.zkirVersion ?? 2);
+          assert.equal(compiled.valid, true, `${path}: ${compiled.error}`);
+        }
+        const scan = scanFile(file, { detectors: [seed.detector], policies: seed.policies, searchPaths, zkirVersion: seed.zkirVersion });
+        // Preserve ground-truth lines for missed positives. These assertions
+        // characterize a known gap, not a successful detection; reports must
+        // include these cases as misses (including incomplete) as detector misses.
+        const gap = path === seed.file ? seed.knownGap : undefined;
+        if (gap) {
+          assert.ok(expected.length > 0);
+          context.diagnostic(`NOT DETECTED: ${seed.id}: ${gap.reason}`);
+        }
+        assert.equal(scan.status, gap?.status ?? "complete", `${path}: ${JSON.stringify(scan.diagnostics)}`);
+        assert.deepEqual(scan.diagnostics.map(diagnostic => diagnostic.code), gap?.diagnosticCodes ?? [], path);
+        assert.deepEqual(scan.findings.map(finding => finding.location.line), gap?.observedLines ?? expected, path);
+        for (const finding of scan.findings) {
+          if (seed.expectedSeverity) assert.equal(finding.severity, seed.expectedSeverity, path);
+          for (const [key, value] of Object.entries(seed.expectedMetadata ?? {})) assert.equal(finding.metadata[key], value, `${path}: ${key}`);
+        }
+      };
       const file = resolve("tests/corpus", path);
-      if (process.env.COMPACTC_TEST) {
-        const compiled = validateWithCompiler(process.env.COMPACTC_TEST, file, searchPaths, 30000, seed.zkirVersion ?? 2);
-        assert.equal(compiled.valid, true, `${path}: ${compiled.error}`);
-      }
-      const scan = scanFile(file, { detectors: [seed.detector], policies: seed.policies, searchPaths, zkirVersion: seed.zkirVersion });
-      // Preserve ground-truth lines for missed positives. These assertions
-      // characterize a known gap, not a successful detection; reports must
-      // include these cases as misses (including incomplete) as detector misses.
-      const gap = path === seed.file ? seed.knownGap : undefined;
-      if (gap) {
-        assert.ok(expected.length > 0);
-        context.diagnostic(`NOT DETECTED: ${seed.id}: ${gap.reason}`);
-      }
-      assert.equal(scan.status, gap?.status ?? "complete", `${path}: ${JSON.stringify(scan.diagnostics)}`);
-      assert.deepEqual(scan.diagnostics.map(diagnostic => diagnostic.code), gap?.diagnosticCodes ?? [], path);
-      assert.deepEqual(scan.findings.map(finding => finding.location.line), gap?.observedLines ?? expected, path);
-      for (const finding of scan.findings) {
-        if (seed.expectedSeverity) assert.equal(finding.severity, seed.expectedSeverity, path);
-        for (const [key, value] of Object.entries(seed.expectedMetadata ?? {})) assert.equal(finding.metadata[key], value, `${path}: ${key}`);
-      }
+      // Metered operand identities include physical paths. Keep self-contained
+      // fixtures within their default allowance regardless of checkout depth.
+      if (seed.isolateSource) withFiles({ "main.compact": readFileSync(file, "utf8") }, directory => check(resolve(directory, "main.compact")));
+      else check(file);
     }
   });
 }

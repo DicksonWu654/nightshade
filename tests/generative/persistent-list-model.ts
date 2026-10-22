@@ -8,7 +8,7 @@ import { isDeepStrictEqual } from "node:util";
 
 export const PERSISTENT_LIST_SOURCE_SHA256 = "562f52cbe14267ad837e49a2a4724689872f0c5a020122a32848ef7eda2f7135";
 export const PERSISTENT_LIST_LOCK_SHA256 = "2fb51a5192161882aecfe1f72bed96339fcba2d76eed52db00dadc0dc44ea901";
-export const PERSISTENT_LIST_MANIFEST_SHA256 = "2e87598d12b5051ee24b1134a871302e1505a937ecc14d3d5608db48d2c2dead";
+export const PERSISTENT_LIST_MANIFEST_SHA256 = "7c93c03de053fca043ccb0d66ba21201683287a7cda12ea472306751e3679910";
 export const PERSISTENT_LIST_REJECTION = "failed assert: owned guarded List requires nonempty";
 export const PERSISTENT_LIST_LIMITS = Object.freeze({ timeoutMs: 60000, heapMiB: 256, maxOutputBytes: 1048576 });
 export const PERSISTENT_LIST_OBSERVATION_LIMITS = Object.freeze({ maxRows: 32, maxViews: 200, maxValues: 64, maxTotalValues: 12800, maxScalarChars: 80, maxCircuitChars: 64, maxBytes: 1048576 });

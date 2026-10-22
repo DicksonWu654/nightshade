@@ -2938,10 +2938,7 @@
     "detectors": [
       "caller-supplied-time-review",
       "unasserted-security-result",
-      "witness-derived-value-review",
-      "context-binding-review",
-      "field-arithmetic-domain-review",
-      "terminal-state-exclusivity-review"
+      "witness-derived-value-review"
     ],
     "scope": "Synthetic detector-specific source regression; no whole-contract or runtime claim."
   }

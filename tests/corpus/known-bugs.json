@@ -1525,6 +1525,7 @@
       "compiler": "0.34.0",
       "zkirVersion": 2,
       "test": "tests/known-bugs.test.ts",
+      "isolateSource": true,
       "expectedLines": [
         35
       ],
