@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="description" content="Nightshade is an offline static security analyzer for Compact smart contracts. Explore rules, coverage, and the v0.1.0 release.">
+  <title>Nightshade | Compact security analysis</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="shell nav-row">
+      <a class="brand" href="index.html" aria-label="Nightshade home"><span class="brand-mark" aria-hidden="true"><span></span></span><span>nightshade<span class="brand-dot">.</span></span></a>
+      <nav aria-label="Primary navigation">
+        <a href="#capabilities">What it catches</a>
+        <a href="#workflow">How it works</a>
+        <a href="#evaluation">Evaluation</a>
+        <a href="rules.html">Rules <span class="nav-count">96</span></a>
+      </nav>
+      <a class="header-github" href="https://github.com/DicksonWu654/nightshade">GitHub <span aria-hidden="true">↗</span></a>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero">
+      <div class="shell hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow"><span class="eyebrow-spark" aria-hidden="true"></span> Open source · v0.1.0 · Apache-2.0</p>
+          <h1>See where private data becomes public.</h1>
+          <p class="hero-lede">Nightshade is an offline static security analyzer for Compact, Midnight's smart-contract language. It traces witness values, ledger effects, and calls, then reports findings with source evidence and coverage status.</p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#quickstart">Get started <span aria-hidden="true">↓</span></a>
+            <a class="button button-outline" href="https://github.com/DicksonWu654/nightshade">View source <span aria-hidden="true">↗</span></a>
+          </div>
+          <div class="hero-links"><a href="https://github.com/DicksonWu654/nightshade/releases/tag/v0.1.0">v0.1.0 release ↗</a><a href="https://github.com/DicksonWu654/nightshade/tree/v0.1.0/docs">Documentation ↗</a><a href="rules.html">Explore 96 rules →</a></div>
+        </div>
+        <div class="hero-visual" aria-label="Example flow from private witness to public ledger">
+          <div class="visual-top"><span class="visual-orbit" aria-hidden="true"></span><span>Compact analysis</span><span class="visual-version">0.1.0</span></div>
+          <div class="flow-node"><span class="flow-index">01</span><div><strong>Private witness</strong><span>ownerSecret()</span></div><span class="flow-tag private">private</span></div>
+          <div class="flow-line" aria-hidden="true"></div>
+          <div class="flow-node"><span class="flow-index">02</span><div><strong>Disclosure boundary</strong><span>disclose(secret)</span></div><span class="flow-tag boundary">review</span></div>
+          <div class="flow-line" aria-hidden="true"></div>
+          <div class="flow-node"><span class="flow-index">03</span><div><strong>Ledger write</strong><span>published = …</span></div><span class="flow-tag public">public</span></div>
+          <div class="visual-foot">Source location <span>·</span> Evidence <span>·</span> Coverage</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="quickstart" class="section quickstart">
+      <div class="shell">
+        <div class="section-heading compact-heading"><div><p class="kicker">Start locally</p><h2>Three ways to run a scan</h2></div><p>Normal scans use local source and imports. They do not run your contract or require a Compact compiler.</p></div>
+        <div class="setup-grid">
+          <article class="setup-card"><div class="card-topline"><span class="step">01</span><span class="small-label">Release tarball</span></div><h3>Install the CLI</h3><p>Download the v0.1.0 package from <a href="https://github.com/DicksonWu654/nightshade/releases/tag/v0.1.0">GitHub Releases</a>. The packaged native target is Linux x86-64/glibc with Node 22 or 24.</p><pre><code>npm install ./nightshade-compact-0.1.0.tgz
+./node_modules/.bin/nightshade path/to/contract.compact</code></pre></article>
+          <article class="setup-card"><div class="card-topline"><span class="step">02</span><span class="small-label">Docker</span></div><h3>Scan in a container</h3><p>Build from the source checkout and mount the project read-only. Include local Compact imports with your source.</p><pre><code>docker build --platform linux/amd64 -t nightshade:local .
+docker run --platform linux/amd64 --rm --network none \
+  -v "$PWD:/project:ro" nightshade:local \
+  path/to/contract.compact</code></pre></article>
+          <article class="setup-card"><div class="card-topline"><span class="step">03</span><span class="small-label">GitHub Action</span></div><h3>Bring it into CI</h3><p>With code-scanning access, the Action scans the caller workspace, uploads SARIF, and preserves the analyzer exit code. Install project dependencies first.</p><pre><code>- uses: DicksonWu654/nightshade@v0.1.0
+  with:
+    path: contracts
+    fail-on: medium</code></pre><a class="text-link" href="https://github.com/DicksonWu654/nightshade/blob/v0.1.0/README.md#output-configuration-and-ci">Full workflow and permissions →</a></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="capabilities" class="section capabilities">
+      <div class="shell">
+        <div class="section-heading"><div><p class="kicker">What it catches</p><h2>Checks for Compact's public and private boundaries.</h2></div><p>Findings are static observations to review against the application's intended behavior. Some rules need explicit policy configuration.</p></div>
+        <div class="family-grid">
+          <article class="family-card"><span class="family-icon">↗</span><h3>Privacy and disclosure</h3><p>Looks for private witness values reaching public ledger writes, raw authentication preimages being published, low-entropy hash disclosures, and predictable commitment randomness.</p><a href="rules.html?q=publication">View publication rules →</a></article>
+          <article class="family-card"><span class="family-icon">◎</span><h3>Authorization and identity</h3><p>Reviews spoofable guards, public-key membership checks, ignored validation, and sensitive state writes. Application-specific authorization needs declared policy.</p><a href="rules.html?q=authorization">View authorization rules →</a></article>
+          <article class="family-card"><span class="family-icon">▣</span><h3>Ledger and shielded assets</h3><p>Checks state transitions and coin or token operations, including duplicate shielded mint patterns and discarded shielded send results.</p><a href="rules.html?q=shielded">View shielded rules →</a></article>
+          <article class="family-card"><span class="family-icon">⌁</span><h3>Control flow and validation</h3><p>Flags impossible assertions, caller-supplied time boundaries, and review points where a returned security result is left unenforced.</p><a href="rules.html?q=assertion">View validation rules →</a></article>
+        </div>
+        <div class="finding-layout">
+          <div class="finding-intro"><p class="kicker">A real finding</p><h3>A witness secret crosses into public ledger data.</h3><p>The shipped example hashes <code>ownerSecret()</code> for an authorization check, then publishes that same raw value. Nightshade reports the source line, path, and why the boundary matters. An intentional reveal can still be valid and needs human review.</p><a class="text-link" href="https://github.com/DicksonWu654/nightshade/blob/v0.1.0/docs/detectors/ledger-bound-preimage-publication.md">Read this rule's evidence and limits →</a></div>
+          <div class="terminal"><div class="terminal-bar"><span class="lights" aria-hidden="true"><i></i><i></i><i></i></span><span>nightshade · examples/review/contract.compact</span></div><pre><code><span class="terminal-warning">MEDIUM</span>  Ledger-bound private preimage is published
+        [ledger-bound-preimage-publication]
+examples/review/contract.compact:12:3
+  12 |   published = disclose(secret);
+     |   ^
+
+Private value from ownerSecret reaches ledger-write
+published without a hiding transformation. Ledger
+operation data is public.
+
+Call path: update
+Baseline analysis: complete; selected rules: complete.
+1 finding; 2/2 entrypoints completed; analysis complete.</code></pre></div>
+        </div>
+        <p class="source-note">Terminal excerpt from the installed v0.1.0 CLI on the shipped example. Paths are shortened to the example's relative path.</p>
+      </div>
+    </section>
+
+    <section id="workflow" class="section workflow">
+      <div class="shell"><div class="section-heading"><div><p class="kicker">How it works</p><h2>Evidence from source to report.</h2></div><p>Analysis is bounded and profile-specific. Gaps remain visible in coverage and diagnostics.</p></div>
+        <ol class="process-grid"><li><span>01 / Parse</span><h3>Build an owned model</h3><p>Parse Compact roots and imports into an owned representation, then resolve symbols, types, modules, and the call graph.</p></li><li><span>02 / Trace</span><h3>Follow values and effects</h3><p>Data-flow tracks private witness provenance, ledger revisions, guards, and effects across bounded paths and calls.</p></li><li><span>03 / Check</span><h3>Inspect public boundaries</h3><p>Detectors use shared facts to review disclosure, ledger writes, authorization, and application policy.</p></li><li><span>04 / Report</span><h3>Keep coverage attached</h3><p>Findings include source evidence. Unknown effects, unsupported syntax, and exhausted budgets produce diagnostics.</p></li></ol>
+        <div class="coverage-callout"><span class="callout-symbol" aria-hidden="true">!</span><p><strong>Incomplete analysis is never reported as clean.</strong> A complete result means the selected, supported analysis finished. It does not prove contract security or that a reported path can execute.</p></div>
+      </div>
+    </section>
+
+    <section id="integrations" class="section integrations">
+      <div class="shell integration-grid"><div><p class="kicker">Use the results</p><h2>Fits local review and CI.</h2><p class="integration-lede">Text for a quick read, JSON for tools, and SARIF 2.1.0 for GitHub code scanning. Reports carry findings and coverage information.</p><div class="feature-list"><div><strong>Configure the review</strong><span>Select detectors and compiler profile with CLI flags or <code>nightshade.json</code>.</span></div><div><strong>Record intent</strong><span>Inline suppressions require exact rule IDs and a reason; the finding remains in JSON and SARIF.</span></div><div><strong>Inspect coverage</strong><span>Review diagnostics and per-rule status before treating a quiet scan as meaningful.</span></div></div><a class="text-link" href="https://github.com/DicksonWu654/nightshade/blob/v0.1.0/docs/user-guide.md">Read the user guide →</a></div><div class="exit-panel"><div class="panel-caption">CI exit codes</div><div class="exit-row"><b>0</b><p>Analysis complete; no unsuppressed new finding meets the threshold.</p></div><div class="exit-row"><b>1</b><p>Analysis complete; at least one finding meets the threshold.</p></div><div class="exit-row"><b>2</b><p>Incomplete or invalid analysis, configuration error, or worker failure.</p></div><pre><code>nightshade contracts/ --sarif &gt; report.sarif</code></pre><p class="panel-foot">The Action uploads SARIF, including incomplete results, and preserves this exit code.</p></div></div>
+    </section>
+
+    <section id="evaluation" class="section evaluation">
+      <div class="shell"><div class="section-heading"><div><p class="kicker">Published evaluation</p><h2>Coverage measured on a fixed input set.</h2></div><p>A pre-release 0.1.0 build was measured on 300 roots from 144 public repositories. The assembled inputs and per-source results are private and unavailable for reproduction.</p></div>
+        <div class="evaluation-grid"><div class="measure-panel"><div class="measure-head"><span>Analysis completion</span><span>of 300 roots</span></div><div class="measure"><div class="measure-label"><strong>Compiler accepted</strong><span>273 / 300</span></div><div class="bar" role="img" aria-label="Compiler accepted 273 of 300 roots, 91 percent"><span style="width:91%"></span></div></div><div class="measure"><div class="measure-label"><strong>Baseline complete</strong><span>258 / 300 · 86.0%</span></div><div class="bar" role="img" aria-label="Baseline analysis complete for 258 of 300 roots, 86 percent"><span style="width:86%"></span></div></div><div class="measure"><div class="measure-label"><strong>All selected rules complete</strong><span>237 / 300 · 79.0%</span></div><div class="bar" role="img" aria-label="All selected rules complete for 237 of 300 roots, 79 percent"><span style="width:79%"></span></div></div><p>All 300 roots stay in the denominator, including 27 compiler-rejected roots that Nightshade did not scan.</p></div><div class="number-panel"><div class="metric"><strong>315</strong><span>Nightshade findings</span></div><div class="metric"><strong>0</strong><span>Worker or process failures</span></div><div class="metric comparator"><strong>157 / 143</strong><span>OpenZeppelin scanner successful / nonzero exits</span></div></div></div>
+        <p class="evaluation-note">The comparator was the unmodified OpenZeppelin scanner 0.0.3 release asset, whose embedded version reports 0.0.2. It attempted all 300 roots, including the 27 compiler-rejected inputs. The tools implement different checks and have different error and coverage models. These counts do not establish relative vulnerability-detection accuracy. <a href="https://github.com/DicksonWu654/nightshade/blob/v0.1.0/docs/evaluation.md">Read the full evaluation and caveats ↗</a></p>
+      </div>
+    </section>
+
+    <section id="limitations" class="section limitations"><div class="shell limit-grid"><div><p class="kicker">Know the limits</p><h2>A review aid with visible boundaries.</h2></div><div><p>Nightshade 0.1.0 is experimental. The packaged native build targets Linux x86-64/glibc with Node 22 or 24; other targets need separate validation. Analysis has bounded path and value tracking, incomplete support for some native operations and dynamic calls, and no general cross-transaction or cryptographic proof.</p><p>Policy rules require declared application intent. Intentional disclosure can resemble a defect. No release-wide precision or recall estimate has been established. Review findings and gaps alongside a human audit.</p><a class="text-link" href="https://github.com/DicksonWu654/nightshade/blob/v0.1.0/docs/limitations.md">Detailed limitations →</a></div></div></section>
+  </main>
+
+  <footer class="site-footer"><div class="shell footer-grid"><div><a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true"><span></span></span><span>nightshade<span class="brand-dot">.</span></span></a><p>Offline static analysis for Compact.<br>Created by Dickson Wu.</p></div><div><strong>Project</strong><a href="https://github.com/DicksonWu654/nightshade">Source</a><a href="https://github.com/DicksonWu654/nightshade/releases/tag/v0.1.0">Release</a><a href="https://github.com/DicksonWu654/nightshade/blob/v0.1.0/LICENSE">Apache-2.0</a></div><div><strong>Explore</strong><a href="rules.html">Rule catalog</a><a href="https://github.com/DicksonWu654/nightshade/tree/v0.1.0/docs">Documentation</a><a href="https://github.com/DicksonWu654/nightshade/blob/v0.1.0/docs/evaluation.md">Evaluation</a></div><div><strong>Security</strong><a href="https://github.com/DicksonWu654/nightshade/security/advisories/new">Report a vulnerability privately ↗</a><p>Use GitHub private vulnerability reporting for security issues.</p></div></div><div class="shell footer-bottom"><span>© 2026 Dickson Wu · Apache-2.0</span><span>Built as a static, offline-ready site.</span></div></footer>
+</body>
+</html>
