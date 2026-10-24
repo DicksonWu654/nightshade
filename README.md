@@ -1,6 +1,6 @@
 # Nightshade
 
-Nightshade is an offline static security analyzer for Compact, Midnight's smart contract language.
+Nightshade is an offline static security analyzer for Midnight's Compact smart contracts.
 
 This project extends the Midnight Network with additional developer tooling.
 
